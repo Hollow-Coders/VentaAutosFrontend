@@ -1,8 +1,14 @@
 import React from 'react'
+import Carta_v from '../components/Carta_v'
+
 
 function Catalogo() {
   return (
-    <div>Catalogo</div>
+    <div>
+        <h1>Catalogo</h1>
+        <Carta_v/>
+    </div>
+
   )
 }
 

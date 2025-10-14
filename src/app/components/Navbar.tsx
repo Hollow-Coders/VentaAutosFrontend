@@ -1,9 +1,9 @@
-"use client"; // Necesario si usas hooks o navegación cliente
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function Navbar() {
+const Navbar = () => {
   const pathname = usePathname();
 
   const links = [
@@ -14,18 +14,22 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className=" bg-white text-black p-4 flex gap-12 justify-center-safe border-b-4 border-b-red-800">
-      {links.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          className={`hover:text-white transition-colors hover:bg-red-800 w-20 text-center rounded-2xl ${
-            pathname === link.href ? "text-white bg-red-800 font-semibold" : ""
-          }`}
-        >
-          {link.label}
-        </Link>
-      ))}
+    <nav className="bg-white text-black p-4 border-b-4 border-b-red-700 shadow-sm">
+      <div className="container mx-auto flex justify-center md:justify-center gap-6 md:gap-12">
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={`transition-colors rounded-2xl px-4 py-2 text-center font-medium
+              hover:bg-red-700 hover:text-white
+              ${pathname === link.href ? "bg-red-700 text-white font-semibold border-1 border-red-900" : ""}`}
+          >
+            {link.label}
+          </Link>
+        ))}
+      </div>
     </nav>
   );
-}
+};
+
+export default Navbar;
