@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import BidButton from '../../components/vehicle/BidButton';
+import BuyButton from '../../components/vehicle/BuyButton';
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -237,9 +239,10 @@ export default function Home() {
                           <span className="text-2xl font-bold text-gray-900">{vehicle.price}</span>
                           <span className="text-sm text-gray-500">Tijuana B.C</span>
                         </div>
-                        <button className="w-full bg-red-700 text-white py-3 rounded-full font-semibold hover:bg-red-800 transition-colors">
-                          VER DETALLES
-                        </button>
+                        <div className="space-y-2">
+                          <BidButton vehicle={vehicle} />
+                          <BuyButton vehicle={vehicle} />
+                        </div>
                       </div>
                     </div>
                   ))}
