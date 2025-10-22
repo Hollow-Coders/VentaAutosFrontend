@@ -1,5 +1,5 @@
 import React from 'react'
-import Carta_v from '../components/Carta_v'
+import Carta_v from '../../../components/vehicle/Carta_v'
 
 
 function Catalogo() {
