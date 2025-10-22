@@ -2,21 +2,23 @@ import React from 'react'
 
 function Carta_v() {
   return (
-     <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-5 hover:shadow-md transition-all duration-200 max-w-sm">
-      <h2 className="text-xl font-semibold text-gray-800">Chevrolet Camaro SS</h2>
-      <p className="text-sm text-gray-500 mb-2">Marca: Chevrolet</p>
-
-      <div className="flex flex-col gap-1 text-sm text-gray-600 mb-3">
-        <p><span className="font-medium text-gray-700">Año:</span> 2022</p>
-        <p><span className="font-medium text-gray-700">Color:</span> Rojo</p>
-        <p className="text-gray-500">
-          Potente motor V8 con diseño icónico y excelente desempeño deportivo.
-        </p>
+    <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+      {/* Imagen del vehículo */}
+      <div className="h-48 bg-gray-200 flex items-center justify-center">
+        <div className="text-6xl text-gray-400">🚗</div>
       </div>
 
-      <div className="flex justify-between items-center mt-3">
-        <span className="text-lg font-bold text-red-600">$890,000</span>
-        <button className="bg-red-500 text-white px-3 py-1.5 rounded-lg hover:bg-red-600 transition">
+      {/* Contenido de la carta */}
+      <div className="p-4">
+        <h2 className="text-lg font-semibold text-gray-800 mb-1">Toyota Supra MK4 | 2020</h2>
+        
+        <div className="mb-3">
+          <p className="text-lg font-bold text-red-600 mb-1">Precio $350,000</p>
+          <p className="text-sm text-gray-600">Ubicación Tijuana B.C</p>
+        </div>
+
+        <button className="w-full bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 font-medium">
+          <span>🚗</span>
           Ver detalles
         </button>
       </div>
