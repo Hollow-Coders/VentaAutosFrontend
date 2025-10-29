@@ -20,7 +20,7 @@ function Catalogo() {
           </div>
 
           {/* Sección de filtros */}
-          <div>
+    <div>
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Filtros</h3>
             <div className="space-y-3">
               
@@ -109,7 +109,7 @@ function Catalogo() {
                 Buscar
               </button>
             </div>
-          </div>
+    </div>
 
           {/* Grid de vehículos */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
