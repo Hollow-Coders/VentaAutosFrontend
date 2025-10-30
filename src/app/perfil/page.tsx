@@ -11,7 +11,8 @@ import ProfileReviews from "../../components/profile/ProfileReviews";
 // Datos mock (en producción vendrían de una API)
 const mockUser = {
   id: "user-123",
-  name: "Juan Pérez",
+  name: "Juan",
+  lastname:"Perez Rodrigrez",
   email: "juan@example.com",
   phone: "+52 664 123 4567",
   location: "Tijuana, B.C.",
@@ -164,6 +165,7 @@ export default function ProfilePage() {
   const profileUser = {
     id: user?.id || "user-123",
     name: user?.name || mockUser.name,
+    lastname:user?.lastname || mockUser.lastname,
     email: user?.email || mockUser.email,
     phone: mockUser.phone,
     location: mockUser.location,
