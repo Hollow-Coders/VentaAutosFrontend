@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 interface User {
   id: string;
   name: string;
+  lastname: string;
   email: string;
   avatar?: string;
 }
@@ -13,7 +14,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (name: string, lastname:string, email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -44,6 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser({
         id: '1',
         name: 'Usuario Demo',
+        lastname:'Demo',
         email: email,
         avatar: undefined
       });
@@ -55,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (name: string, email: string, password: string) => {
+  const register = async (name: string, lastname:string, email: string, password: string) => {
     setIsLoading(true);
     try {
       // Simular llamada a API
@@ -65,6 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser({
         id: '1',
         name: name,
+        lastname: lastname,
         email: email,
         avatar: undefined
       });

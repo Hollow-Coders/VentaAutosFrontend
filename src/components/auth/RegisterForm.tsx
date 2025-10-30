@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
     name: "",
+    lastname:"",
     email: "",
     password: "",
     confirmPassword: "",
@@ -29,7 +30,7 @@ export default function RegisterForm() {
     }
     
     try {
-      await register(formData.name, formData.email, formData.password);
+      await register(formData.name,formData.lastname, formData.email, formData.password);
       router.push("/");
     } catch (error) {
       setError("Error al crear la cuenta. Inténtalo de nuevo.");
@@ -65,7 +66,7 @@ export default function RegisterForm() {
         
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-            Nombre completo
+            Nombre
           </label>
           <input
             id="name"
@@ -79,7 +80,22 @@ export default function RegisterForm() {
             placeholder="Tu nombre completo"
           />
         </div>
-
+        <div>
+          <label htmlFor="lastname" className="block text-sm font-medium text-gray-700 mb-2">
+            Apellidos
+          </label>
+          <input
+            id="lastname"
+            name="lastname"
+            type="text"
+            autoComplete="lastname"
+            required
+            value={formData.lastname}
+            onChange={handleChange}
+            className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
+            placeholder="Tu apellido/s"
+          />
+        </div>
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
             Correo electrónico

@@ -6,6 +6,7 @@ import { useAuth } from "../../hooks/useAuth";
 interface User {
   id: string;
   name: string;
+  lastname:string;
   email: string;
   phone?: string;
   location?: string;
@@ -47,6 +48,7 @@ export default function ProfileHeader({ user, isOwner }: ProfileHeaderProps) {
             ) : (
               <span className="text-white text-4xl font-bold">
                 {user.name.charAt(0).toUpperCase()}
+                {user.lastname.charAt(0).toUpperCase()}
               </span>
             )}
             {isOwner && (
@@ -85,6 +87,9 @@ export default function ProfileHeader({ user, isOwner }: ProfileHeaderProps) {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 {user.name}
+              </h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {user.lastname}
               </h1>
               <p className="text-gray-600 text-sm">
                 Miembro desde {new Date(user.joinDate).toLocaleDateString('es-ES', { 
