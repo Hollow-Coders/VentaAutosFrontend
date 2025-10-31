@@ -23,10 +23,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Simular carga inicial (en una app real, verificarías el token aquí)
   useEffect(() => {
     const checkAuth = async () => {
-      // Simular verificación de token
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
@@ -37,44 +35,78 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Simular llamada a API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Simular usuario logueado
+      const response = await fetch("http://127.0.0.1:8000/venta/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          correo: email,
+          contrasena: password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Credenciales inválidas");
+      }
+
+      const data = await response.json();
+
       setUser({
-        id: '1',
-        name: 'Usuario Demo',
-        email: email,
-        avatar: undefined
+        id: data.id,
+        name: data.nombre,
+        email: data.correo,
+        avatar: data.avatar,
       });
     } catch (error) {
-      console.error('Error en login:', error);
+      console.error("Error en login:", error);
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const register = async (name: string, email: string, password: string) => {
-    setIsLoading(true);
-    try {
-      // Simular llamada a API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Simular usuario registrado
-      setUser({
-        id: '1',
-        name: name,
-        email: email,
-        avatar: undefined
-      });
-    } catch (error) {
-      console.error('Error en registro:', error);
-      throw error;
-    } finally {
-      setIsLoading(false);
+
+const register = async (name: string, email: string, password: string) => {
+  setIsLoading(true);
+  try {
+    const response = await fetch("http://127.0.0.1:8000/venta/register/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nombre: name,
+        apellido: "2",
+        correo: email,
+        contrasena: password,
+        rol: "1",
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error en registro:", errorData);
+      throw new Error("Error en el registro");
     }
-  };
+
+    const data = await response.json();
+    console.log("Usuario creado:", data);
+
+    setUser({
+      id: "1",
+      name: name,
+      email: email,
+      avatar: undefined,
+    });
+  } catch (error) {
+    console.error("Error en registro:", error);
+    throw error;
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const logout = () => {
     setUser(null);
