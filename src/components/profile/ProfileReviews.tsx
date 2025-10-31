@@ -3,7 +3,7 @@
 interface Review {
   id: string;
   reviewer: {
-    name: string;
+    nombre: string;
     avatar?: string;
   };
   rating: number;
@@ -78,12 +78,12 @@ export default function ProfileReviews({ reviews }: ProfileReviewsProps) {
                     {review.reviewer.avatar ? (
                       <img 
                         src={review.reviewer.avatar} 
-                        alt={review.reviewer.name}
+                        alt={review.reviewer.nombre}
                         className="w-full h-full object-cover rounded-full"
                       />
                     ) : (
                       <span className="text-white text-sm font-semibold">
-                        {review.reviewer.name.charAt(0).toUpperCase()}
+                        {review.reviewer.nombre.charAt(0).toUpperCase()}
                       </span>
                     )}
                   </div>
@@ -94,7 +94,7 @@ export default function ProfileReviews({ reviews }: ProfileReviewsProps) {
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h4 className="font-semibold text-gray-900">
-                        {review.reviewer.name}
+                        {review.reviewer.nombre}
                       </h4>
                       <div className="flex items-center gap-1 mt-1">
                         {[...Array(5)].map((_, i) => (

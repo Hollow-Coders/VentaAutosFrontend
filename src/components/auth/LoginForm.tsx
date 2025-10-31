@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    correo: "",
+    contrasena: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -21,7 +21,7 @@ export default function LoginForm() {
     setError("");
     
     try {
-      await login(formData.email, formData.password);
+      await login(formData.correo, formData.contrasena);
       router.push("/");
     } catch (error) {
       setError("Error al iniciar sesión. Verifica tus credenciales.");
@@ -61,11 +61,11 @@ export default function LoginForm() {
           </label>
           <input
             id="email"
-            name="email"
+            name="correo"
             type="email"
             autoComplete="email"
             required
-            value={formData.email}
+            value={formData.correo}
             onChange={handleChange}
             className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
             placeholder="tu@email.com"
@@ -78,11 +78,11 @@ export default function LoginForm() {
           </label>
           <input
             id="password"
-            name="password"
+            name="contrasena"
             type="password"
             autoComplete="current-password"
             required
-            value={formData.password}
+            value={formData.contrasena}
             onChange={handleChange}
             className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
             placeholder="Tu contraseña"

@@ -11,9 +11,9 @@ import ProfileReviews from "../../components/profile/ProfileReviews";
 // Datos mock (en producción vendrían de una API)
 const mockUser = {
   id: "user-123",
-  name: "Juan",
-  lastname:"Perez Rodrigrez",
-  email: "juan@example.com",
+  nombre: "Juan",
+  apellido:"Perez Rodrigrez",
+  correo: "juan@example.com",
   phone: "+52 664 123 4567",
   location: "Tijuana, B.C.",
   avatar: undefined,
@@ -108,7 +108,7 @@ const mockReviews = [
   {
     id: "rev-1",
     reviewer: {
-      name: "María González",
+      nombre: "María González",
       avatar: undefined
     },
     rating: 5,
@@ -118,7 +118,7 @@ const mockReviews = [
   {
     id: "rev-2",
     reviewer: {
-      name: "Carlos Ramírez",
+      nombre: "Carlos Ramírez",
       avatar: undefined
     },
     rating: 5,
@@ -128,7 +128,7 @@ const mockReviews = [
   {
     id: "rev-3",
     reviewer: {
-      name: "Ana Martínez",
+      nombre: "Ana Martínez",
       avatar: undefined
     },
     rating: 4,
@@ -163,13 +163,13 @@ export default function ProfilePage() {
   // Usar datos mock del usuario actual
   // En producción, estos datos vendrían del AuthContext o API
   const profileUser = {
-    id: user?.id || "user-123",
-    name: user?.name || mockUser.name,
-    lastname:user?.lastname || mockUser.lastname,
-    email: user?.email || mockUser.email,
+    id: (user?.id ?? "user-123"),
+    nombre: (user?.nombre ?? mockUser.nombre),
+    apellido: (user?.apellido ?? mockUser.apellido),
+    correo: (user?.correo ?? mockUser.correo),
     phone: mockUser.phone,
     location: mockUser.location,
-    avatar: user?.avatar || mockUser.avatar,
+    avatar: (user?.avatar ?? mockUser.avatar),
     bio: mockUser.bio,
     isSeller: mockUser.isSeller,
     isBuyer: mockUser.isBuyer,

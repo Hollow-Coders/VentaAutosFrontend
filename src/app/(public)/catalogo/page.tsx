@@ -1,7 +1,10 @@
+"use client";
 import React from 'react'
+import { useAuth } from '../../../hooks/useAuth'
 import Carta_v from '../../../components/vehicle/Carta_v'
 
 function Catalogo() {
+  const { user } = useAuth();
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex flex-col lg:flex-row">
@@ -13,9 +16,9 @@ function Catalogo() {
           <div className="mb-8">
             <div className="flex items-center mb-4">
               <div className="w-12 h-12 bg-red-700 rounded-full flex items-center justify-center mr-3">
-                <span className="text-white text-xl">👤</span>
+                <span className="text-white text-xl">{(user?.nombre?.charAt(0)?.toUpperCase() || '👤')}</span>
               </div>
-              <span className="text-lg font-semibold text-gray-800">Alex Cárdenas</span>
+              <span className="text-lg font-semibold text-gray-800">{user?.nombre || 'Usuario'}</span>
             </div>
           </div>
 
