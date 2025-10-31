@@ -6,8 +6,8 @@ import { useAuth } from "../../hooks/useAuth";
 
 interface User {
   id: string;
-  name: string;
-  email: string;
+  nombre: string;
+  correo: string;
   avatar?: string;
 }
 
@@ -32,11 +32,11 @@ export default function UserMenu({ user }: UserMenuProps) {
       >
         <div className="w-8 h-8 bg-red-700 rounded-full flex items-center justify-center">
           <span className="text-white text-sm font-semibold">
-            {user.name.charAt(0).toUpperCase()}
+            {(user?.nombre?.charAt(0)?.toUpperCase() || "?")}
           </span>
         </div>
         <span className="text-gray-700 font-medium hidden sm:block">
-          {user.name}
+          {user?.nombre || "Usuario"}
         </span>
         <svg
           className={`w-4 h-4 text-gray-500 transition-transform ${
@@ -68,8 +68,8 @@ export default function UserMenu({ user }: UserMenuProps) {
             <div className="py-2">
               {/* Información del usuario */}
               <div className="px-4 py-2 border-b border-gray-100">
-                <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                <p className="text-xs text-gray-500">{user.email}</p>
+                <p className="text-sm font-medium text-gray-900">{user?.nombre || "Usuario"}</p>
+                <p className="text-xs text-gray-500">{user?.correo || ""}</p>
               </div>
 
               {/* Enlaces del menú */}

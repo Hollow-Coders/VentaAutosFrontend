@@ -6,11 +6,11 @@ import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
-    name: "",
-    lastname:"",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    nombre: "",
+    apellido:"",
+    correo: "",
+    contrasena: "",
+    confirmcontrasena: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -23,14 +23,14 @@ export default function RegisterForm() {
     setIsLoading(true);
     setError("");
     
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.contrasena !== formData.confirmcontrasena) {
       setError("Las contraseñas no coinciden.");
       setIsLoading(false);
       return;
     }
     
     try {
-      await register(formData.name,formData.lastname, formData.email, formData.password);
+      await register(formData.nombre, formData.apellido, formData.correo, formData.contrasena);
       router.push("/");
     } catch (error) {
       setError("Error al crear la cuenta. Inténtalo de nuevo.");
@@ -65,65 +65,65 @@ export default function RegisterForm() {
         )}
         
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-2">
             Nombre
           </label>
           <input
-            id="name"
-            name="name"
+            id="nombre"
+            name="nombre"
             type="text"
-            autoComplete="name"
+            autoComplete="nombre"
             required
-            value={formData.name}
+            value={formData.nombre}
             onChange={handleChange}
             className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
             placeholder="Tu nombre completo"
           />
         </div>
         <div>
-          <label htmlFor="lastname" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="apellido" className="block text-sm font-medium text-gray-700 mb-2">
             Apellidos
           </label>
           <input
-            id="lastname"
-            name="lastname"
+            id="apellido"
+            name="apellido"
             type="text"
-            autoComplete="lastname"
+            autoComplete="apellido"
             required
-            value={formData.lastname}
+            value={formData.apellido}
             onChange={handleChange}
             className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
             placeholder="Tu apellido/s"
           />
         </div>
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="correo" className="block text-sm font-medium text-gray-700 mb-2">
             Correo electrónico
           </label>
           <input
-            id="email"
-            name="email"
+            id="correo"
+            name="correo"
             type="email"
             autoComplete="email"
             required
-            value={formData.email}
+            value={formData.correo}
             onChange={handleChange}
             className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
-            placeholder="tu@email.com"
+            placeholder="tu@correo.com"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="contrasena" className="block text-sm font-medium text-gray-700 mb-2">
             Contraseña
           </label>
           <input
-            id="password"
-            name="password"
+            id="contrasena"
+            name="contrasena"
             type="password"
             autoComplete="new-password"
             required
-            value={formData.password}
+            value={formData.contrasena}
             onChange={handleChange}
             className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
             placeholder="Mínimo 8 caracteres"
@@ -131,16 +131,16 @@ export default function RegisterForm() {
         </div>
 
         <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="confirmcontrasena" className="block text-sm font-medium text-gray-700 mb-2">
             Confirmar contraseña
           </label>
           <input
-            id="confirmPassword"
-            name="confirmPassword"
+            id="confirmcontrasena"
+            name="confirmcontrasena"
             type="password"
             autoComplete="new-password"
             required
-            value={formData.confirmPassword}
+            value={formData.confirmcontrasena}
             onChange={handleChange}
             className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
             placeholder="Repite tu contraseña"

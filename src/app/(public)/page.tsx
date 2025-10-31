@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import BidButton from '../../components/vehicle/BidButton';
-import BuyButton from '../../components/vehicle/BuyButton';
+// Removed unused BidButton and BuyButton components; using Links instead
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -89,7 +88,7 @@ export default function Home() {
 
               {/* Botones subasta y catalogo */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/Catalogo" className="bg-red-700 text-white px-8 py-4 rounded-full font-semibold hover:bg-red-800 transition-colors text-center">
+                <Link href="/catalogo" className="bg-red-700 text-white px-8 py-4 rounded-full font-semibold hover:bg-red-800 transition-colors text-center">
                   EXPLORAR CATÁLOGO
                 </Link>
                 <Link href="/Subastas" className="border-2 border-red-700 text-red-700 px-8 py-4 rounded-full font-semibold hover:bg-red-700 hover:text-white transition-colors text-center">
@@ -240,8 +239,18 @@ export default function Home() {
                           <span className="text-sm text-gray-500">Tijuana B.C</span>
                         </div>
                         <div className="space-y-2">
-                          <BidButton vehicle={vehicle} />
-                          <BuyButton vehicle={vehicle} />
+                          <Link
+                            href="/subastas"
+                            className="block w-full text-center bg-white border border-red-700 text-red-700 hover:bg-red-700 hover:text-white rounded-full px-4 py-2 font-medium transition-colors"
+                          >
+                            Pujar
+                          </Link>
+                          <Link
+                            href="/catalogo"
+                            className="block w-full text-center bg-red-700 text-white hover:bg-red-800 rounded-full px-4 py-2 font-medium transition-colors"
+                          >
+                            Comprar ahora
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -267,7 +276,7 @@ export default function Home() {
 
           {/* CTA Button */}
           <div className="text-center mt-12">
-            <Link href="/Catalogo" className="inline-block bg-red-700 text-white px-12 py-4 rounded-full font-bold text-lg hover:bg-red-800 transition-colors">
+            <Link href="/catalogo" className="inline-block bg-red-700 text-white px-12 py-4 rounded-full font-bold text-lg hover:bg-red-800 transition-colors">
               EXPLORAR CATÁLOGO COMPLETO
             </Link>
             <p className="text-gray-500 mt-4">Más de 100+ vehículos disponibles</p>
