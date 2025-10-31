@@ -45,7 +45,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           contrasena: password,
         }),
       });
-
       if (!response.ok) {
         throw new Error("Credenciales inválidas");
       }
