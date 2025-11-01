@@ -1,3 +1,4 @@
+
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -144,6 +145,7 @@ function Catalogo() {
       setCargando(false)
     }
   }
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -300,7 +302,7 @@ function Catalogo() {
                 {cargando ? 'Buscando...' : 'Buscar'}
               </button>
             </div>
-          </div>
+    </div>
 
           {/* Mensaje de error */}
           {error && (

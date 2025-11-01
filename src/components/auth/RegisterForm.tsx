@@ -106,7 +106,6 @@ export default function RegisterForm() {
             />
           </div>
         </div>
-
         <div>
           <label htmlFor="correo" className="block text-sm font-medium text-gray-700 mb-2">
             Correo electrónico
@@ -120,7 +119,7 @@ export default function RegisterForm() {
             value={datosFormulario.correo}
             onChange={manejarCambio}
             className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
-            placeholder="tu@email.com"
+            placeholder="tu@correo.com"
           />
         </div>
 
@@ -190,16 +189,16 @@ export default function RegisterForm() {
 
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            ¿Ya tienes cuenta?{" "}
+        ¿Ya tienes cuenta?{" "}
             <Link 
               href="/login" 
               className="font-medium text-red-600 hover:text-red-500 transition-colors"
             >
               Inicia sesión aquí
-            </Link>
-          </p>
+        </Link>
+      </p>
         </div>
-      </form>
+    </form>
     </div>
   );
 }

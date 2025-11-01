@@ -69,7 +69,7 @@ export function ProveedorAutenticacion({ children }: Readonly<{ children: React.
       establecerUsuario(usuario);
       authService.setCurrentUser(usuario);
     } catch (error) {
-      console.error('Error en login:', error);
+      console.error("Error en login:", error);
       throw error;
     } finally {
       establecerCarga(false);
@@ -98,7 +98,7 @@ export function ProveedorAutenticacion({ children }: Readonly<{ children: React.
       establecerUsuario(usuario);
       authService.setCurrentUser(usuario);
     } catch (error) {
-      console.error('Error en registro:', error);
+      console.error("Error en registro:", error);
       throw error;
     } finally {
       establecerCarga(false);
