@@ -1,23 +1,23 @@
 "use client";
 
-interface Review {
+interface Resena {
   id: string;
-  reviewer: {
+  revisor: {
     nombre: string;
     avatar?: string;
   };
-  rating: number;
-  comment: string;
-  date: string;
+  calificacion: number;
+  comentario: string;
+  fecha: string;
 }
 
-interface ProfileReviewsProps {
-  reviews: Review[];
+interface ResenasPerfilProps {
+  resenas: Resena[];
 }
 
-export default function ProfileReviews({ reviews }: ProfileReviewsProps) {
-  const averageRating = reviews.length > 0
-    ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
+export default function ProfileReviews({ resenas }: ResenasPerfilProps) {
+  const promedioCalificacion = resenas.length > 0
+    ? (resenas.reduce((suma, resena) => suma + resena.calificacion, 0) / resenas.length).toFixed(1)
     : "0.0";
 
   return (
@@ -34,7 +34,7 @@ export default function ProfileReviews({ reviews }: ProfileReviewsProps) {
                 <svg
                   key={i}
                   className={`w-5 h-5 ${
-                    i < Math.round(Number(averageRating))
+                    i < Math.round(Number(promedioCalificacion))
                       ? 'text-yellow-400'
                       : 'text-gray-300'
                   }`}
@@ -46,14 +46,14 @@ export default function ProfileReviews({ reviews }: ProfileReviewsProps) {
               ))}
             </div>
             <span className="text-gray-600 text-sm">
-              {averageRating} de {reviews.length} valoración{reviews.length !== 1 ? 'es' : ''}
+              {promedioCalificacion} de {resenas.length} valoración{resenas.length !== 1 ? 'es' : ''}
             </span>
           </div>
         </div>
       </div>
 
       {/* Lista de reviews */}
-      {reviews.length === 0 ? (
+      {resenas.length === 0 ? (
         <div className="text-center py-12">
           <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,21 +69,21 @@ export default function ProfileReviews({ reviews }: ProfileReviewsProps) {
         </div>
       ) : (
         <div className="space-y-4">
-          {reviews.map((review) => (
-            <div key={review.id} className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
+          {resenas.map((resena) => (
+            <div key={resena.id} className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
               <div className="flex gap-4">
                 {/* Avatar del reviewer */}
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 bg-red-700 rounded-full flex items-center justify-center">
-                    {review.reviewer.avatar ? (
+                    {resena.revisor.avatar ? (
                       <img 
-                        src={review.reviewer.avatar} 
-                        alt={review.reviewer.nombre}
+                        src={resena.revisor.avatar} 
+                        alt={resena.revisor.nombre}
                         className="w-full h-full object-cover rounded-full"
                       />
                     ) : (
                       <span className="text-white text-sm font-semibold">
-                        {review.reviewer.nombre.charAt(0).toUpperCase()}
+                        {resena.revisor.nombre.charAt(0).toUpperCase()}
                       </span>
                     )}
                   </div>
@@ -94,14 +94,14 @@ export default function ProfileReviews({ reviews }: ProfileReviewsProps) {
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h4 className="font-semibold text-gray-900">
-                        {review.reviewer.nombre}
+                        {resena.revisor.nombre}
                       </h4>
                       <div className="flex items-center gap-1 mt-1">
                         {[...Array(5)].map((_, i) => (
                           <svg
                             key={i}
                             className={`w-4 h-4 ${
-                              i < review.rating
+                              i < resena.calificacion
                                 ? 'text-yellow-400'
                                 : 'text-gray-300'
                             }`}
@@ -114,7 +114,7 @@ export default function ProfileReviews({ reviews }: ProfileReviewsProps) {
                       </div>
                     </div>
                     <span className="text-gray-500 text-sm">
-                      {new Date(review.date).toLocaleDateString('es-ES', {
+                      {new Date(resena.fecha).toLocaleDateString('es-ES', {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric'
@@ -122,7 +122,7 @@ export default function ProfileReviews({ reviews }: ProfileReviewsProps) {
                     </span>
                   </div>
                   <p className="text-gray-600 text-sm leading-relaxed">
-                    {review.comment}
+                    {resena.comentario}
                   </p>
                 </div>
               </div>

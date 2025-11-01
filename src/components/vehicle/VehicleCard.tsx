@@ -2,33 +2,33 @@
 
 import Link from "next/link";
 
-interface Vehicle {
+interface Vehiculo {
   id: string;
-  name: string;
-  year: string;
-  price: string;
-  location?: string;
-  image?: string;
-  category?: string;
-  mileage?: string;
-  transmission?: string;
-  fuel?: string;
+  nombre: string;
+  anio: string;
+  precio: string;
+  ubicacion?: string;
+  imagen?: string;
+  categoria?: string;
+  kilometraje?: string;
+  transmision?: string;
+  combustible?: string;
 }
 
-interface VehicleCardProps {
-  vehicle: Vehicle;
+interface TarjetaVehiculoProps {
+  vehiculo: Vehiculo;
 }
 
-export default function VehicleCard({ vehicle }: VehicleCardProps) {
+export default function VehicleCard({ vehiculo }: TarjetaVehiculoProps) {
   return (
-    <Link href={`/vehiculo/${vehicle.id}`}>
+    <Link href={`/vehiculo/${vehiculo.id}`}>
       <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 transform cursor-pointer">
         {/* Imagen del vehículo */}
         <div className="h-48 bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center relative overflow-hidden">
-          {vehicle.image ? (
-            <img 
-              src={vehicle.image} 
-              alt={vehicle.name}
+          {vehiculo.imagen ? (
+            <img
+              src={vehiculo.imagen}
+              alt={vehiculo.nombre}
               className="w-full h-full object-cover"
             />
           ) : (
@@ -38,10 +38,10 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           )}
           
           {/* Categoría */}
-          {vehicle.category && (
+          {vehiculo.categoria && (
             <div className="absolute top-3 left-3">
               <span className="bg-red-700 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                {vehicle.category}
+                {vehiculo.categoria}
               </span>
             </div>
           )}
@@ -50,49 +50,49 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         {/* Contenido de la carta */}
         <div className="p-4">
           <h2 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
-            {vehicle.name} | {vehicle.year}
+            {vehiculo.nombre} | {vehiculo.anio}
           </h2>
           
           <div className="mb-3 space-y-1">
             <p className="text-xl font-bold text-red-600">
-              {vehicle.price}
+              {vehiculo.precio}
             </p>
-            {vehicle.location && (
+            {vehiculo.ubicacion && (
               <p className="text-sm text-gray-600 flex items-center gap-1">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                {vehicle.location}
+                {vehiculo.ubicacion}
               </p>
             )}
           </div>
 
           {/* Información adicional */}
-          {(vehicle.mileage || vehicle.transmission || vehicle.fuel) && (
+          {(vehiculo.kilometraje || vehiculo.transmision || vehiculo.combustible) && (
             <div className="flex flex-wrap gap-3 mb-3 text-xs text-gray-500">
-              {vehicle.mileage && (
+              {vehiculo.kilometraje && (
                 <span className="flex items-center gap-1">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
-                  {vehicle.mileage}
+                  {vehiculo.kilometraje}
                 </span>
               )}
-              {vehicle.transmission && (
+              {vehiculo.transmision && (
                 <span className="flex items-center gap-1">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
-                  {vehicle.transmission}
+                  {vehiculo.transmision}
                 </span>
               )}
-              {vehicle.fuel && (
+              {vehiculo.combustible && (
                 <span className="flex items-center gap-1">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  {vehicle.fuel}
+                  {vehiculo.combustible}
                 </span>
               )}
             </div>

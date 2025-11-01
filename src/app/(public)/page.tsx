@@ -8,20 +8,20 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Array de los carros 
-  const vehicles = [
-    { id: 1, name: "Chevrolet Camaro", year: "2016", price: "$150,000.00", category: "DEPORTIVO", badge: "POPULAR", badgeColor: "bg-red-700" },
-    { id: 2, name: "Toyota Supra", year: "2020", price: "$350,000.00", category: "SEDÁN", badge: "NUEVO", badgeColor: "bg-green-500" },
-    { id: 3, name: "Chevrolet Impala", year: "1964", price: "$450,000.00", category: "CLÁSICO", badge: "OFERTA", badgeColor: "bg-orange-500" },
-    { id: 4, name: "BMW M3", year: "2022", price: "$520,000.00", category: "DEPORTIVO", badge: "PREMIUM", badgeColor: "bg-blue-500" },
-    { id: 5, name: "Honda Civic", year: "2019", price: "$85,000.00", category: "SEDÁN", badge: "ECONÓMICO", badgeColor: "bg-purple-500" },
-    { id: 6, name: "Ford Mustang", year: "2021", price: "$280,000.00", category: "DEPORTIVO", badge: "ICÓNICO", badgeColor: "bg-yellow-500" },
-    { id: 7, name: "Audi A4", year: "2023", price: "$420,000.00", category: "SEDÁN", badge: "LUXURY", badgeColor: "bg-indigo-500" },
-    { id: 8, name: "Nissan GT-R", year: "2020", price: "$650,000.00", category: "DEPORTIVO", badge: "SUPER", badgeColor: "bg-pink-500" },
-    { id: 9, name: "Mercedes C-Class", year: "2022", price: "$380,000.00", category: "SEDÁN", badge: "ELEGANTE", badgeColor: "bg-teal-500" }
+  const vehiculos = [
+    { id: 1, nombre: "Chevrolet Camaro", anio: "2016", precio: "$150,000.00", categoria: "DEPORTIVO", insignia: "POPULAR", colorInsignia: "bg-red-700" },
+    { id: 2, nombre: "Toyota Supra", anio: "2020", precio: "$350,000.00", categoria: "SEDÁN", insignia: "NUEVO", colorInsignia: "bg-green-500" },
+    { id: 3, nombre: "Chevrolet Impala", anio: "1964", precio: "$450,000.00", categoria: "CLÁSICO", insignia: "OFERTA", colorInsignia: "bg-orange-500" },
+    { id: 4, nombre: "BMW M3", anio: "2022", precio: "$520,000.00", categoria: "DEPORTIVO", insignia: "PREMIUM", colorInsignia: "bg-blue-500" },
+    { id: 5, nombre: "Honda Civic", anio: "2019", precio: "$85,000.00", categoria: "SEDÁN", insignia: "ECONÓMICO", colorInsignia: "bg-purple-500" },
+    { id: 6, nombre: "Ford Mustang", anio: "2021", precio: "$280,000.00", categoria: "DEPORTIVO", insignia: "ICÓNICO", colorInsignia: "bg-yellow-500" },
+    { id: 7, nombre: "Audi A4", anio: "2023", precio: "$420,000.00", categoria: "SEDÁN", insignia: "LUXURY", colorInsignia: "bg-indigo-500" },
+    { id: 8, nombre: "Nissan GT-R", anio: "2020", precio: "$650,000.00", categoria: "DEPORTIVO", insignia: "SUPER", colorInsignia: "bg-pink-500" },
+    { id: 9, nombre: "Mercedes C-Class", anio: "2022", precio: "$380,000.00", categoria: "SEDÁN", insignia: "ELEGANTE", colorInsignia: "bg-teal-500" }
   ];
 
   const itemsPerSlide = 3;
-  const totalSlides = Math.ceil(vehicles.length / itemsPerSlide);
+  const totalSlides = Math.ceil(vehiculos.length / itemsPerSlide);
 
   // Autoscroll del carrusel
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function Home() {
   // Función para los vehículos de la slide actual
   const getCurrentVehicles = () => {
     const startIndex = currentSlide * itemsPerSlide;
-    return vehicles.slice(startIndex, startIndex + itemsPerSlide);
+    return vehiculos.slice(startIndex, startIndex + itemsPerSlide);
   };
 
   return (
@@ -218,24 +218,24 @@ export default function Home() {
             <div className="overflow-hidden">
               <div className="flex transition-transform duration-500 ease-in-out">
                 <div className="w-full grid grid-cols-3 gap-8">
-                  {getCurrentVehicles().map((vehicle) => (
+                  {getCurrentVehicles().map((vehiculo) => (
                     <div
-                      key={vehicle.id}
+                      key={vehiculo.id}
                       className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
                     >
                       <div className="relative h-48 bg-gradient-to-br from-red-100 to-red-200">
-                        <div className={`absolute top-4 left-4 ${vehicle.badgeColor} text-white px-3 py-1 rounded-full text-xs font-semibold`}>
-                          {vehicle.badge}
+                        <div className={`absolute top-4 left-4 ${vehiculo.colorInsignia} text-white px-3 py-1 rounded-full text-xs font-semibold`}>
+                          {vehiculo.insignia}
                         </div>
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="w-32 h-20 bg-gradient-to-br from-red-300 to-red-400 rounded-xl"></div>
                         </div>
                       </div>
                       <div className="p-6">
-                        <div className="text-sm text-red-600 font-semibold mb-2">{vehicle.category}</div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">{vehicle.name} | {vehicle.year}</h3>
+                        <div className="text-sm text-red-600 font-semibold mb-2">{vehiculo.categoria}</div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">{vehiculo.nombre} | {vehiculo.anio}</h3>
                         <div className="flex justify-between items-center mb-4">
-                          <span className="text-2xl font-bold text-gray-900">{vehicle.price}</span>
+                          <span className="text-2xl font-bold text-gray-900">{vehiculo.precio}</span>
                           <span className="text-sm text-gray-500">Tijuana B.C</span>
                         </div>
                         <div className="space-y-2">

@@ -4,22 +4,22 @@ import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import AuthPrompt from "../auth/AuthPrompt";
 
-interface Vehicle {
+interface Vehiculo {
   id: string;
-  name: string;
-  year: string;
-  price: string;
-  category: string;
-  badge: string;
-  badgeColor: string;
+  nombre: string;
+  anio: string;
+  precio: string;
+  categoria: string;
+  insignia: string;
+  colorInsignia: string;
 }
 
-interface BidButtonProps {
-  vehicle: Vehicle;
-  currentBid?: number;
+interface BotonPujaProps {
+  vehiculo: Vehiculo;
+  pujaActual?: number;
 }
 
-export default function BidButton({ vehicle, currentBid = 0 }: BidButtonProps) {
+export default function BidButton({ vehiculo, pujaActual = 0 }: BotonPujaProps) {
   const { isAuthenticated } = useAuth();
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
@@ -29,7 +29,7 @@ export default function BidButton({ vehicle, currentBid = 0 }: BidButtonProps) {
       return;
     }
     // Lógica de puja para usuario autenticado
-    console.log("Pujando en vehículo:", vehicle.id);
+    console.log("Pujando en vehículo:", vehiculo.id, "Puja actual:", pujaActual);
   };
 
   return (

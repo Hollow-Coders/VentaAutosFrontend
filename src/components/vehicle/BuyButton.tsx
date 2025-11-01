@@ -4,21 +4,21 @@ import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import AuthPrompt from "../auth/AuthPrompt";
 
-interface Vehicle {
+interface Vehiculo {
   id: string;
-  name: string;
-  year: string;
-  price: string;
-  category: string;
-  badge: string;
-  badgeColor: string;
+  nombre: string;
+  anio: string;
+  precio: string;
+  categoria: string;
+  insignia: string;
+  colorInsignia: string;
 }
 
-interface BuyButtonProps {
-  vehicle: Vehicle;
+interface BotonCompraProps {
+  vehiculo: Vehiculo;
 }
 
-export default function BuyButton({ vehicle }: BuyButtonProps) {
+export default function BuyButton({ vehiculo }: BotonCompraProps) {
   const { isAuthenticated } = useAuth();
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
@@ -28,7 +28,7 @@ export default function BuyButton({ vehicle }: BuyButtonProps) {
       return;
     }
     // Lógica de compra para usuario autenticado
-    console.log("Comprando vehículo:", vehicle.id);
+    console.log("Comprando vehículo:", vehiculo.id);
   };
 
   return (

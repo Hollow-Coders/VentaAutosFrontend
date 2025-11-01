@@ -9,131 +9,131 @@ import ProfileVehicles from "../../components/profile/ProfileVehicles";
 import ProfileReviews from "../../components/profile/ProfileReviews";
 
 // Datos mock (en producción vendrían de una API)
-const mockUser = {
+const usuarioMock = {
   id: "user-123",
   nombre: "Juan",
   apellido:"Perez Rodrigrez",
   correo: "juan@example.com",
-  phone: "+52 664 123 4567",
-  location: "Tijuana, B.C.",
+  telefono: "+52 664 123 4567",
+  ubicacion: "Tijuana, B.C.",
   avatar: undefined,
-  bio: "Vendedor de vehículos con más de 10 años de experiencia. Especializado en vehículos deportivos y clásicos. Ofrezco garantía en todos mis vehículos.",
-  isSeller: true,
-  isBuyer: true,
-  joinDate: "2023-01-15"
+  biografia: "Vendedor de vehículos con más de 10 años de experiencia. Especializado en vehículos deportivos y clásicos. Ofrezco garantía en todos mis vehículos.",
+  esVendedor: true,
+  esComprador: true,
+  fechaRegistro: "2023-01-15"
 };
 
-const mockVehicles = [
+const vehiculosMock = [
   {
     id: "veh-1",
-    name: "Chevrolet Camaro SS",
-    year: "2022",
-    price: "$890,000 MXN",
-    image: undefined,
-    location: "Tijuana, B.C.",
-    category: "DEPORTIVO",
-    mileage: "25,000 km",
-    transmission: "Automática",
-    fuel: "Gasolina",
+    nombre: "Chevrolet Camaro SS",
+    anio: "2022",
+    precio: "$890,000 MXN",
+    imagen: undefined,
+    ubicacion: "Tijuana, B.C.",
+    categoria: "DEPORTIVO",
+    kilometraje: "25,000 km",
+    transmision: "Automática",
+    combustible: "Gasolina",
     status: "active" as const
   },
   {
     id: "veh-2",
-    name: "Toyota Supra",
-    year: "2021",
-    price: "$1,200,000 MXN",
-    image: undefined,
-    location: "Tijuana, B.C.",
-    category: "DEPORTIVO",
-    mileage: "18,000 km",
-    transmission: "Automática",
-    fuel: "Gasolina",
+    nombre: "Toyota Supra",
+    anio: "2021",
+    precio: "$1,200,000 MXN",
+    imagen: undefined,
+    ubicacion: "Tijuana, B.C.",
+    categoria: "DEPORTIVO",
+    kilometraje: "18,000 km",
+    transmision: "Automática",
+    combustible: "Gasolina",
     status: "active" as const
   },
   {
     id: "veh-3",
-    name: "BMW M3",
-    year: "2020",
-    price: "$950,000 MXN",
-    image: undefined,
-    location: "Tijuana, B.C.",
-    category: "SEDÁN",
-    mileage: "30,000 km",
-    transmission: "Automática",
-    fuel: "Gasolina",
+    nombre: "BMW M3",
+    anio: "2020",
+    precio: "$950,000 MXN",
+    imagen: undefined,
+    ubicacion: "Tijuana, B.C.",
+    categoria: "SEDÁN",
+    kilometraje: "30,000 km",
+    transmision: "Automática",
+    combustible: "Gasolina",
     status: "sold" as const
   },
   {
     id: "veh-4",
-    name: "Ford Mustang",
-    year: "2023",
-    price: "$650,000 MXN",
-    image: undefined,
-    location: "Tijuana, B.C.",
-    category: "MUSCLE CAR",
-    mileage: "5,000 km",
-    transmission: "Manual",
-    fuel: "Gasolina",
+    nombre: "Ford Mustang",
+    anio: "2023",
+    precio: "$650,000 MXN",
+    imagen: undefined,
+    ubicacion: "Tijuana, B.C.",
+    categoria: "MUSCLE CAR",
+    kilometraje: "5,000 km",
+    transmision: "Manual",
+    combustible: "Gasolina",
     status: "active" as const
   },
   {
     id: "veh-5",
-    name: "Nissan GT-R",
-    year: "2021",
-    price: "$1,450,000 MXN",
-    image: undefined,
-    location: "Tijuana, B.C.",
-    category: "SUPERCAR",
-    mileage: "15,000 km",
-    transmission: "Automática",
-    fuel: "Gasolina",
+    nombre: "Nissan GT-R",
+    anio: "2021",
+    precio: "$1,450,000 MXN",
+    imagen: undefined,
+    ubicacion: "Tijuana, B.C.",
+    categoria: "SUPERCAR",
+    kilometraje: "15,000 km",
+    transmision: "Automática",
+    combustible: "Gasolina",
     status: "active" as const
   },
   {
     id: "veh-6",
-    name: "Audi A4",
-    year: "2022",
-    price: "$720,000 MXN",
-    image: undefined,
-    location: "Tijuana, B.C.",
-    category: "LUXURY",
-    mileage: "20,000 km",
-    transmission: "Automática",
-    fuel: "Diesel",
+    nombre: "Audi A4",
+    anio: "2022",
+    precio: "$720,000 MXN",
+    imagen: undefined,
+    ubicacion: "Tijuana, B.C.",
+    categoria: "LUXURY",
+    kilometraje: "20,000 km",
+    transmision: "Automática",
+    combustible: "Diesel",
     status: "active" as const
   }
 ];
 
-const mockReviews = [
+const resenasMock = [
   {
     id: "rev-1",
-    reviewer: {
+    revisor: {
       nombre: "María González",
       avatar: undefined
     },
-    rating: 5,
-    comment: "Excelente vendedor, el vehículo estaba en perfecto estado como describió. Muy profesional y atento a todas mis preguntas.",
-    date: "2024-10-15"
+    calificacion: 5,
+    comentario: "Excelente vendedor, el vehículo estaba en perfecto estado como describió. Muy profesional y atento a todas mis preguntas.",
+    fecha: "2024-10-15"
   },
   {
     id: "rev-2",
-    reviewer: {
+    revisor: {
       nombre: "Carlos Ramírez",
       avatar: undefined
     },
-    rating: 5,
-    comment: "Transacción muy fluida. El proceso fue rápido y sin complicaciones. Recomiendo totalmente.",
-    date: "2024-10-10"
+    calificacion: 5,
+    comentario: "Transacción muy fluida. El proceso fue rápido y sin complicaciones. Recomiendo totalmente.",
+    fecha: "2024-10-10"
   },
   {
     id: "rev-3",
-    reviewer: {
+    revisor: {
       nombre: "Ana Martínez",
       avatar: undefined
     },
-    rating: 4,
-    comment: "Buen vendedor, el vehículo está muy bien cuidado. Solo un pequeño detalle con el retraso en la entrega de documentos.",
-    date: "2024-10-05"
+    calificacion: 4,
+    comentario: "Buen vendedor, el vehículo está muy bien cuidado. Solo un pequeño detalle con el retraso en la entrega de documentos.",
+    fecha: "2024-10-05"
   }
 ];
 
@@ -162,21 +162,21 @@ export default function ProfilePage() {
 
   // Usar datos mock del usuario actual
   // En producción, estos datos vendrían del AuthContext o API
-  const profileUser = {
+  const usuarioPerfil = {
     id: (user?.id ?? "user-123"),
-    nombre: (user?.nombre ?? mockUser.nombre),
-    apellido: (user?.apellido ?? mockUser.apellido),
-    correo: (user?.correo ?? mockUser.correo),
-    phone: mockUser.phone,
-    location: mockUser.location,
-    avatar: (user?.avatar ?? mockUser.avatar),
-    bio: mockUser.bio,
-    isSeller: mockUser.isSeller,
-    isBuyer: mockUser.isBuyer,
-    joinDate: mockUser.joinDate
+    nombre: (user?.nombre ?? usuarioMock.nombre),
+    apellido: (user?.apellido ?? usuarioMock.apellido),
+    correo: (user?.correo ?? usuarioMock.correo),
+    telefono: usuarioMock.telefono,
+    ubicacion: usuarioMock.ubicacion,
+    avatar: (user?.avatar ?? usuarioMock.avatar),
+    biografia: usuarioMock.biografia,
+    esVendedor: usuarioMock.esVendedor,
+    esComprador: usuarioMock.esComprador,
+    fechaRegistro: usuarioMock.fechaRegistro
   };
 
-  const isOwner = true; // Siempre es el propietario en /perfil
+  const esPropietario = true; // Siempre es el propietario en /perfil
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -203,20 +203,20 @@ export default function ProfilePage() {
         </div>
 
         {/* Header del Perfil */}
-        <ProfileHeader user={profileUser} isOwner={isOwner} />
+        <ProfileHeader usuario={usuarioPerfil} esPropietario={esPropietario} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Contenido principal - Lista de vehículos */}
           <div className="lg:col-span-2">
             <ProfileVehicles 
-              vehicles={mockVehicles} 
-              isOwner={isOwner} 
+              vehiculos={vehiculosMock} 
+              esPropietario={esPropietario} 
             />
           </div>
 
           {/* Sidebar - Valoraciones */}
           <div className="lg:col-span-1">
-            <ProfileReviews reviews={mockReviews} />
+            <ProfileReviews resenas={resenasMock} />
           </div>
         </div>
       </div>
