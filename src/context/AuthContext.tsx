@@ -1,105 +1,141 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authService } from '../api';
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
+interface Usuario {
+  id: number | string;
+  nombre: string;
+  apellido?: string;
+  nombre_completo?: string;
+  correo: string;
   avatar?: string;
 }
 
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => void;
+interface TipoContextoAutenticacion {
+  usuario: Usuario | null;
+  estaAutenticado: boolean;
+  estaCargando: boolean;
+  iniciarSesion: (correo: string, contrasena: string) => Promise<void>;
+  registrar: (nombre: string, apellido: string, nombreCompleto: string, correo: string, contrasena: string) => Promise<void>;
+  cerrarSesion: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const ContextoAutenticacion = createContext<TipoContextoAutenticacion | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export function ProveedorAutenticacion({ children }: Readonly<{ children: React.ReactNode }>) {
+  const [usuario, establecerUsuario] = useState<Usuario | null>(null);
+  const [estaCargando, establecerCarga] = useState(true);
 
-  // Simular carga inicial (en una app real, verificarías el token aquí)
+  // Verificar autenticación inicial
   useEffect(() => {
-    const checkAuth = async () => {
-      // Simular verificación de token
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
+    const verificarAutenticacion = async () => {
+      try {
+        // Intentar obtener usuario del almacenamiento local
+        const userStored = authService.getCurrentUser();
+        if (userStored) {
+          establecerUsuario(userStored);
+          // También verificar el token si existe
+          try {
+            const user = await authService.verifyToken();
+            establecerUsuario(user);
+            authService.setCurrentUser(user);
+          } catch {
+            // Si falla la verificación, usar el usuario del storage
+          }
+        }
+      } catch (error) {
+        console.error('Error verificando autenticación:', error);
+        // Si hay error, limpiar datos
+        authService.removeCurrentUser();
+      } finally {
+        establecerCarga(false);
+      }
     };
-    checkAuth();
+    verificarAutenticacion();
   }, []);
 
-  const login = async (email: string, password: string) => {
-    setIsLoading(true);
+  const iniciarSesion = async (correo: string, contrasena: string) => {
+    establecerCarga(true);
     try {
-      // Simular llamada a API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Simular usuario logueado
-      setUser({
-        id: '1',
-        name: 'Usuario Demo',
-        email: email,
-        avatar: undefined
-      });
+      const response = await authService.login({ correo, contrasena });
+      // El backend devuelve los datos directamente, no dentro de 'user'
+      const usuario: Usuario = {
+        id: response.id,
+        nombre: response.nombre,
+        apellido: response.apellido,
+        nombre_completo: response.nombre_completo,
+        correo: response.correo,
+      };
+      establecerUsuario(usuario);
+      authService.setCurrentUser(usuario);
     } catch (error) {
       console.error('Error en login:', error);
       throw error;
     } finally {
-      setIsLoading(false);
+      establecerCarga(false);
     }
   };
 
-  const register = async (name: string, email: string, password: string) => {
-    setIsLoading(true);
+  const registrar = async (nombre: string, apellido: string, nombreCompleto: string, correo: string, contrasena: string) => {
+    establecerCarga(true);
     try {
-      // Simular llamada a API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Simular usuario registrado
-      setUser({
-        id: '1',
-        name: name,
-        email: email,
-        avatar: undefined
+      const response = await authService.register({ 
+        nombre, 
+        apellido, 
+        nombre_completo: nombreCompleto,
+        correo, 
+        contrasena,
+        rol: 2 // ID del rol por defecto para nuevos usuarios
       });
+      // El backend devuelve los datos directamente, no dentro de 'user'
+      const usuario: Usuario = {
+        id: response.id,
+        nombre: response.nombre,
+        apellido: response.apellido,
+        nombre_completo: response.nombre_completo,
+        correo: response.correo,
+      };
+      establecerUsuario(usuario);
+      authService.setCurrentUser(usuario);
     } catch (error) {
       console.error('Error en registro:', error);
       throw error;
     } finally {
-      setIsLoading(false);
+      establecerCarga(false);
     }
   };
 
-  const logout = () => {
-    setUser(null);
+  const cerrarSesion = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    } finally {
+      establecerUsuario(null);
+      authService.removeCurrentUser();
+    }
   };
 
-  const value = {
-    user,
-    isAuthenticated: !!user,
-    isLoading,
-    login,
-    register,
-    logout,
+  const valor = {
+    usuario,
+    estaAutenticado: !!usuario,
+    estaCargando,
+    iniciarSesion,
+    registrar,
+    cerrarSesion,
   };
 
   return (
-    <AuthContext.Provider value={value}>
+    <ContextoAutenticacion.Provider value={valor}>
       {children}
-    </AuthContext.Provider>
+    </ContextoAutenticacion.Provider>
   );
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+  const contexto = useContext(ContextoAutenticacion);
+  if (contexto === undefined) {
+    throw new Error('useAuth debe usarse dentro de un ProveedorAutenticacion');
   }
-  return context;
+  return contexto;
 }

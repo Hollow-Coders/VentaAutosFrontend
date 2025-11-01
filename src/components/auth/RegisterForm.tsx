@@ -5,42 +5,51 @@ import { useAuth } from "../../hooks/useAuth";
 import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+  const [datosFormulario, establecerDatosFormulario] = useState({
+    nombre: "",
+    apellido: "",
+    correo: "",
+    contrasena: "",
+    confirmarContrasena: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [estaCargando, establecerCarga] = useState(false);
+  const [error, establecerError] = useState("");
   
-  const { register } = useAuth();
-  const router = useRouter();
+  const { registrar } = useAuth();
+  const enrutador = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const manejarEnvio = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError("");
+    establecerCarga(true);
+    establecerError("");
     
-    if (formData.password !== formData.confirmPassword) {
-      setError("Las contraseñas no coinciden.");
-      setIsLoading(false);
+    if (datosFormulario.contrasena !== datosFormulario.confirmarContrasena) {
+      establecerError("Las contraseñas no coinciden.");
+      establecerCarga(false);
       return;
     }
     
     try {
-      await register(formData.name, formData.email, formData.password);
-      router.push("/");
-    } catch (error) {
-      setError("Error al crear la cuenta. Inténtalo de nuevo.");
+      // Concatenar nombre y apellido para nombre_completo
+      const nombreCompleto = `${datosFormulario.nombre.trim()} ${datosFormulario.apellido.trim()}`.trim();
+      await registrar(datosFormulario.nombre, datosFormulario.apellido, nombreCompleto, datosFormulario.correo, datosFormulario.contrasena);
+      enrutador.push("/");
+    } catch (error: unknown) {
+      // Mostrar el mensaje de error específico del backend
+      if (error instanceof Error) {
+        establecerError(error.message || "Error al crear la cuenta. Inténtalo de nuevo.");
+      } else {
+        establecerError("Error al crear la cuenta. Inténtalo de nuevo.");
+      }
+      console.error("Error en registro:", error);
     } finally {
-      setIsLoading(false);
+      establecerCarga(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
+  const manejarCambio = (e: React.ChangeEvent<HTMLInputElement>) => {
+    establecerDatosFormulario({
+      ...datosFormulario,
       [e.target.name]: e.target.value,
     });
   };
@@ -56,76 +65,94 @@ export default function RegisterForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={manejarEnvio} className="space-y-6">
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
             {error}
           </div>
         )}
         
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-            Nombre completo
-          </label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            autoComplete="name"
-            required
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
-            placeholder="Tu nombre completo"
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-2">
+              Nombre
+            </label>
+            <input
+              id="nombre"
+              name="nombre"
+              type="text"
+              autoComplete="given-name"
+              required
+              value={datosFormulario.nombre}
+              onChange={manejarCambio}
+              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
+              placeholder="Tu nombre"
+            />
+          </div>
+          <div>
+            <label htmlFor="apellido" className="block text-sm font-medium text-gray-700 mb-2">
+              Apellido
+            </label>
+            <input
+              id="apellido"
+              name="apellido"
+              type="text"
+              autoComplete="family-name"
+              required
+              value={datosFormulario.apellido}
+              onChange={manejarCambio}
+              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
+              placeholder="Tu apellido"
+            />
+          </div>
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="correo" className="block text-sm font-medium text-gray-700 mb-2">
             Correo electrónico
           </label>
           <input
-            id="email"
-            name="email"
+            id="correo"
+            name="correo"
             type="email"
             autoComplete="email"
             required
-            value={formData.email}
-            onChange={handleChange}
+            value={datosFormulario.correo}
+            onChange={manejarCambio}
             className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
             placeholder="tu@email.com"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="contrasena" className="block text-sm font-medium text-gray-700 mb-2">
             Contraseña
           </label>
           <input
-            id="password"
-            name="password"
+            id="contrasena"
+            name="contrasena"
             type="password"
             autoComplete="new-password"
             required
-            value={formData.password}
-            onChange={handleChange}
+            value={datosFormulario.contrasena}
+            onChange={manejarCambio}
             className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
             placeholder="Mínimo 8 caracteres"
           />
         </div>
 
         <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="confirmarContrasena" className="block text-sm font-medium text-gray-700 mb-2">
             Confirmar contraseña
           </label>
           <input
-            id="confirmPassword"
-            name="confirmPassword"
+            id="confirmarContrasena"
+            name="confirmarContrasena"
             type="password"
             autoComplete="new-password"
             required
-            value={formData.confirmPassword}
-            onChange={handleChange}
+            value={datosFormulario.confirmarContrasena}
+            onChange={manejarCambio}
             className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
             placeholder="Repite tu contraseña"
           />
@@ -133,13 +160,13 @@ export default function RegisterForm() {
 
         <div className="flex items-center">
           <input
-            id="terms"
-            name="terms"
+            id="terminos"
+            name="terminos"
             type="checkbox"
             required
             className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
           />
-          <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+          <label htmlFor="terminos" className="ml-2 block text-sm text-gray-700">
             Acepto los{" "}
             <a href="#" className="text-red-600 hover:text-red-500">
               términos y condiciones
@@ -154,10 +181,10 @@ export default function RegisterForm() {
         <div>
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={estaCargando}
             className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Creando cuenta..." : "Crear Cuenta"}
+            {estaCargando ? "Creando cuenta..." : "Crear Cuenta"}
           </button>
         </div>
 

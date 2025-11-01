@@ -6,10 +6,10 @@ import { useAuth } from "../../hooks/useAuth";
 import UserMenu from "./UserMenu";
 
 const Navbar = () => {
-  const pathname = usePathname();
-  const { isAuthenticated, user, isLoading } = useAuth();
+  const ruta = usePathname();
+  const { estaAutenticado, usuario, estaCargando } = useAuth();
 
-  const publicLinks = [
+  const enlacesPublicos = [
     { href: "/", label: "Inicio" },
     { href: "/catalogo", label: "Catálogo" },
     { href: "/subastas", label: "Subastas" },
@@ -48,33 +48,33 @@ const Navbar = () => {
 
             {/* Enlaces de navegación - SIEMPRE VISIBLES */}
             <div className="flex gap-8">
-              {publicLinks.map((link) => (
+              {enlacesPublicos.map((enlace) => (
                 <Link
-                  key={link.href}
-                  href={link.href}
+                  key={enlace.href}
+                  href={enlace.href}
                   className={`transition-colors rounded-full px-4 py-2 text-center font-medium text-sm
                     ${
-                      pathname === link.href
+                      ruta === enlace.href
                         ? "bg-red-700 text-white font-semibold"
                         : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     }`}
                 >
-                  {link.label}
+                  {enlace.label}
                 </Link>
               ))}
             </div>
 
             {/* Área de autenticación */}
             <div className="flex items-center space-x-3">
-              {isLoading ? (
+              {estaCargando ? (
                 // Estado de carga
                 <div className="flex items-center space-x-2">
                   <div className="w-4 h-4 border-2 border-red-700 border-t-transparent rounded-full animate-spin"></div>
                   <span className="text-sm text-gray-600">Cargando...</span>
                 </div>
-              ) : isAuthenticated ? (
+              ) : estaAutenticado && usuario ? (
                 // Usuario autenticado - Mostrar menú de usuario
-                <UserMenu user={user!} />
+                <UserMenu user={usuario} />
               ) : (
                 // Usuario no autenticado - Mostrar botones de login/register
                 <>
