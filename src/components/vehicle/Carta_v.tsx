@@ -1,6 +1,27 @@
 import React from 'react'
+import { Vehiculo } from '@/api/vehicles'
 
-function Carta_v() {
+interface CartaVProps {
+  vehicle: Vehiculo
+  onVerDetalles?: (id: number) => void
+}
+
+function Carta_v({ vehicle, onVerDetalles }: CartaVProps) {
+  const formatearPrecio = (precio: number): string => {
+    return new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(precio)
+  }
+
+  const handleClick = () => {
+    if (onVerDetalles) {
+      onVerDetalles(vehicle.id)
+    }
+  }
+
   return (
     <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
       {/* Imagen del vehículo */}
@@ -10,14 +31,17 @@ function Carta_v() {
 
       {/* Contenido de la carta */}
       <div className="p-4">
-        <h2 className="text-lg font-semibold text-gray-800 mb-1">Toyota Supra MK4 | 2020</h2>
+        <h2 className="text-lg font-semibold text-gray-800 mb-1">{vehicle.nombre}</h2>
         
         <div className="mb-3">
-          <p className="text-lg font-bold text-red-600 mb-1">Precio $350,000</p>
-          <p className="text-sm text-gray-600">Ubicación Tijuana B.C</p>
+          <p className="text-lg font-bold text-red-600 mb-1">Precio {formatearPrecio(vehicle.precio)}</p>
+          <p className="text-sm text-gray-600">Ubicación {vehicle.ubicacion}</p>
         </div>
 
-        <button className="w-full bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 font-medium">
+        <button 
+          onClick={handleClick}
+          className="w-full bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 font-medium"
+        >
           <span>🚗</span>
           Ver detalles
         </button>
