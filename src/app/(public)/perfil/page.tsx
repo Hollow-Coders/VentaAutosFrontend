@@ -363,6 +363,12 @@ export default function PerfilPage() {
               >
                 Ver Catálogo
               </Link>
+              <Link
+                href="/creacion_vehiculo"
+                className="px-6 py-3 bg-red-700 text-white rounded-lg font-medium hover:bg-red-800 transition-colors"
+              >
+                Vender Vehiculo
+              </Link>
             </div>
           </div>
 

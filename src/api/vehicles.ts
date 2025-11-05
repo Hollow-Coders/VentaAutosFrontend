@@ -77,3 +77,36 @@ export const servicioVehiculo = {
   },
 };
 
+// Solicitud para crear un vehículo
+export interface SolicitudVehiculo {
+  usuario: number;
+  marca: number;
+  modelo: number;
+  año: number;
+  precio: number;
+  tipo_transmision: string;
+  tipo_combustible: string;
+  kilometraje?: number;
+  descripcion?: string;
+  estado: string;
+  tipo_vehiculo: string;
+  ubicacion: string;
+}
+
+// Servicios de vehículos (creación y gestión)
+export const servicioCreacionVehiculo = {
+  // Crear un nuevo vehículo
+  async create(data: SolicitudVehiculo): Promise<VehiculoDetalle> {
+    return await apiClient.post<VehiculoDetalle>('/vehiculos/', data);
+  },
+
+  // Subir imágenes de vehículo
+  async uploadImagenes(vehiculoId: number, imagenes: File[]): Promise<VehiculoDetalle> {
+    const formData = new FormData();
+    imagenes.forEach((imagen) => {
+      formData.append('fotos', imagen);
+    });
+    return await apiClient.patchFormData<VehiculoDetalle>(`/vehiculos/${vehiculoId}/`, formData);
+  },
+};
+
