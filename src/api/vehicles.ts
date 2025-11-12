@@ -86,6 +86,11 @@ export const servicioVehiculo = {
     }
     return await apiClient.get<Vehiculo[]>(`/catalogo/buscar/?q=${encodeURIComponent(query)}`);
   },
+
+  // Obtener vehículos por usuario (usando endpoint /vehiculos/)
+  async getByUsuario(usuarioId: number): Promise<VehiculoDetalle[]> {
+    return await apiClient.get<VehiculoDetalle[]>(`/vehiculos/?usuario=${usuarioId}`);
+  },
 };
 
 // Solicitud para crear un vehículo
