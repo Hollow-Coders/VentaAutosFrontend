@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { servicioMarca, Marca } from "../../../api/brands";
 import { servicioModelo, Modelo } from "../../../api/models";
 import { servicioCreacionVehiculo, SolicitudVehiculo } from "../../../api/vehicles";
+import { servicioVehiculoFoto } from "../../../api/vehiclePhotos";
 
 export default function CreacionVehiculoPage() {
   const { usuario, estaAutenticado, estaCargando } = useAuth();
@@ -191,10 +192,14 @@ export default function CreacionVehiculoPage() {
       const imagenesFiltradas = imagenes.filter(img => img !== null && img !== undefined) as File[];
       if (imagenesFiltradas.length > 0) {
         try {
-          await servicioCreacionVehiculo.uploadImagenes(vehiculoCreado.id, imagenesFiltradas);
+          await Promise.all(
+            imagenesFiltradas.map((imagen) =>
+              servicioVehiculoFoto.upload(vehiculoCreado.id, imagen)
+            )
+          );
         } catch (uploadError) {
           console.error('Error al subir imágenes:', uploadError);
-          establecerError("Vehículo creado pero hubo un error al subir las imágenes. Puedes editarlo más tarde.");
+          establecerError("Vehículo creado pero hubo un error al subir las imágenes. Puedes editarlas más tarde.");
         }
       }
 

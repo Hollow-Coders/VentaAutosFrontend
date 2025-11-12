@@ -25,7 +25,7 @@ interface ProfileHeaderProps {
 export default function ProfileHeader({ user, isOwner }: ProfileHeaderProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedBio, setEditedBio] = useState(user.bio || "");
-  const { logout } = useAuth();
+  const { cerrarSesion } = useAuth();
 
   const handleSaveBio = () => {
     // Lógica para guardar bio
@@ -109,7 +109,7 @@ export default function ProfileHeader({ user, isOwner }: ProfileHeaderProps) {
                   {isEditing ? 'Cancelar' : 'Editar Perfil'}
                 </button>
                 <button
-                  onClick={logout}
+                  onClick={cerrarSesion}
                   className="px-4 py-2 bg-red-700 text-white rounded-full font-semibold hover:bg-red-800 transition-colors text-sm"
                 >
                   Cerrar Sesión

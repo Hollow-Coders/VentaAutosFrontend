@@ -14,7 +14,7 @@ export interface Subasta {
 }
 
 // Respuesta de subasta
-export interface RespuestaSubasta extends Subasta {}
+export type RespuestaSubasta = Subasta;
 
 // Servicios de subastas
 export const servicioSubasta = {

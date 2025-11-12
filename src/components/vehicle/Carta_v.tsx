@@ -7,6 +7,8 @@ interface CartaVProps {
 }
 
 function Carta_v({ vehicle, onVerDetalles }: CartaVProps) {
+  const fotoPrincipal = vehicle.foto_principal ?? null
+
   const formatearPrecio = (precio: number): string => {
     return new Intl.NumberFormat('es-MX', {
       style: 'currency',
@@ -26,7 +28,20 @@ function Carta_v({ vehicle, onVerDetalles }: CartaVProps) {
     <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
       {/* Imagen del vehículo */}
       <div className="h-48 bg-gray-200 flex items-center justify-center">
-        <div className="text-6xl text-gray-400">🚗</div>
+        {fotoPrincipal ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={fotoPrincipal}
+            alt={`Foto de ${vehicle.nombre}`}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-gray-100 to-gray-200">
+            <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+          </div>
+        )}
       </div>
 
       {/* Contenido de la carta */}

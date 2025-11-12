@@ -1,4 +1,5 @@
 import { apiClient } from './client';
+import type { VehiculoFoto } from './vehiclePhotos';
 
 // Tipo de vehículo según CatalogoSerializer del backend (vista lista)
 export interface Vehiculo {
@@ -9,6 +10,7 @@ export interface Vehiculo {
   año: number;
   precio: number;
   ubicacion: string;
+  foto_principal?: string | null;
 }
 
 // Tipo de vehículo completo según VehiculoSerializer del backend (vista detalle)
@@ -25,11 +27,12 @@ export interface VehiculoDetalle {
   ubicacion: string;
   tipo_transmision: string;
   tipo_combustible: string;
+  tipo_vehiculo: string;
   kilometraje?: number;
   descripcion?: string;
   estado: string;
   fecha_publicacion: string;
-  fotos: string[]; // URLs de las fotos
+  fotos: Array<string | VehiculoFoto>;
   total_documentos: number;
 }
 
@@ -50,13 +53,21 @@ export const servicioVehiculo = {
   async getAll(filters?: FiltrosCatalogo): Promise<Vehiculo[]> {
     const params = new URLSearchParams();
     if (filters) {
-      if (filters.marca) params.append('marca', filters.marca);
-      if (filters.modelo) params.append('modelo', filters.modelo);
-      if (filters.año_min) params.append('año_min', String(filters.año_min));
-      if (filters.año_max) params.append('año_max', String(filters.año_max));
-      if (filters.precio_min) params.append('precio_min', String(filters.precio_min));
-      if (filters.precio_max) params.append('precio_max', String(filters.precio_max));
-      if (filters.ubicacion) params.append('ubicacion', filters.ubicacion);
+      const filtroMap: Record<string, string | number | undefined> = {
+        marca: filters.marca,
+        modelo: filters.modelo,
+        año_min: filters.año_min,
+        año_max: filters.año_max,
+        precio_min: filters.precio_min,
+        precio_max: filters.precio_max,
+        ubicacion: filters.ubicacion,
+      };
+
+      for (const [clave, valor] of Object.entries(filtroMap)) {
+        if (valor !== undefined && valor !== null && valor !== '') {
+          params.append(clave, String(valor));
+        }
+      }
     }
     const queryString = params.toString();
     const endpoint = queryString ? `/catalogo/?${queryString}` : '/catalogo/';
@@ -99,14 +110,4 @@ export const servicioCreacionVehiculo = {
   async create(data: SolicitudVehiculo): Promise<VehiculoDetalle> {
     return await apiClient.post<VehiculoDetalle>('/vehiculos/', data);
   },
-
-  // Subir imágenes de vehículo
-  async uploadImagenes(vehiculoId: number, imagenes: File[]): Promise<VehiculoDetalle> {
-    const formData = new FormData();
-    imagenes.forEach((imagen) => {
-      formData.append('fotos', imagen);
-    });
-    return await apiClient.patchFormData<VehiculoDetalle>(`/vehiculos/${vehiculoId}/`, formData);
-  },
 };
-

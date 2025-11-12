@@ -39,9 +39,10 @@ export const servicioPerfil = {
   },
 
   // Obtener perfil del usuario actual
-  async getMyProfile(): Promise<Profile> {
-    const userStr = typeof window !== 'undefined' ? localStorage.getItem('current_user') : null;
-    if (!userStr) {
+  async getMyProfile(): Promise<Perfil> {
+    const storage = globalThis.window?.localStorage ?? null;
+    const userStr = storage?.getItem('current_user') ?? null;
+    if (userStr === null) {
       throw new Error('Usuario no autenticado');
     }
     const user = JSON.parse(userStr);

@@ -13,6 +13,7 @@ export * from './sales';
 export * from './brands';
 export * from './models';
 export * from './profile';
+export * from './vehiclePhotos';
 
 // Re-exportar servicios con nombres específicos para fácil acceso (mantener compatibilidad)
 export { servicioAutenticacion as authService } from './auth';
@@ -23,6 +24,7 @@ export { servicioVenta as saleService } from './sales';
 export { servicioMarca as brandService } from './brands';
 export { servicioModelo as modelService } from './models';
 export { servicioPerfil as profileService } from './profile';
+export { servicioVehiculoFoto as vehiclePhotoService } from './vehiclePhotos';
 
 // También exportar con nombres en español
 export { servicioAutenticacion } from './auth';
@@ -33,4 +35,5 @@ export { servicioVenta } from './sales';
 export { servicioMarca } from './brands';
 export { servicioModelo } from './models';
 export { servicioPerfil } from './profile';
+export { servicioVehiculoFoto } from './vehiclePhotos';
 

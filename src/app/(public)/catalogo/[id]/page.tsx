@@ -1,14 +1,13 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import React, { useState, useEffect, useMemo } from 'react'
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { servicioVehiculo, VehiculoDetalle } from '@/api/vehicles'
 import BidButton from '@/components/vehicle/BidButton'
 import BuyButton from '@/components/vehicle/BuyButton'
 
 export default function DetalleVehiculo() {
-  const router = useRouter()
   const params = useParams()
   const id = params?.id ? parseInt(params.id as string) : null
   
@@ -16,6 +15,17 @@ export default function DetalleVehiculo() {
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [imagenActual, setImagenActual] = useState(0)
+
+  const fotos = useMemo(() => {
+    if (!vehiculo?.fotos) return []
+    return vehiculo.fotos
+      .map((foto) => {
+        if (!foto) return null
+        if (typeof foto === 'string') return foto
+        return foto.url_imagen_url ?? foto.url_imagen ?? null
+      })
+      .filter((url): url is string => Boolean(url))
+  }, [vehiculo])
 
   useEffect(() => {
     if (!id || isNaN(id)) {
@@ -30,6 +40,7 @@ export default function DetalleVehiculo() {
       try {
         const data = await servicioVehiculo.getById(id)
         setVehiculo(data)
+        setImagenActual(0)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error al cargar el vehículo')
         console.error('Error cargando vehículo:', err)
@@ -39,6 +50,12 @@ export default function DetalleVehiculo() {
     }
     cargarVehiculo()
   }, [id])
+
+  useEffect(() => {
+    if (imagenActual >= fotos.length && fotos.length > 0) {
+      setImagenActual(0)
+    }
+  }, [imagenActual, fotos.length])
 
   const formatearPrecio = (precio: number): string => {
     return new Intl.NumberFormat('es-MX', {
@@ -104,18 +121,18 @@ export default function DetalleVehiculo() {
           
           {/* Galería de imágenes */}
           <div>
-            {vehiculo.fotos && vehiculo.fotos.length > 0 ? (
+            {fotos.length > 0 ? (
               <>
                 <div className="mb-4">
                   <img
-                    src={vehiculo.fotos[imagenActual]}
+                    src={fotos[imagenActual]}
                     alt={`${vehiculo.marca_nombre} ${vehiculo.modelo_nombre}`}
                     className="w-full h-96 object-cover rounded-lg shadow-lg"
                   />
                 </div>
-                {vehiculo.fotos.length > 1 && (
+                {fotos.length > 1 && (
                   <div className="grid grid-cols-4 gap-2">
-                    {vehiculo.fotos.map((foto, index) => (
+                    {fotos.map((foto, index) => (
                       <button
                         key={index}
                         onClick={() => setImagenActual(index)}
