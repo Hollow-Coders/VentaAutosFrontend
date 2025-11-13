@@ -2,46 +2,63 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import VehicleCard from "../vehicle/VehicleCard";
-
-interface Vehicle {
-  id: string;
-  name: string;
-  year: string;
-  price: string;
-  image?: string;
-  location?: string;
-  category?: string;
-  mileage?: string;
-  transmission?: string;
-  fuel?: string;
-  status: 'active' | 'sold' | 'pending';
-}
+import { useRouter } from "next/navigation";
+import Carta_v from "../vehicle/Carta_v";
+import { VehiculoDetalle } from "../../api/vehicles";
 
 interface ProfileVehiclesProps {
-  vehicles: Vehicle[];
+  vehicles: VehiculoDetalle[];
   isOwner: boolean;
 }
 
 export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesProps) {
-  const [filter, setFilter] = useState<'all' | 'active' | 'sold' | 'pending'>('all');
+  const router = useRouter();
+  const [filter, setFilter] = useState<'all' | 'disponible' | 'vendido' | 'pendiente'>('all');
+
+  // Mapear estados del backend a estados del filtro
+  const mapEstadoToFilter = (estado: string): 'disponible' | 'vendido' | 'pendiente' => {
+    const estadoLower = estado.toLowerCase();
+    if (estadoLower.includes('vendido') || estadoLower.includes('sold')) return 'vendido';
+    if (estadoLower.includes('pendiente') || estadoLower.includes('pending')) return 'pendiente';
+    return 'disponible';
+  };
 
   const filteredVehicles = vehicles.filter(vehicle => {
     if (filter === 'all') return true;
-    return vehicle.status === filter;
+    const vehicleFilter = mapEstadoToFilter(vehicle.estado);
+    return vehicleFilter === filter;
   });
 
-  const getStatusBadge = (status: string) => {
-    const badges = {
-      active: { text: 'Activo', color: 'bg-green-100 text-green-700' },
-      sold: { text: 'Vendido', color: 'bg-gray-100 text-gray-600' },
-      pending: { text: 'Pendiente', color: 'bg-yellow-100 text-yellow-700' }
+  const getStatusBadge = (estado: string) => {
+    const estadoLower = estado.toLowerCase();
+    if (estadoLower.includes('vendido') || estadoLower.includes('sold')) {
+      return { text: 'Vendido', color: 'bg-gray-100 text-gray-600' };
+    }
+    if (estadoLower.includes('pendiente') || estadoLower.includes('pending')) {
+      return { text: 'Pendiente', color: 'bg-yellow-100 text-yellow-700' };
+    }
+    return { text: 'Activo', color: 'bg-green-100 text-green-700' };
+  };
+
+  const handleVerDetalles = (id: number) => {
+    router.push(`/catalogo/${id}`);
+  };
+
+  // Convertir VehiculoDetalle a formato Vehiculo para Carta_v
+  const convertirAVehiculo = (vehiculoDetalle: VehiculoDetalle) => {
+    return {
+      id: vehiculoDetalle.id,
+      nombre: `${vehiculoDetalle.marca_nombre} ${vehiculoDetalle.modelo_nombre} ${vehiculoDetalle.año}`,
+      marca_nombre: vehiculoDetalle.marca_nombre,
+      modelo_nombre: vehiculoDetalle.modelo_nombre,
+      año: vehiculoDetalle.año,
+      precio: vehiculoDetalle.precio,
+      ubicacion: vehiculoDetalle.ubicacion,
     };
-    return badges[status as keyof typeof badges] || badges.active;
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 mb-8">
       {/* Header con filtros y botones */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
@@ -49,7 +66,7 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
             {isOwner ? 'Mis Vehículos' : 'Vehículos de este vendedor'}
           </h2>
           <p className="text-gray-600 text-sm">
-            {filteredVehicles.length} vehículo{filteredVehicles.length !== 1 ? 's' : ''} {filter !== 'all' ? filter : ''}
+            {filteredVehicles.length} vehículo{filteredVehicles.length !== 1 ? 's' : ''} {filter !== 'all' ? `(${filter})` : ''}
           </p>
         </div>
 
@@ -66,9 +83,9 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
             Todos
           </button>
           <button
-            onClick={() => setFilter('active')}
+            onClick={() => setFilter('disponible')}
             className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
-              filter === 'active' 
+              filter === 'disponible' 
                 ? 'bg-red-700 text-white' 
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
@@ -76,9 +93,9 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
             Activos
           </button>
           <button
-            onClick={() => setFilter('sold')}
+            onClick={() => setFilter('vendido')}
             className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
-              filter === 'sold' 
+              filter === 'vendido' 
                 ? 'bg-red-700 text-white' 
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
@@ -87,9 +104,9 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
           </button>
           {isOwner && (
             <button
-              onClick={() => setFilter('pending')}
+              onClick={() => setFilter('pendiente')}
               className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
-                filter === 'pending' 
+                filter === 'pendiente' 
                   ? 'bg-red-700 text-white' 
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
@@ -103,7 +120,7 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
         {isOwner && (
           <div className="mt-4 md:mt-0">
             <Link
-              href="/nuevo-vehiculo"
+              href="/creacion_vehiculo"
               className="inline-flex items-center px-6 py-3 bg-red-700 text-white rounded-full font-semibold hover:bg-red-800 transition-colors text-sm"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,30 +148,26 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredVehicles.map((vehicle) => (
-            <div key={vehicle.id} className="relative">
-              {/* Badge de estado */}
-              <div className="absolute top-3 right-3 z-10">
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(vehicle.status).color}`}>
-                  {getStatusBadge(vehicle.status).text}
-                </span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredVehicles.map((vehicle) => {
+            const vehiculo = convertirAVehiculo(vehicle);
+            const badge = getStatusBadge(vehicle.estado);
+            return (
+              <div key={vehicle.id} className="relative">
+                {/* Badge de estado */}
+                <div className="absolute top-3 right-3 z-10">
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${badge.color}`}>
+                    {badge.text}
+                  </span>
+                </div>
+                {/* Usar Carta_v con datos convertidos */}
+                <Carta_v
+                  vehicle={vehiculo}
+                  onVerDetalles={handleVerDetalles}
+                />
               </div>
-              {/* Usar VehicleCard con datos extendidos */}
-              <VehicleCard vehicle={{
-                id: vehicle.id,
-                name: vehicle.name,
-                year: vehicle.year,
-                price: vehicle.price,
-                location: vehicle.location,
-                image: vehicle.image,
-                category: vehicle.category,
-                mileage: vehicle.mileage,
-                transmission: vehicle.transmission,
-                fuel: vehicle.fuel
-              }} />
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

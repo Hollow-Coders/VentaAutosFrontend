@@ -229,6 +229,32 @@ export default function DetalleVehiculo() {
                 </div>
               )}
 
+              {/* Tarjeta del vendedor */}
+              <div className="mb-6 bg-gray-50 border border-gray-200 rounded-lg p-5">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-1">
+                      Vendedor
+                    </p>
+                    <p className="text-lg font-semibold text-gray-800">
+                      {vehiculo.usuario_nombre || 'Vendedor verificado'}
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Conoce más sobre este vendedor, revisa sus vehículos publicados y su reputación.
+                    </p>
+                  </div>
+                  <Link
+                    href={`/perfil/${vehiculo.usuario}`}
+                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-red-700 text-white rounded-full font-semibold text-sm hover:bg-red-800 transition-colors shadow-sm"
+                  >
+                    Ver perfil del vendedor
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+
               {/* Documentos */}
               {vehiculo.total_documentos > 0 && (
                 <div className="mb-6 p-4 bg-blue-50 rounded-lg">
