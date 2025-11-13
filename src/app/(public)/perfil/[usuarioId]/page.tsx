@@ -2,22 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Perfil, servicioPerfil } from "../../../../api";
 import { VehiculoDetalle, servicioVehiculo } from "../../../../api/vehicles";
-import ProfileHeader from "../../../../components/profile/ProfileHeader";
+import EncabezadoPerfil from "../../../../components/profile/ProfileHeader";
 import ProfileVehicles from "../../../../components/profile/ProfileVehicles";
 import ProfileReviews from "../../../../components/profile/ProfileReviews";
 
-interface PublicProfilePageProps {
-  params: {
-    usuarioId: string;
-  };
-}
-
-export default function PerfilPublicoPage({ params }: PublicProfilePageProps) {
+export default function PerfilPublicoPage() {
   const router = useRouter();
-  const usuarioId = Number(params.usuarioId);
+  const params = useParams<{ usuarioId: string }>();
+  const usuarioId = Number(params?.usuarioId ?? Number.NaN);
 
   const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [vehiculos, setVehiculos] = useState<VehiculoDetalle[]>([]);
@@ -148,7 +143,7 @@ export default function PerfilPublicoPage({ params }: PublicProfilePageProps) {
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <ProfileHeader usuario={usuarioPublico} perfil={perfil} isOwner={false} />
+          <EncabezadoPerfil usuario={usuarioPublico} perfil={perfil} esPropietario={false} />
 
           <div className="p-8">
             <div className="mb-8">

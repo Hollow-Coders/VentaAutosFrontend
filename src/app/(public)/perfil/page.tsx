@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { servicioPerfil, Perfil } from "../../../api";
 import { servicioVehiculo, VehiculoDetalle } from "../../../api/vehicles";
-import ProfileHeader from "../../../components/profile/ProfileHeader";
+import EncabezadoPerfil from "../../../components/profile/ProfileHeader";
 import ProfileVehicles from "../../../components/profile/ProfileVehicles";
 import ProfileReviews from "../../../components/profile/ProfileReviews";
 
@@ -96,10 +96,10 @@ export default function PerfilPage() {
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Header del perfil */}
-          <ProfileHeader 
+          <EncabezadoPerfil 
             usuario={usuario} 
             perfil={perfil} 
-            onPerfilUpdate={manejarActualizarPerfil}
+            alActualizarPerfil={manejarActualizarPerfil}
           />
 
           {/* Contenido del perfil */}

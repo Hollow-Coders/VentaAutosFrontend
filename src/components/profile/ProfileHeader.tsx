@@ -11,14 +11,14 @@ interface Usuario {
   correo: string;
 }
 
-interface ProfileHeaderProps {
+interface EncabezadoPerfilPropiedades {
   usuario: Usuario;
   perfil: Perfil | null;
-  onPerfilUpdate?: (perfil: Perfil) => void;
-  isOwner?: boolean;
+  alActualizarPerfil?: (perfil: Perfil) => void;
+  esPropietario?: boolean;
 }
 
-export default function ProfileHeader({ usuario, perfil, onPerfilUpdate, isOwner = true }: ProfileHeaderProps) {
+export default function EncabezadoPerfil({ usuario, perfil, alActualizarPerfil, esPropietario = true }: EncabezadoPerfilPropiedades) {
   const [mostrarModal, establecerMostrarModal] = useState(false);
   const [guardando, establecerGuardando] = useState(false);
   const [error, establecerError] = useState("");
@@ -50,16 +50,16 @@ export default function ProfileHeader({ usuario, perfil, onPerfilUpdate, isOwner
     }
   }, [perfil]);
 
-  const esPropietario = isOwner ?? true;
+  const puedeEditar = esPropietario;
 
   useEffect(() => {
-    if (!esPropietario && mostrarModal) {
+    if (!puedeEditar && mostrarModal) {
       establecerMostrarModal(false);
     }
-  }, [esPropietario, mostrarModal]);
+  }, [puedeEditar, mostrarModal]);
 
   const abrirModal = () => {
-    if (!esPropietario) {
+    if (!puedeEditar) {
       return;
     }
     establecerMostrarModal(true);
@@ -97,7 +97,7 @@ export default function ProfileHeader({ usuario, perfil, onPerfilUpdate, isOwner
 
   const manejarGuardar = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!esPropietario || !onPerfilUpdate) {
+    if (!puedeEditar || !alActualizarPerfil) {
       establecerError("No tienes permiso para editar este perfil.");
       return;
     }
@@ -131,7 +131,7 @@ export default function ProfileHeader({ usuario, perfil, onPerfilUpdate, isOwner
             ...datosFormulario,
           });
         }
-        onPerfilUpdate(nuevoPerfil);
+        alActualizarPerfil(nuevoPerfil);
         if (nuevoPerfil.foto_perfil_url) {
           establecerVistaPreviaFoto(nuevoPerfil.foto_perfil_url);
         }
@@ -149,7 +149,7 @@ export default function ProfileHeader({ usuario, perfil, onPerfilUpdate, isOwner
           const { foto_perfil, ...restoDatos } = datosFormulario;
           perfilActualizado = await servicioPerfil.partialUpdate(perfil.id, restoDatos);
         }
-        onPerfilUpdate(perfilActualizado);
+        alActualizarPerfil(perfilActualizado);
         if (perfilActualizado.foto_perfil_url) {
           establecerVistaPreviaFoto(perfilActualizado.foto_perfil_url);
         }
@@ -272,7 +272,7 @@ export default function ProfileHeader({ usuario, perfil, onPerfilUpdate, isOwner
             </div>
 
             {/* Botón de edición mejorado */}
-            {esPropietario && (
+            {puedeEditar && (
               <button
                 onClick={abrirModal}
                 className="group relative px-8 py-4 bg-white text-red-700 rounded-xl font-bold text-base hover:bg-gray-50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 flex items-center gap-2"
@@ -288,7 +288,7 @@ export default function ProfileHeader({ usuario, perfil, onPerfilUpdate, isOwner
       </div>
 
       {/* Modal de Edición - Rediseñado */}
-      {esPropietario && mostrarModal && (
+      {puedeEditar && mostrarModal && (
         <>
           {/* Overlay con animación */}
           <div 
