@@ -128,7 +128,7 @@ export default function PurchaseCard({ venta, vehiculo, vendedorNombre }: Purcha
             Ver Vehículo
           </Link>
           <Link
-            href={`/chat/${venta.id}`}
+            href={`/chat?comprador=${venta.comprador}&vendedor=${vehiculo.usuario}&vehiculo=${vehiculo.id}`}
             className="flex-1 bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 transition-colors text-center text-sm font-medium flex items-center justify-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

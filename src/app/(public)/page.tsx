@@ -2,35 +2,112 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-// Removed unused BidButton and BuyButton components; using Links instead
+import { servicioVehiculo } from '@/api/vehicles';
+
+interface VehicleCarousel {
+  id: number;
+  name: string;
+  year: number;
+  price: string;
+  category: string;
+  badge: string;
+  badgeColor: string;
+  foto_principal?: string | null;
+  ubicacion: string;
+}
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [vehicles, setVehicles] = useState<VehicleCarousel[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Array de los carros 
-  const vehicles = [
-    { id: 1, name: "Chevrolet Camaro", year: "2016", price: "$150,000.00", category: "DEPORTIVO", badge: "POPULAR", badgeColor: "bg-red-700" },
-    { id: 2, name: "Toyota Supra", year: "2020", price: "$350,000.00", category: "SEDÁN", badge: "NUEVO", badgeColor: "bg-green-500" },
-    { id: 3, name: "Chevrolet Impala", year: "1964", price: "$450,000.00", category: "CLÁSICO", badge: "OFERTA", badgeColor: "bg-orange-500" },
-    { id: 4, name: "BMW M3", year: "2022", price: "$520,000.00", category: "DEPORTIVO", badge: "PREMIUM", badgeColor: "bg-blue-500" },
-    { id: 5, name: "Honda Civic", year: "2019", price: "$85,000.00", category: "SEDÁN", badge: "ECONÓMICO", badgeColor: "bg-purple-500" },
-    { id: 6, name: "Ford Mustang", year: "2021", price: "$280,000.00", category: "DEPORTIVO", badge: "ICÓNICO", badgeColor: "bg-yellow-500" },
-    { id: 7, name: "Audi A4", year: "2023", price: "$420,000.00", category: "SEDÁN", badge: "LUXURY", badgeColor: "bg-indigo-500" },
-    { id: 8, name: "Nissan GT-R", year: "2020", price: "$650,000.00", category: "DEPORTIVO", badge: "SUPER", badgeColor: "bg-pink-500" },
-    { id: 9, name: "Mercedes C-Class", year: "2022", price: "$380,000.00", category: "SEDÁN", badge: "ELEGANTE", badgeColor: "bg-teal-500" }
-  ];
+  // Función para mezclar aleatoriamente un array
+  const mezclarArray = <T,>(array: T[]): T[] => {
+    const arrayMezclado = [...array];
+    for (let i = arrayMezclado.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arrayMezclado[i], arrayMezclado[j]] = [arrayMezclado[j], arrayMezclado[i]];
+    }
+    return arrayMezclado;
+  };
+
+  // Cargar vehículos desde la API
+  useEffect(() => {
+    const cargarVehiculos = async () => {
+      setCargando(true);
+      setError(null);
+      try {
+        const vehiculosData = await servicioVehiculo.getAll();
+        // Mezclar aleatoriamente y limitar a 9 vehículos para el carrusel
+        const vehiculosMezclados = mezclarArray(vehiculosData);
+        const vehiculosLimitados = vehiculosMezclados.slice(0, 9);
+        
+        // Transformar los datos de la API al formato del carrusel
+        const vehiculosTransformados: VehicleCarousel[] = vehiculosLimitados.map((vehiculo, index) => {
+          // Formatear precio
+          const precioFormateado = new Intl.NumberFormat('es-MX', {
+            style: 'currency',
+            currency: 'MXN',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          }).format(vehiculo.precio);
+
+          // Determinar badge y color según el índice o precio
+          const badges = [
+            { badge: "POPULAR", color: "bg-red-700" },
+            { badge: "NUEVO", color: "bg-green-500" },
+            { badge: "OFERTA", color: "bg-orange-500" },
+            { badge: "PREMIUM", color: "bg-blue-500" },
+            { badge: "ECONÓMICO", color: "bg-purple-500" },
+            { badge: "ICÓNICO", color: "bg-yellow-500" },
+            { badge: "LUXURY", color: "bg-indigo-500" },
+            { badge: "SUPER", color: "bg-pink-500" },
+            { badge: "ELEGANTE", color: "bg-teal-500" }
+          ];
+
+          const badgeInfo = badges[index % badges.length];
+
+          return {
+            id: vehiculo.id,
+            name: `${vehiculo.marca_nombre} ${vehiculo.modelo_nombre}`,
+            year: vehiculo.año,
+            price: precioFormateado,
+            category: "VEHÍCULO", // Puedes ajustar esto según tu lógica
+            badge: badgeInfo.badge,
+            badgeColor: badgeInfo.color,
+            foto_principal: vehiculo.foto_principal,
+            ubicacion: vehiculo.ubicacion,
+          };
+        });
+
+        setVehicles(vehiculosTransformados);
+      } catch (err) {
+        console.error('Error cargando vehículos:', err);
+        setError('Error al cargar los vehículos destacados');
+        // En caso de error, mantener un array vacío
+        setVehicles([]);
+      } finally {
+        setCargando(false);
+      }
+    };
+
+    cargarVehiculos();
+  }, []);
 
   const itemsPerSlide = 3;
   const totalSlides = Math.ceil(vehicles.length / itemsPerSlide);
 
-  // Autoscroll del carrusel
+  // Autoscroll del carrusel (solo si hay vehículos)
   useEffect(() => {
+    if (vehicles.length === 0 || totalSlides === 0) return;
+    
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % totalSlides);
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [totalSlides]);
+  }, [totalSlides, vehicles.length]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % totalSlides);
@@ -216,62 +293,107 @@ export default function Home() {
 
             {/* Contenedor del carrusel */}
             <div className="overflow-hidden">
-              <div className="flex transition-transform duration-500 ease-in-out">
-                <div className="w-full grid grid-cols-3 gap-8">
-                  {getCurrentVehicles().map((vehicle) => (
-                    <div
-                      key={vehicle.id}
-                      className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-                    >
-                      <div className="relative h-48 bg-gradient-to-br from-red-100 to-red-200">
-                        <div className={`absolute top-4 left-4 ${vehicle.badgeColor} text-white px-3 py-1 rounded-full text-xs font-semibold`}>
-                          {vehicle.badge}
-                        </div>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-32 h-20 bg-gradient-to-br from-red-300 to-red-400 rounded-xl"></div>
-                        </div>
-                      </div>
-                      <div className="p-6">
-                        <div className="text-sm text-red-600 font-semibold mb-2">{vehicle.category}</div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">{vehicle.name} | {vehicle.year}</h3>
-                        <div className="flex justify-between items-center mb-4">
-                          <span className="text-2xl font-bold text-gray-900">{vehicle.price}</span>
-                          <span className="text-sm text-gray-500">Tijuana B.C</span>
-                        </div>
-                        <div className="space-y-2">
-                          <Link
-                            href="/subastas"
-                            className="block w-full text-center bg-white border border-red-700 text-red-700 hover:bg-red-700 hover:text-white rounded-full px-4 py-2 font-medium transition-colors"
-                          >
-                            Pujar
-                          </Link>
-                          <Link
-                            href="/catalogo"
-                            className="block w-full text-center bg-red-700 text-white hover:bg-red-800 rounded-full px-4 py-2 font-medium transition-colors"
-                          >
-                            Comprar ahora
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+              {cargando ? (
+                <div className="flex justify-center items-center py-20">
+                  <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-red-700 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-gray-600">Cargando vehículos destacados...</p>
+                  </div>
                 </div>
-              </div>
+              ) : error ? (
+                <div className="flex justify-center items-center py-20">
+                  <div className="text-center">
+                    <p className="text-red-600 mb-4">{error}</p>
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="bg-red-700 text-white px-6 py-2 rounded-full hover:bg-red-800 transition-colors"
+                    >
+                      Reintentar
+                    </button>
+                  </div>
+                </div>
+              ) : vehicles.length === 0 ? (
+                <div className="flex justify-center items-center py-20">
+                  <p className="text-gray-600">No hay vehículos disponibles en este momento</p>
+                </div>
+              ) : (
+                <div className="flex transition-transform duration-500 ease-in-out">
+                  <div className="w-full grid grid-cols-3 gap-8">
+                    {getCurrentVehicles().map((vehicle) => (
+                      <div
+                        key={vehicle.id}
+                        className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                      >
+                        <div className="relative h-48 bg-gradient-to-br from-red-100 to-red-200 overflow-hidden">
+                          <div className={`absolute top-4 left-4 ${vehicle.badgeColor} text-white px-3 py-1 rounded-full text-xs font-semibold z-10`}>
+                            {vehicle.badge}
+                          </div>
+                          {vehicle.foto_principal ? (
+                            <img
+                              src={vehicle.foto_principal}
+                              alt={vehicle.name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                // Si la imagen falla, mostrar el placeholder
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const placeholder = target.nextElementSibling as HTMLElement;
+                                if (placeholder) placeholder.style.display = 'flex';
+                              }}
+                            />
+                          ) : null}
+                          <div className={`absolute inset-0 flex items-center justify-center ${vehicle.foto_principal ? 'hidden' : ''}`}>
+                            <div className="w-32 h-20 bg-gradient-to-br from-red-300 to-red-400 rounded-xl flex items-center justify-center">
+                              <svg className="w-12 h-12 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-6">
+                          <div className="text-sm text-red-600 font-semibold mb-2">{vehicle.category}</div>
+                          <h3 className="text-xl font-bold text-gray-900 mb-2">{vehicle.name} | {vehicle.year}</h3>
+                          <div className="flex justify-between items-center mb-4">
+                            <span className="text-2xl font-bold text-gray-900">{vehicle.price}</span>
+                            <span className="text-sm text-gray-500">{vehicle.ubicacion}</span>
+                          </div>
+                          <div className="space-y-2">
+                            <Link
+                              href={`/catalogo/${vehicle.id}`}
+                              className="block w-full text-center bg-white border border-red-700 text-red-700 hover:bg-red-700 hover:text-white rounded-full px-4 py-2 font-medium transition-colors"
+                            >
+                              Ver detalles
+                            </Link>
+                            <Link
+                              href={`/catalogo/${vehicle.id}`}
+                              className="block w-full text-center bg-red-700 text-white hover:bg-red-800 rounded-full px-4 py-2 font-medium transition-colors"
+                            >
+                              Comprar ahora
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Indicadores */}
-            <div className="flex justify-center mt-8 space-x-2">
-              {Array.from({ length: totalSlides }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentSlide
-                      ? 'bg-red-700 scale-125'
-                      : 'bg-gray-300 hover:bg-gray-400'
-                    }`}
-                />
-              ))}
-            </div>
+            {!cargando && !error && vehicles.length > 0 && (
+              <div className="flex justify-center mt-8 space-x-2">
+                {Array.from({ length: totalSlides }).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => goToSlide(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentSlide
+                        ? 'bg-red-700 scale-125'
+                        : 'bg-gray-300 hover:bg-gray-400'
+                      }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* CTA Button */}

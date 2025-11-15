@@ -1,20 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useAuth } from "../../../../hooks/useAuth";
-import { useRouter, useParams } from "next/navigation";
+import { useAuth } from "../../../hooks/useAuth";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef, useCallback } from "react";
-import { servicioChat, Mensaje, SolicitudMensaje } from "../../../../api/chat";
-import { servicioVenta, Venta } from "../../../../api/sales";
-import { servicioVehiculo, VehiculoDetalle } from "../../../../api/vehicles";
-import { ApiError } from "../../../../api/config";
-import { apiClient } from "../../../../api/client";
+import { servicioChat, Mensaje, SolicitudMensajeNuevo } from "../../../api/chat";
+import { servicioVehiculo, VehiculoDetalle } from "../../../api/vehicles";
+import { ApiError } from "../../../api/config";
+import { apiClient } from "../../../api/client";
 
 export default function ChatPage() {
   const { usuario, estaAutenticado, estaCargando, cerrarSesion } = useAuth();
   const router = useRouter();
-  const params = useParams();
-  const ventaId = Number(params.ventaId);
+  const searchParams = useSearchParams();
+  
+  const vehiculoId = Number(searchParams.get('vehiculo'));
+  const compradorId = Number(searchParams.get('comprador'));
+  const vendedorId = Number(searchParams.get('vendedor'));
 
   const [mensajes, establecerMensajes] = useState<Mensaje[]>([]);
   const [nuevoMensaje, establecerNuevoMensaje] = useState("");
@@ -22,7 +24,6 @@ export default function ChatPage() {
   const [enviando, establecerEnviando] = useState(false);
   const [error, establecerError] = useState("");
   const [errorChatNoDisponible, establecerErrorChatNoDisponible] = useState(false);
-  const [venta, establecerVenta] = useState<Venta | null>(null);
   const [vehiculo, establecerVehiculo] = useState<VehiculoDetalle | null>(null);
   const [vendedorNombre, establecerVendedorNombre] = useState<string>("");
 
@@ -47,8 +48,10 @@ export default function ChatPage() {
 
   // Cargar mensajes
   const cargarMensajes = useCallback(async () => {
+    if (!vehiculoId || !compradorId || !vendedorId) return;
+    
     try {
-      const mensajesData = await servicioChat.getMensajesPorVenta(ventaId);
+      const mensajesData = await servicioChat.getMensajesPorChat(compradorId, vendedorId, vehiculoId);
       establecerMensajes(mensajesData);
       establecerErrorChatNoDisponible(false);
     } catch (error) {
@@ -91,12 +94,12 @@ export default function ChatPage() {
         establecerError("Error al cargar los mensajes.");
       }
     }
-  }, [ventaId, router, cerrarSesion]);
+  }, [vehiculoId, compradorId, vendedorId, router, cerrarSesion]);
 
   // Cargar información inicial
   useEffect(() => {
     const cargarInformacion = async () => {
-      if (!estaAutenticado || !ventaId) return;
+      if (!estaAutenticado || !vehiculoId || !compradorId || !vendedorId) return;
 
       establecerCargando(true);
       establecerError("");
@@ -110,20 +113,17 @@ export default function ChatPage() {
         return;
       }
 
+      // Verificar que el usuario es parte de este chat
+      const usuarioId = Number(usuario?.id);
+      if (usuarioId !== compradorId && usuarioId !== vendedorId) {
+        establecerError("No tienes permiso para ver este chat.");
+        establecerCargando(false);
+        return;
+      }
+
       try {
-        // Cargar venta
-        const ventaData = await servicioVenta.getById(ventaId);
-        establecerVenta(ventaData);
-
-        // Verificar que el usuario es parte de esta venta
-        if (ventaData.comprador !== Number(usuario?.id) && ventaData.vendedor !== Number(usuario?.id)) {
-          establecerError("No tienes permiso para ver este chat.");
-          establecerCargando(false);
-          return;
-        }
-
         // Cargar vehículo
-        const vehiculoData = await servicioVehiculo.getById(ventaData.vehiculo);
+        const vehiculoData = await servicioVehiculo.getById(vehiculoId);
         establecerVehiculo(vehiculoData);
         establecerVendedorNombre(vehiculoData.usuario_nombre);
 
@@ -163,11 +163,11 @@ export default function ChatPage() {
     if (estaAutenticado) {
       cargarInformacion();
     }
-  }, [estaAutenticado, ventaId, usuario?.id, cargarMensajes, router, cerrarSesion, scrollToBottom]);
+  }, [estaAutenticado, vehiculoId, compradorId, vendedorId, usuario?.id, cargarMensajes, router, cerrarSesion, scrollToBottom]);
 
   // Polling para actualizar mensajes cada 3 segundos (solo si el chat está disponible)
   useEffect(() => {
-    if (!estaAutenticado || !ventaId || errorChatNoDisponible) return;
+    if (!estaAutenticado || !vehiculoId || !compradorId || !vendedorId || errorChatNoDisponible) return;
 
     intervaloRef.current = setInterval(() => {
       cargarMensajes();
@@ -178,25 +178,27 @@ export default function ChatPage() {
         clearInterval(intervaloRef.current);
       }
     };
-  }, [estaAutenticado, ventaId, errorChatNoDisponible, cargarMensajes]);
+  }, [estaAutenticado, vehiculoId, compradorId, vendedorId, errorChatNoDisponible, cargarMensajes]);
 
 
   // Enviar mensaje
   const manejarEnviarMensaje = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nuevoMensaje.trim() || enviando || !ventaId) return;
+    if (!nuevoMensaje.trim() || enviando || !vehiculoId || !compradorId || !vendedorId) return;
 
     const contenido = nuevoMensaje.trim();
     establecerNuevoMensaje("");
     establecerEnviando(true);
 
     try {
-      const solicitud: SolicitudMensaje = {
-        venta: ventaId,
+      const solicitud: SolicitudMensajeNuevo = {
+        comprador: compradorId,
+        vendedor: vendedorId,
+        vehiculo: vehiculoId,
         contenido,
       };
 
-      await servicioChat.enviarMensaje(solicitud);
+      await servicioChat.enviarMensajeNuevo(solicitud);
       await cargarMensajes();
       // Scroll al final después de enviar mensaje
       setTimeout(() => {
@@ -262,7 +264,7 @@ export default function ChatPage() {
     );
   }
 
-  if (error && !venta) {
+  if (error && !vehiculo) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full mx-4">
@@ -275,10 +277,10 @@ export default function ChatPage() {
             <h2 className="text-xl font-semibold text-gray-900 mb-2">Error</h2>
             <p className="text-gray-600 mb-6">{error}</p>
             <button
-              onClick={() => router.push("/mis-compras")}
+              onClick={() => router.back()}
               className="bg-red-700 text-white px-6 py-2 rounded-lg hover:bg-red-800 transition-colors"
             >
-              Volver a Mis Compras
+              Volver
             </button>
           </div>
         </div>
@@ -296,7 +298,7 @@ export default function ChatPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
-                onClick={() => router.push("/mis-compras")}
+                onClick={() => router.back()}
                 className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -308,7 +310,7 @@ export default function ChatPage() {
                   {vehiculo ? `${vehiculo.marca_nombre} ${vehiculo.modelo_nombre} ${vehiculo.año}` : "Chat"}
                 </h1>
                 <p className="text-sm text-gray-600">
-                  {venta?.comprador === Number(usuario?.id) 
+                  {compradorId === Number(usuario?.id) 
                     ? `Vendedor: ${vendedorNombre}`
                     : `Comprador: Usuario`}
                 </p>
@@ -316,7 +318,7 @@ export default function ChatPage() {
             </div>
             {vehiculo && (
               <Link
-                href={`/vehiculo/${vehiculo.id}`}
+                href={`/catalogo/${vehiculo.id}`}
                 className="text-red-700 hover:text-red-800 text-sm font-medium"
               >
                 Ver Vehículo
