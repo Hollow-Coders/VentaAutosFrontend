@@ -5,6 +5,8 @@ export interface Modelo {
   id: number;
   marca: number;
   nombre: string;
+  tipo_vehiculo: number;
+  tipo_vehiculo_descripcion: string;
   año_inicio?: number;
   año_fin?: number;
 }

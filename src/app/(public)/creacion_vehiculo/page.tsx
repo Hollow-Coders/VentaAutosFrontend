@@ -42,7 +42,7 @@ export default function CreacionVehiculoPage() {
     kilometraje: "",
     descripcion: "",
     estado: "en_revision",
-    tipo_vehiculo: "Automovil",
+    tipo_vehiculo: "",
     ubicacion: "",
   });
 
@@ -314,7 +314,7 @@ export default function CreacionVehiculoPage() {
                           type="button"
                           onMouseDown={(e) => e.preventDefault()}
                           onClick={() => {
-                            establecerDatosFormulario(prev => ({ ...prev, marca: marca.id, modelo: 0 }));
+                            establecerDatosFormulario(prev => ({ ...prev, marca: marca.id, modelo: 0, tipo_vehiculo: "" }));
                             establecerMarcaSeleccionada(marca.id);
                             establecerNombreMarcaSeleccionada(marca.nombre);
                             establecerBuscandoMarca("");
@@ -376,7 +376,11 @@ export default function CreacionVehiculoPage() {
                           type="button"
                           onMouseDown={(e) => e.preventDefault()}
                           onClick={() => {
-                            establecerDatosFormulario(prev => ({ ...prev, modelo: modelo.id }));
+                            establecerDatosFormulario(prev => ({ 
+                              ...prev, 
+                              modelo: modelo.id,
+                              tipo_vehiculo: modelo.tipo_vehiculo_descripcion
+                            }));
                             establecerNombreModeloSeleccionado(modelo.nombre);
                             establecerBuscandoModelo("");
                             establecerMostrarDropdownModelo(false);
@@ -499,18 +503,15 @@ export default function CreacionVehiculoPage() {
                   id="tipo_vehiculo"
                   name="tipo_vehiculo"
                   value={datosFormulario.tipo_vehiculo}
-                  onChange={manejarCambio}
+                  disabled
                   required
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
+                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors bg-gray-100 cursor-not-allowed"
                 >
-                  <option value="">Selecciona una opción</option>
-                  <option value="Automovil">Automóvil</option>
-                  <option value="Motocicleta">Motocicleta</option>
-                  <option value="Camioneta">Camioneta</option>
-                  <option value="SUV">SUV</option>
-                  <option value="Pickup">Pickup</option>
-                  <option value="Van">Van</option>
+                  <option value="">{datosFormulario.tipo_vehiculo || "Se asignará automáticamente"}</option>
                 </select>
+                <p className="mt-1 text-xs text-gray-500">
+                  El tipo de vehículo se selecciona automáticamente según el modelo
+                </p>
               </div>
             </div>
 
