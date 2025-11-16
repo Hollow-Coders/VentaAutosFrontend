@@ -24,3 +24,29 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Desactivar autocompletado solo para campos de marca y modelo */
+#marca:-webkit-autofill,
+#marca:-webkit-autofill:hover,
+#marca:-webkit-autofill:focus,
+#marca:-webkit-autofill:active,
+#modelo:-webkit-autofill,
+#modelo:-webkit-autofill:hover,
+#modelo:-webkit-autofill:focus,
+#modelo:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+/* Ocultar sugerencias de autocompletado solo para campos de marca y modelo */
+#marca::-webkit-contacts-auto-fill-button,
+#marca::-webkit-credentials-auto-fill-button,
+#modelo::-webkit-contacts-auto-fill-button,
+#modelo::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+  height: 0;
+  width: 0;
+  margin: 0;
+}

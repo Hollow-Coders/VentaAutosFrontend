@@ -41,7 +41,7 @@ export default function CreacionVehiculoPage() {
     tipo_combustible: "",
     kilometraje: "",
     descripcion: "",
-    estado: "disponible",
+    estado: "en_revision",
     tipo_vehiculo: "Automovil",
     ubicacion: "",
   });
@@ -79,6 +79,8 @@ export default function CreacionVehiculoPage() {
     const cargarModelos = async () => {
       if (marcaSeleccionada) {
         try {
+          // Limpiar modelos antes de cargar nuevos
+          establecerModelos([]);
           const modelosData = await servicioModelo.getByBrand(marcaSeleccionada);
           establecerModelos(modelosData);
         } catch (error) {
@@ -217,12 +219,20 @@ export default function CreacionVehiculoPage() {
   };
 
   // Filtrar marcas y modelos según búsqueda
-  const marcasFiltradas = marcas.filter(marca =>
-    marca.nombre.toLowerCase().includes(buscandoMarca.toLowerCase())
-  );
-  const modelosFiltrados = modelos.filter(modelo =>
-    modelo.nombre.toLowerCase().includes(buscandoModelo.toLowerCase())
-  );
+  // Filtrar marcas por búsqueda, pero si no hay búsqueda mostrar todas las marcas
+  const marcasFiltradas = buscandoMarca
+    ? marcas.filter(marca =>
+        marca.nombre.toLowerCase().includes(buscandoMarca.toLowerCase())
+      )
+    : marcas;
+  // Filtrar modelos por marca seleccionada y por búsqueda
+  const modelosFiltrados = modelos
+    .filter(modelo => marcaSeleccionada ? modelo.marca === marcaSeleccionada : false)
+    .filter(modelo =>
+      buscandoModelo
+        ? modelo.nombre.toLowerCase().includes(buscandoModelo.toLowerCase())
+        : true
+    );
 
   if (estaCargando) {
     return (
@@ -272,6 +282,7 @@ export default function CreacionVehiculoPage() {
                   <input
                     id="marca"
                     type="text"
+                    autoComplete="off"
                     value={nombreMarcaSeleccionada || buscandoMarca}
                     onChange={(e) => {
                       establecerBuscandoMarca(e.target.value);
@@ -295,7 +306,7 @@ export default function CreacionVehiculoPage() {
                   <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
-                  {mostrarDropdownMarca && buscandoMarca && marcasFiltradas.length > 0 && (
+                  {mostrarDropdownMarca && marcasFiltradas.length > 0 && (
                     <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                       {marcasFiltradas.map((marca) => (
                         <button
@@ -303,11 +314,15 @@ export default function CreacionVehiculoPage() {
                           type="button"
                           onMouseDown={(e) => e.preventDefault()}
                           onClick={() => {
-                            establecerDatosFormulario(prev => ({ ...prev, marca: marca.id }));
+                            establecerDatosFormulario(prev => ({ ...prev, marca: marca.id, modelo: 0 }));
                             establecerMarcaSeleccionada(marca.id);
                             establecerNombreMarcaSeleccionada(marca.nombre);
                             establecerBuscandoMarca("");
                             establecerMostrarDropdownMarca(false);
+                            // Limpiar modelo seleccionado y modelos cuando se cambia la marca
+                            establecerNombreModeloSeleccionado("");
+                            establecerBuscandoModelo("");
+                            establecerModelos([]);
                           }}
                           className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                         >
@@ -327,6 +342,7 @@ export default function CreacionVehiculoPage() {
                   <input
                     id="modelo"
                     type="text"
+                    autoComplete="off"
                     value={nombreModeloSeleccionado || buscandoModelo}
                     onChange={(e) => {
                       establecerBuscandoModelo(e.target.value);
@@ -337,8 +353,10 @@ export default function CreacionVehiculoPage() {
                       }
                     }}
                     onFocus={() => {
-                      establecerBuscandoModelo("");
-                      establecerMostrarDropdownModelo(true);
+                      if (marcaSeleccionada) {
+                        establecerBuscandoModelo("");
+                        establecerMostrarDropdownModelo(true);
+                      }
                     }}
                     onBlur={() => {
                       setTimeout(() => establecerMostrarDropdownModelo(false), 200);
@@ -350,7 +368,7 @@ export default function CreacionVehiculoPage() {
                   <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
-                  {mostrarDropdownModelo && buscandoModelo && modelosFiltrados.length > 0 && (
+                  {mostrarDropdownModelo && marcaSeleccionada && modelosFiltrados.length > 0 && (
                     <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                       {modelosFiltrados.map((modelo) => (
                         <button
@@ -463,15 +481,14 @@ export default function CreacionVehiculoPage() {
                   id="estado"
                   name="estado"
                   value={datosFormulario.estado}
-                  onChange={manejarCambio}
-                  required
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
+                  disabled
+                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors bg-gray-100 cursor-not-allowed"
                 >
-                  <option value="disponible">Disponible</option>
-                  <option value="vendido">Vendido</option>
                   <option value="en_revision">En Revisión</option>
-                  <option value="reservado">Reservado</option>
                 </select>
+                <p className="mt-1 text-xs text-gray-500">
+                  Los vehículos nuevos se envían automáticamente a revisión
+                </p>
               </div>
 
               <div>
