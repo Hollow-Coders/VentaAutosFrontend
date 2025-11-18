@@ -37,7 +37,7 @@ export default function UserMenu({ user }: PropsMenuUsuario) {
         if (perfil.foto_perfil_url) {
           establecerFotoPerfil(perfil.foto_perfil_url);
         }
-      } catch (error) {
+      } catch {
         // Si no hay perfil, no es error crítico
         console.log('No se encontró perfil o foto');
       } finally {
@@ -141,6 +141,13 @@ export default function UserMenu({ user }: PropsMenuUsuario) {
                 onClick={() => establecerEstadoAbierto(false)}
               >
                 Mis Compras
+              </Link>
+              <Link
+                href="/administracion"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                onClick={() => establecerEstadoAbierto(false)}
+              >
+                Administración
               </Link>
               
               <hr className="my-2" />
