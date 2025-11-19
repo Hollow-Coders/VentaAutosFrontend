@@ -46,6 +46,26 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
 
   // Convertir VehiculoDetalle a formato Vehiculo para Carta_v
   const convertirAVehiculo = (vehiculoDetalle: VehiculoDetalle) => {
+    // Extraer la primera foto si existe
+    let fotoPrincipal: string | null = null;
+    if (vehiculoDetalle.fotos && vehiculoDetalle.fotos.length > 0) {
+      const primeraFoto = vehiculoDetalle.fotos[0];
+      // Si es un string (URL), usarlo directamente
+      if (typeof primeraFoto === 'string') {
+        fotoPrincipal = primeraFoto;
+      } 
+      // Si es un objeto VehiculoFoto, extraer la URL
+      else if (primeraFoto && typeof primeraFoto === 'object' && 'url_imagen_url' in primeraFoto) {
+        fotoPrincipal = primeraFoto.url_imagen_url || null;
+      } else if (primeraFoto && typeof primeraFoto === 'object' && 'url_imagen' in primeraFoto) {
+        // Si tiene url_imagen, construir la URL completa
+        const urlImagen = primeraFoto.url_imagen;
+        if (urlImagen) {
+          fotoPrincipal = urlImagen.startsWith('http') ? urlImagen : `${process.env.NEXT_PUBLIC_API_URL || ''}${urlImagen}`;
+        }
+      }
+    }
+
     return {
       id: vehiculoDetalle.id,
       nombre: `${vehiculoDetalle.marca_nombre} ${vehiculoDetalle.modelo_nombre} ${vehiculoDetalle.año}`,
@@ -54,6 +74,7 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
       año: vehiculoDetalle.año,
       precio: vehiculoDetalle.precio,
       ubicacion: vehiculoDetalle.ubicacion,
+      foto_principal: fotoPrincipal,
     };
   };
 
