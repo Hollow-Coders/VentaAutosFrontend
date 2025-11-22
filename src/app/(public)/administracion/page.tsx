@@ -4,172 +4,52 @@ import { useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { servicioVehiculo, VehiculoDetalle } from "../../../api/vehicles";
+import type { VehiculoFoto } from "../../../api/vehiclePhotos";
+import { usarToast, ToastContainer } from "../../../components/ui/Toast";
 
-interface VehiculoEnRevision {
-  id: number;
-  usuario: number;
-  usuario_nombre: string;
-  marca: number;
-  marca_nombre: string;
-  modelo: number;
-  modelo_nombre: string;
-  año: number;
-  precio: number;
-  tipo_transmision: string;
-  tipo_combustible: string;
-  tipo_vehiculo: string;
-  kilometraje?: number;
-  descripcion?: string;
-  estado: "en_revision";
-  ubicacion: string;
-  fecha_solicitud: string;
-  fotos?: string[];
-}
+// Usamos VehiculoDetalle directamente de la API
+type VehiculoEnRevision = VehiculoDetalle & {
+  fecha_solicitud: string; // Usamos fecha_publicacion del backend como fecha_solicitud
+};
 
 export default function AdministracionPage() {
-  const { usuario, estaAutenticado, estaCargando } = useAuth();
+  const { estaAutenticado, estaCargando } = useAuth();
   const router = useRouter();
   const [vehiculosEnRevision, establecerVehiculosEnRevision] = useState<VehiculoEnRevision[]>([]);
   const [cargando, establecerCargando] = useState(true);
+  const [error, establecerError] = useState<string>("");
+  const [procesando, establecerProcesando] = useState<number | null>(null);
+  const { mostrar: mostrarToast, cerrar: cerrarToast, toasts } = usarToast();
 
-  // Datos de ejemplo (mock) - Simulando vehículos en revisión
+  // Cargar vehículos en revisión desde la API
   useEffect(() => {
-    // Simular carga de datos
-    const cargarVehiculosEnRevision = () => {
-      establecerCargando(true);
+    const cargarVehiculosEnRevision = async () => {
+      if (!estaAutenticado) return;
       
-      // Datos de ejemplo - Estructura basada en el formulario de creación
-      const vehiculosMock: VehiculoEnRevision[] = [
-        {
-          id: 1,
-          usuario: 5,
-          usuario_nombre: "Juan Pérez",
-          marca: 1,
-          marca_nombre: "Toyota",
-          modelo: 3,
-          modelo_nombre: "Corolla",
-          año: 2020,
-          precio: 250000,
-          tipo_transmision: "Automatica",
-          tipo_combustible: "Gasolina",
-          tipo_vehiculo: "Sedán",
-          kilometraje: 45000,
-          descripcion: "Vehículo en excelente estado, único dueño, sin accidentes. Mantenimiento completo en agencia, todas las revisiones al día. Interior impecable, sin olores ni manchas. Ideal para familia.",
-          estado: "en_revision",
-          ubicacion: "Ciudad de México",
-          fecha_solicitud: "2024-11-15T10:30:00Z",
-          fotos: []
-        },
-        {
-          id: 2,
-          usuario: 8,
-          usuario_nombre: "María González",
-          marca: 2,
-          marca_nombre: "Honda",
-          modelo: 5,
-          modelo_nombre: "Civic",
-          año: 2019,
-          precio: 280000,
-          tipo_transmision: "Manual",
-          tipo_combustible: "Gasolina",
-          tipo_vehiculo: "Sedán",
-          kilometraje: 52000,
-          descripcion: "Automóvil bien mantenido, servicio completo al día. Equipamiento completo, sistema de audio premium, asientos de cuero. Perfecto estado mecánico.",
-          estado: "en_revision",
-          ubicacion: "Guadalajara",
-          fecha_solicitud: "2024-11-16T14:20:00Z",
-          fotos: []
-        },
-        {
-          id: 3,
-          usuario: 12,
-          usuario_nombre: "Carlos Rodríguez",
-          marca: 3,
-          marca_nombre: "Nissan",
-          modelo: 7,
-          modelo_nombre: "Sentra",
-          año: 2021,
-          precio: 320000,
-          tipo_transmision: "CVT",
-          tipo_combustible: "Hibrido",
-          tipo_vehiculo: "Sedán",
-          kilometraje: 30000,
-          descripcion: "Vehículo seminuevo, garantía de agencia disponible. Tecnología avanzada, cámara de reversa, sensores de estacionamiento. Excelente opción.",
-          estado: "en_revision",
-          ubicacion: "Monterrey",
-          fecha_solicitud: "2024-11-17T09:15:00Z",
-          fotos: []
-        },
-        {
-          id: 4,
-          usuario: 15,
-          usuario_nombre: "Ana Martínez",
-          marca: 4,
-          marca_nombre: "Ford",
-          modelo: 12,
-          modelo_nombre: "Ranger",
-          año: 2022,
-          precio: 450000,
-          tipo_transmision: "Automatica",
-          tipo_combustible: "Diesel",
-          tipo_vehiculo: "Pickup",
-          kilometraje: 25000,
-          descripcion: "Camioneta en perfecto estado, 4x4, doble cabina. Ideal para trabajo y aventura. Equipada con llantas nuevas, sistema de sonido premium.",
-          estado: "en_revision",
-          ubicacion: "Puebla",
-          fecha_solicitud: "2024-11-18T11:45:00Z",
-          fotos: []
-        },
-        {
-          id: 5,
-          usuario: 20,
-          usuario_nombre: "Roberto Sánchez",
-          marca: 5,
-          marca_nombre: "Volkswagen",
-          modelo: 15,
-          modelo_nombre: "Jetta",
-          año: 2020,
-          precio: 290000,
-          tipo_transmision: "Automatica",
-          tipo_combustible: "Gasolina",
-          tipo_vehiculo: "Sedán",
-          kilometraje: 48000,
-          descripcion: "Sedán alemán en excelente condición. Motor turbo, transmisión automática de 8 velocidades. Interior espacioso y cómodo.",
-          estado: "en_revision",
-          ubicacion: "Querétaro",
-          fecha_solicitud: "2024-11-19T16:30:00Z",
-          fotos: []
-        },
-        {
-          id: 6,
-          usuario: 22,
-          usuario_nombre: "Laura Fernández",
-          marca: 6,
-          marca_nombre: "Chevrolet",
-          modelo: 18,
-          modelo_nombre: "Equinox",
-          año: 2021,
-          precio: 380000,
-          tipo_transmision: "Automatica",
-          tipo_combustible: "Gasolina",
-          tipo_vehiculo: "SUV",
-          kilometraje: 35000,
-          descripcion: "SUV familiar, 7 pasajeros, excelente para viajes largos. Sistema de seguridad avanzado, cámara 360°, asientos de cuero.",
-          estado: "en_revision",
-          ubicacion: "Toluca",
-          fecha_solicitud: "2024-11-20T08:00:00Z",
-          fotos: []
-        }
-      ];
-
-      setTimeout(() => {
-        establecerVehiculosEnRevision(vehiculosMock);
+      establecerCargando(true);
+      establecerError("");
+      
+      try {
+        const vehiculos = await servicioVehiculo.getEnRevision();
+        // Mapear VehiculoDetalle a VehiculoEnRevision usando fecha_publicacion como fecha_solicitud
+        const vehiculosMapeados: VehiculoEnRevision[] = vehiculos.map(v => ({
+          ...v,
+          fecha_solicitud: v.fecha_publicacion || new Date().toISOString(),
+        }));
+        establecerVehiculosEnRevision(vehiculosMapeados);
+      } catch (err) {
+        console.error("Error cargando vehículos en revisión:", err);
+        establecerError(err instanceof Error ? err.message : "Error al cargar vehículos en revisión");
+      } finally {
         establecerCargando(false);
-      }, 500);
+      }
     };
 
-    cargarVehiculosEnRevision();
-  }, []);
+    if (!estaCargando) {
+      cargarVehiculosEnRevision();
+    }
+  }, [estaAutenticado, estaCargando]);
 
   useEffect(() => {
     if (!estaCargando && !estaAutenticado) {
@@ -177,16 +57,54 @@ export default function AdministracionPage() {
     }
   }, [estaAutenticado, estaCargando, router]);
 
-  const manejarAceptar = (id: number) => {
-    // TODO: Implementar lógica de aceptación
-    console.log(`Aceptar vehículo ${id}`);
-    alert(`Vehículo ${id} aceptado (funcionalidad pendiente)`);
+  const manejarAceptar = async (id: number) => {
+    if (!confirm("¿Estás seguro de que deseas aceptar y publicar este vehículo en el catálogo?")) {
+      return;
+    }
+
+    establecerProcesando(id);
+    establecerError("");
+
+    try {
+      // Cambiar el estado a "disponible" para que aparezca en el catálogo
+      await servicioVehiculo.updateEstado(id, "disponible");
+      
+      // Remover el vehículo de la lista de en revisión
+      establecerVehiculosEnRevision(prev => prev.filter(v => v.id !== id));
+      
+      mostrarToast("Vehículo aceptado y publicado en el catálogo", "success");
+    } catch (err) {
+      console.error("Error al aceptar vehículo:", err);
+      establecerError(err instanceof Error ? err.message : "Error al aceptar el vehículo");
+      mostrarToast("Error al aceptar el vehículo", "error");
+    } finally {
+      establecerProcesando(null);
+    }
   };
 
-  const manejarRechazar = (id: number) => {
-    // TODO: Implementar lógica de rechazo
-    console.log(`Rechazar vehículo ${id}`);
-    alert(`Vehículo ${id} rechazado (funcionalidad pendiente)`);
+  const manejarRechazar = async (id: number) => {
+    if (!confirm("¿Estás seguro de que deseas rechazar este vehículo?")) {
+      return;
+    }
+
+    establecerProcesando(id);
+    establecerError("");
+
+    try {
+      // Cambiar el estado a "rechazado"
+      await servicioVehiculo.updateEstado(id, "rechazado");
+      
+      // Remover el vehículo de la lista de en revisión
+      establecerVehiculosEnRevision(prev => prev.filter(v => v.id !== id));
+      
+      mostrarToast("Vehículo rechazado exitosamente", "success");
+    } catch (err) {
+      console.error("Error al rechazar vehículo:", err);
+      establecerError(err instanceof Error ? err.message : "Error al rechazar el vehículo");
+      mostrarToast("Error al rechazar el vehículo", "error");
+    } finally {
+      establecerProcesando(null);
+    }
   };
 
   const formatearPrecio = (precio: number) => {
@@ -218,8 +136,10 @@ export default function AdministracionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4">
+    <>
+      <ToastContainer toasts={toasts} onClose={cerrarToast} />
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Administración</h1>
@@ -227,6 +147,13 @@ export default function AdministracionPage() {
             Revisa y gestiona los vehículos pendientes de aprobación para el catálogo
           </p>
         </div>
+
+        {/* Error */}
+        {error && (
+          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
 
         {/* Estadísticas */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -275,22 +202,29 @@ export default function AdministracionPage() {
                         <div className="space-y-2">
                           <div className="h-48 bg-gradient-to-br from-red-100 to-red-200 rounded-lg flex items-center justify-center overflow-hidden">
                             <img
-                              src={vehiculo.fotos[0]}
+                              src={typeof vehiculo.fotos[0] === 'string' 
+                                ? vehiculo.fotos[0] 
+                                : (vehiculo.fotos[0] as VehiculoFoto).url_imagen_url || (vehiculo.fotos[0] as VehiculoFoto).url_imagen || ''}
                               alt={`${vehiculo.marca_nombre} ${vehiculo.modelo_nombre}`}
                               className="w-full h-full object-cover"
                             />
                           </div>
                           {vehiculo.fotos.length > 1 && (
                             <div className="flex gap-2">
-                              {vehiculo.fotos.slice(1, 3).map((foto, index) => (
-                                <div key={index} className="h-20 flex-1 bg-gray-100 rounded-lg overflow-hidden">
-                                  <img
-                                    src={foto}
-                                    alt={`${vehiculo.marca_nombre} ${vehiculo.modelo_nombre} ${index + 2}`}
-                                    className="w-full h-full object-cover"
-                                  />
-                                </div>
-                              ))}
+                              {vehiculo.fotos.slice(1, 3).map((foto, index) => {
+                                const fotoUrl = typeof foto === 'string' 
+                                  ? foto 
+                                  : (foto as VehiculoFoto).url_imagen_url || (foto as VehiculoFoto).url_imagen || '';
+                                return (
+                                  <div key={index} className="h-20 flex-1 bg-gray-100 rounded-lg overflow-hidden">
+                                    <img
+                                      src={fotoUrl}
+                                      alt={`${vehiculo.marca_nombre} ${vehiculo.modelo_nombre} ${index + 2}`}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                );
+                              })}
                             </div>
                           )}
                         </div>
@@ -388,21 +322,41 @@ export default function AdministracionPage() {
                       <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
                         <button
                           onClick={() => manejarAceptar(vehiculo.id)}
-                          className="flex-1 min-w-[140px] bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold flex items-center justify-center gap-2"
+                          disabled={procesando === vehiculo.id}
+                          className="flex-1 min-w-[140px] bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          Aceptar y Publicar
+                          {procesando === vehiculo.id ? (
+                            <>
+                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                              <span>Procesando...</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              Aceptar y Publicar
+                            </>
+                          )}
                         </button>
                         <button
                           onClick={() => manejarRechazar(vehiculo.id)}
-                          className="flex-1 min-w-[140px] bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors font-semibold flex items-center justify-center gap-2"
+                          disabled={procesando === vehiculo.id}
+                          className="flex-1 min-w-[140px] bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                          Rechazar
+                          {procesando === vehiculo.id ? (
+                            <>
+                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                              <span>Procesando...</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                              Rechazar
+                            </>
+                          )}
                         </button>
                       </div>
                     </div>
@@ -412,8 +366,9 @@ export default function AdministracionPage() {
             ))}
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

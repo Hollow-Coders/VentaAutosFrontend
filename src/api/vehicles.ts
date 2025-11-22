@@ -91,6 +91,16 @@ export const servicioVehiculo = {
   async getByUsuario(usuarioId: number): Promise<VehiculoDetalle[]> {
     return await apiClient.get<VehiculoDetalle[]>(`/vehiculos/?usuario=${usuarioId}`);
   },
+
+  // Obtener vehículos en revisión (usando endpoint /vehiculos/ con filtro de estado)
+  async getEnRevision(): Promise<VehiculoDetalle[]> {
+    return await apiClient.get<VehiculoDetalle[]>(`/vehiculos/?estado=en_revision`);
+  },
+
+  // Actualizar el estado de un vehículo
+  async updateEstado(id: number, estado: string): Promise<VehiculoDetalle> {
+    return await apiClient.patch<VehiculoDetalle>(`/vehiculos/${id}/`, { estado });
+  },
 };
 
 // Solicitud para crear un vehículo
