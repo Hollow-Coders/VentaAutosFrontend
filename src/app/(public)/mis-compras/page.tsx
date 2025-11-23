@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { servicioVenta, Venta } from "../../../api/sales";
 import { servicioVehiculo, VehiculoDetalle } from "../../../api/vehicles";
+import { servicioValoracion } from "../../../api/ratings";
 import PurchaseCard from "../../../components/purchase/PurchaseCard";
 
 interface CompraConDetalles extends Venta {
   vehiculoDetalle?: VehiculoDetalle;
   vendedorNombre?: string;
+  yaValorado?: boolean;
 }
 
 export default function MisComprasPage() {
@@ -43,15 +45,29 @@ export default function MisComprasPage() {
           return compradorId === usuarioId;
         });
 
-        // Cargar detalles de cada vehículo y vendedor
+        // Cargar detalles de cada vehículo, vendedor y verificar valoraciones
         const comprasConDetalles = await Promise.all(
           comprasDelUsuario.map(async (venta) => {
             try {
               const vehiculoDetalle = await servicioVehiculo.getById(venta.vehiculo);
+              
+              // Verificar si ya existe una valoración para esta venta
+              let yaValorado = false;
+              try {
+                yaValorado = await servicioValoracion.verificarValoracionExistente(
+                  venta.id,
+                  vehiculoDetalle.usuario
+                );
+              } catch (error) {
+                console.error(`Error verificando valoración para venta ${venta.id}:`, error);
+                // Si hay error, asumimos que no está valorado
+              }
+              
               return {
                 ...venta,
                 vehiculoDetalle,
                 vendedorNombre: vehiculoDetalle.usuario_nombre,
+                yaValorado,
               };
             } catch (error) {
               console.error(`Error cargando vehículo ${venta.vehiculo}:`, error);
@@ -59,6 +75,7 @@ export default function MisComprasPage() {
                 ...venta,
                 vehiculoDetalle: undefined,
                 vendedorNombre: undefined,
+                yaValorado: false,
               };
             }
           })
@@ -138,6 +155,7 @@ export default function MisComprasPage() {
                   venta={compra}
                   vehiculo={compra.vehiculoDetalle}
                   vendedorNombre={compra.vendedorNombre}
+                  yaValorado={compra.yaValorado}
                 />
               );
             })}
