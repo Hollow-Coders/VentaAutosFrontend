@@ -15,8 +15,11 @@ export interface Venta {
 // Solicitud para crear una venta
 export interface SolicitudVenta {
   vehiculo: number;
+  comprador: number;
+  vendedor: number;
   precio_final: number;
   metodo_pago: string;
+  fecha_venta: string;
 }
 
 // Respuesta de venta
@@ -57,11 +60,23 @@ export const servicioVenta = {
   },
 
   // Comprar un vehículo (método simplificado)
-  async purchase(vehicleId: number, precioFinal: number, metodoPago: string = 'transferencia'): Promise<RespuestaVenta> {
+  async purchase(
+    vehicleId: number, 
+    precioFinal: number, 
+    compradorId: number,
+    vendedorId: number,
+    metodoPago: string = 'transferencia'
+  ): Promise<RespuestaVenta> {
+    // Formatear la fecha actual en formato ISO (YYYY-MM-DD)
+    const fechaVenta = new Date().toISOString().split('T')[0];
+    
     return await this.create({
       vehiculo: vehicleId,
+      comprador: compradorId,
+      vendedor: vendedorId,
       precio_final: precioFinal,
       metodo_pago: metodoPago,
+      fecha_venta: fechaVenta,
     });
   },
 };

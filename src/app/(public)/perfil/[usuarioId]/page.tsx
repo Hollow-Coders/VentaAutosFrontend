@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Perfil, servicioPerfil } from "../../../../api";
 import { VehiculoDetalle, servicioVehiculo } from "../../../../api/vehicles";
+import { servicioValoracion, Valoracion, PromedioVendedor } from "../../../../api/ratings";
 import EncabezadoPerfil from "../../../../components/profile/ProfileHeader";
 import ProfileVehicles from "../../../../components/profile/ProfileVehicles";
 import ProfileReviews from "../../../../components/profile/ProfileReviews";
@@ -16,9 +17,39 @@ export default function PerfilPublicoPage() {
 
   const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [vehiculos, setVehiculos] = useState<VehiculoDetalle[]>([]);
+  const [valoraciones, setValoraciones] = useState<Valoracion[]>([]);
+  const [todasLasValoraciones, setTodasLasValoraciones] = useState<Valoracion[]>([]);
+  const [mostrarTodasValoraciones, setMostrarTodasValoraciones] = useState(false);
+  const [promedio, setPromedio] = useState<PromedioVendedor | null>(null);
   const [cargandoPerfil, setCargandoPerfil] = useState(true);
   const [cargandoVehiculos, setCargandoVehiculos] = useState(true);
+  const [cargandoValoraciones, setCargandoValoraciones] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Función para cargar todas las valoraciones cuando se hace clic en "Ver más"
+  const cargarTodasValoraciones = async () => {
+    if (todasLasValoraciones.length > 0) {
+      // Si ya tenemos todas las valoraciones cargadas, solo mostrarlas
+      setMostrarTodasValoraciones(true);
+      setValoraciones(todasLasValoraciones);
+    } else {
+      // Si no las tenemos, cargarlas ahora
+      setCargandoValoraciones(true);
+      try {
+        const valoracionesData = await servicioValoracion.getByVendedor(usuarioId);
+        const valoracionesOrdenadas = valoracionesData.valoraciones
+          .sort((a, b) => new Date(b.fecha_creacion).getTime() - new Date(a.fecha_creacion).getTime());
+        
+        setTodasLasValoraciones(valoracionesOrdenadas);
+        setValoraciones(valoracionesOrdenadas);
+        setMostrarTodasValoraciones(true);
+      } catch (err) {
+        console.error("Error al cargar todas las valoraciones:", err);
+      } finally {
+        setCargandoValoraciones(false);
+      }
+    }
+  };
 
   useEffect(() => {
     if (Number.isNaN(usuarioId)) {
@@ -69,6 +100,60 @@ export default function PerfilPublicoPage() {
     cargarVehiculos();
   }, [usuarioId]);
 
+  // Cargar valoraciones del vendedor
+  useEffect(() => {
+    if (Number.isNaN(usuarioId)) {
+      setValoraciones([]);
+      setTodasLasValoraciones([]);
+      setMostrarTodasValoraciones(false);
+      setCargandoValoraciones(false);
+      return;
+    }
+
+    // Resetear estado al cambiar de usuario
+    setMostrarTodasValoraciones(false);
+
+    const cargarValoraciones = async () => {
+      setCargandoValoraciones(true);
+      try {
+        // Cargar solo el promedio primero (más ligero, incluye el total)
+        // Esto nos da el total de valoraciones sin necesidad de cargar todas
+        const promedioData = await servicioValoracion.getPromedioVendedor(usuarioId);
+        setPromedio(promedioData);
+        
+        // Solo cargar las valoraciones del vendedor si hay valoraciones
+        // Si hay más de 10, solo procesaremos las primeras 10 inicialmente
+        if (promedioData.total_valoraciones > 0) {
+          const valoracionesData = await servicioValoracion.getByVendedor(usuarioId);
+          
+          // Ordenar por fecha descendente (más recientes primero)
+          const valoracionesOrdenadas = valoracionesData.valoraciones
+            .sort((a, b) => new Date(b.fecha_creacion).getTime() - new Date(a.fecha_creacion).getTime());
+          
+          // Guardar todas las valoraciones para uso futuro
+          setTodasLasValoraciones(valoracionesOrdenadas);
+          
+          // Mostrar solo las primeras 10 al inicio
+          setValoraciones(valoracionesOrdenadas.slice(0, 10));
+        } else {
+          // Si no hay valoraciones, establecer arrays vacíos
+          setValoraciones([]);
+          setTodasLasValoraciones([]);
+        }
+      } catch (err) {
+        console.error("Error al cargar valoraciones:", err);
+        // Si hay error, simplemente no mostrar valoraciones
+        setValoraciones([]);
+        setTodasLasValoraciones([]);
+        setPromedio(null);
+      } finally {
+        setCargandoValoraciones(false);
+      }
+    };
+
+    cargarValoraciones();
+  }, [usuarioId]);
+
   const usuarioPublico = useMemo(() => {
     if (!perfil) {
       return {
@@ -99,8 +184,6 @@ export default function PerfilPublicoPage() {
     usuarioPublico.nombre ||
     usuarioPublico.correo?.split("@")[0] ||
     "Vendedor";
-
-  const reviews: any[] = [];
 
   if (!cargandoPerfil && error) {
     return (
@@ -227,7 +310,14 @@ export default function PerfilPublicoPage() {
               <ProfileVehicles vehicles={vehiculos} isOwner={false} />
             )}
 
-            <ProfileReviews reviews={reviews} />
+            <ProfileReviews 
+              valoraciones={valoraciones} 
+              promedio={promedio}
+              cargando={cargandoValoraciones}
+              totalValoraciones={todasLasValoraciones.length}
+              mostrarTodas={mostrarTodasValoraciones}
+              onVerMas={cargarTodasValoraciones}
+            />
 
             <div className="flex flex-wrap gap-4 mt-8">
               <Link

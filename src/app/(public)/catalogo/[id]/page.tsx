@@ -269,7 +269,18 @@ export default function DetalleVehiculo() {
 
               {/* Botones de acción */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <BuyButton vehicle={vehiculo} />
+                <BuyButton 
+                  vehicle={vehiculo} 
+                  onCompraExitosa={async () => {
+                    // Recargar los datos del vehículo después de la compra
+                    try {
+                      const data = await servicioVehiculo.getById(id!)
+                      setVehiculo(data)
+                    } catch (err) {
+                      console.error('Error recargando vehículo:', err)
+                    }
+                  }}
+                />
                 <BidButton vehicle={vehiculo} />
               </div>
 

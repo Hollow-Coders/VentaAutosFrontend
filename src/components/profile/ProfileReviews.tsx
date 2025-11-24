@@ -1,59 +1,106 @@
 "use client";
 
-interface Review {
-  id: string;
-  reviewer: {
-    nombre: string;
-    avatar?: string;
-  };
-  rating: number;
-  comment: string;
-  date: string;
-}
+import { Valoracion, PromedioVendedor } from "../../api/ratings";
 
 interface ProfileReviewsProps {
-  reviews: Review[];
+  valoraciones: Valoracion[];
+  promedio: PromedioVendedor | null;
+  cargando?: boolean;
+  totalValoraciones?: number;
+  mostrarTodas?: boolean;
+  onVerMas?: () => void;
 }
 
-export default function ProfileReviews({ reviews }: ProfileReviewsProps) {
-  const averageRating = reviews.length > 0
-    ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
-    : "0.0";
+export default function ProfileReviews({ 
+  valoraciones, 
+  promedio, 
+  cargando = false,
+  totalValoraciones: totalValoracionesProp,
+  mostrarTodas = false,
+  onVerMas
+}: ProfileReviewsProps) {
+  // Asegurar que valoraciones siempre sea un array
+  const valoracionesArray = Array.isArray(valoraciones) ? valoraciones : [];
+  
+  // Usar el promedio del backend si está disponible, sino calcularlo
+  const promedioCalificacion = promedio?.promedio_calificacion ?? 
+    (valoracionesArray.length > 0
+      ? valoracionesArray.reduce((sum, val) => sum + parseFloat(val.calificacion), 0) / valoracionesArray.length
+      : 0);
+  
+  // Usar el total de valoraciones del prop si está disponible, sino del promedio o del array
+  const totalValoraciones = totalValoracionesProp ?? promedio?.total_valoraciones ?? valoracionesArray.length;
+  
+  // Determinar si hay más valoraciones para mostrar
+  const hayMasValoraciones = totalValoraciones > valoracionesArray.length;
+  
+  // Función para renderizar estrellas
+  const renderEstrellas = (calificacion: number, tamaño: 'sm' | 'md' | 'lg' = 'md') => {
+    const tamañoClase = tamaño === 'sm' ? 'w-4 h-4' : tamaño === 'lg' ? 'w-6 h-6' : 'w-5 h-5';
+    const calificacionNum = Math.round(calificacion);
+    
+    return (
+      <div className="flex items-center gap-0.5">
+        {[...Array(5)].map((_, i) => (
+          <svg
+            key={i}
+            className={`${tamañoClase} ${
+              i < calificacionNum
+                ? 'text-yellow-400'
+                : 'text-gray-300'
+            }`}
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+          </svg>
+        ))}
+      </div>
+    );
+  };
+
+  if (cargando) {
+    return (
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+        <div className="flex items-center justify-center py-8">
+          <div className="w-6 h-6 border-2 border-red-700 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <div>
+        <div className="flex-1">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             Valoraciones
           </h2>
-          <div className="flex items-center">
-            <div className="flex items-center mr-2">
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  className={`w-5 h-5 ${
-                    i < Math.round(Number(averageRating))
-                      ? 'text-yellow-400'
-                      : 'text-gray-300'
-                  }`}
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
-              ))}
+          <div className="flex items-center gap-3">
+            {renderEstrellas(promedioCalificacion, 'lg')}
+            <div className="flex flex-col">
+              <span className="text-gray-900 text-lg font-semibold">
+                {promedioCalificacion.toFixed(1)}
+              </span>
+              <span className="text-gray-600 text-sm">
+                {totalValoraciones} valoración{totalValoraciones !== 1 ? 'es' : ''}
+              </span>
             </div>
-            <span className="text-gray-600 text-sm">
-              {averageRating} de {reviews.length} valoración{reviews.length !== 1 ? 'es' : ''}
-            </span>
           </div>
         </div>
+        {!mostrarTodas && hayMasValoraciones && onVerMas && (
+          <button
+            onClick={onVerMas}
+            className="px-4 py-2 bg-red-700 text-white rounded-lg font-medium hover:bg-red-800 transition-colors text-sm whitespace-nowrap ml-4"
+          >
+            Ver más valoraciones
+          </button>
+        )}
       </div>
 
       {/* Lista de reviews */}
-      {reviews.length === 0 ? (
+      {valoracionesArray.length === 0 ? (
         <div className="text-center py-12">
           <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,65 +116,54 @@ export default function ProfileReviews({ reviews }: ProfileReviewsProps) {
         </div>
       ) : (
         <div className="space-y-4">
-          {reviews.map((review) => (
-            <div key={review.id} className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
-              <div className="flex gap-4">
-                {/* Avatar del reviewer */}
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-red-700 rounded-full flex items-center justify-center">
-                    {review.reviewer.avatar ? (
-                      <img 
-                        src={review.reviewer.avatar} 
-                        alt={review.reviewer.nombre}
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                    ) : (
+          {valoracionesArray.map((valoracion) => {
+            const calificacionNum = parseFloat(valoracion.calificacion);
+            const fechaCreacion = new Date(valoracion.fecha_creacion);
+            
+            return (
+              <div key={valoracion.id} className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
+                <div className="flex gap-4">
+                  {/* Avatar del comprador */}
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-red-700 rounded-full flex items-center justify-center">
                       <span className="text-white text-sm font-semibold">
-                        {review.reviewer.nombre.charAt(0).toUpperCase()}
+                        {valoracion.comprador_nombre.charAt(0).toUpperCase()}
                       </span>
+                    </div>
+                  </div>
+
+                  {/* Contenido de la valoración */}
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h4 className="font-semibold text-gray-900">
+                          {valoracion.comprador_nombre}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-1">
+                          {renderEstrellas(calificacionNum, 'sm')}
+                          <span className="text-gray-500 text-xs">
+                            {valoracion.vehiculo_info.marca} {valoracion.vehiculo_info.modelo} {valoracion.vehiculo_info.año}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="text-gray-500 text-sm">
+                        {fechaCreacion.toLocaleDateString('es-ES', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </span>
+                    </div>
+                    {valoracion.comentario && (
+                      <p className="text-gray-600 text-sm leading-relaxed mt-2">
+                        {valoracion.comentario}
+                      </p>
                     )}
                   </div>
                 </div>
-
-                {/* Contenido del review */}
-                <div className="flex-1">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h4 className="font-semibold text-gray-900">
-                        {review.reviewer.nombre}
-                      </h4>
-                      <div className="flex items-center gap-1 mt-1">
-                        {[...Array(5)].map((_, i) => (
-                          <svg
-                            key={i}
-                            className={`w-4 h-4 ${
-                              i < review.rating
-                                ? 'text-yellow-400'
-                                : 'text-gray-300'
-                            }`}
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                          </svg>
-                        ))}
-                      </div>
-                    </div>
-                    <span className="text-gray-500 text-sm">
-                      {new Date(review.date).toLocaleDateString('es-ES', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}
-                    </span>
-                  </div>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {review.comment}
-                  </p>
-                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

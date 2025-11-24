@@ -15,6 +15,7 @@ export * from './models';
 export * from './profile';
 export * from './vehiclePhotos';
 export * from './chat';
+export * from './ratings';
 
 // Re-exportar servicios con nombres específicos para fácil acceso (mantener compatibilidad)
 export { servicioAutenticacion as authService } from './auth';
@@ -27,6 +28,7 @@ export { servicioModelo as modelService } from './models';
 export { servicioPerfil as profileService } from './profile';
 export { servicioVehiculoFoto as vehiclePhotoService } from './vehiclePhotos';
 export { servicioChat as chatService } from './chat';
+export { servicioValoracion as ratingService } from './ratings';
 
 // También exportar con nombres en español
 export { servicioAutenticacion } from './auth';
@@ -39,4 +41,5 @@ export { servicioModelo } from './models';
 export { servicioPerfil } from './profile';
 export { servicioVehiculoFoto } from './vehiclePhotos';
 export { servicioChat } from './chat';
+export { servicioValoracion } from './ratings';
 
