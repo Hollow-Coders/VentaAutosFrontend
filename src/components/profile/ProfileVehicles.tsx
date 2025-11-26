@@ -13,18 +13,25 @@ interface ProfileVehiclesProps {
 
 export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesProps) {
   const router = useRouter();
-  const [filter, setFilter] = useState<'all' | 'disponible' | 'vendido' | 'pendiente'>('all');
+  const [filter, setFilter] = useState<'all' | 'disponible' | 'vendido' | 'revision'>('all');
 
   // Mapear estados del backend a estados del filtro
-  const mapEstadoToFilter = (estado: string): 'disponible' | 'vendido' | 'pendiente' => {
+  const mapEstadoToFilter = (estado: string): 'disponible' | 'vendido' | 'revision' => {
     const estadoLower = estado.toLowerCase();
     if (estadoLower.includes('vendido') || estadoLower.includes('sold')) return 'vendido';
-    if (estadoLower.includes('pendiente') || estadoLower.includes('pending')) return 'pendiente';
+    if (estadoLower.includes('revision') || estadoLower.includes('en_revision') || estadoLower.includes('pendiente') || estadoLower.includes('pending')) return 'revision';
     return 'disponible';
   };
 
   const filteredVehicles = vehicles.filter(vehicle => {
-    if (filter === 'all') return true;
+    if (filter === 'all') {
+      // Si no es el propietario, excluir vehículos en revisión de "Todos"
+      if (!isOwner) {
+        const vehicleFilter = mapEstadoToFilter(vehicle.estado);
+        return vehicleFilter !== 'revision';
+      }
+      return true;
+    }
     const vehicleFilter = mapEstadoToFilter(vehicle.estado);
     return vehicleFilter === filter;
   });
@@ -34,8 +41,8 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
     if (estadoLower.includes('vendido') || estadoLower.includes('sold')) {
       return { text: 'Vendido', color: 'bg-gray-100 text-gray-600' };
     }
-    if (estadoLower.includes('pendiente') || estadoLower.includes('pending')) {
-      return { text: 'Pendiente', color: 'bg-yellow-100 text-yellow-700' };
+    if (estadoLower.includes('revision') || estadoLower.includes('en_revision') || estadoLower.includes('pendiente') || estadoLower.includes('pending')) {
+      return { text: 'Revisión', color: 'bg-yellow-100 text-yellow-700' };
     }
     return { text: 'Activo', color: 'bg-green-100 text-green-700' };
   };
@@ -87,7 +94,7 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
             {isOwner ? 'Mis Vehículos' : 'Vehículos de este vendedor'}
           </h2>
           <p className="text-gray-600 text-sm">
-            {filteredVehicles.length} vehículo{filteredVehicles.length !== 1 ? 's' : ''} {filter !== 'all' ? `(${filter})` : ''}
+            {filteredVehicles.length} vehículo{filteredVehicles.length !== 1 ? 's' : ''} {filter !== 'all' ? `(${filter === 'disponible' ? 'Activos' : filter === 'vendido' ? 'Vendidos' : filter === 'revision' ? 'Revisión' : filter})` : ''}
           </p>
         </div>
 
@@ -125,14 +132,14 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
           </button>
           {isOwner && (
             <button
-              onClick={() => setFilter('pendiente')}
+              onClick={() => setFilter('revision')}
               className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
-                filter === 'pendiente' 
+                filter === 'revision' 
                   ? 'bg-red-700 text-white' 
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              Pendientes
+              Revisión
             </button>
           )}
         </div>
