@@ -1,19 +1,25 @@
 "use client";
 
-import { useAuth } from "../../../hooks/useAuth";
-import { useRouter } from "next/navigation";
+import { useAuth } from "../../../../hooks/useAuth";
+import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { servicioMarca, Marca } from "../../../api/brands";
-import { servicioModelo, Modelo } from "../../../api/models";
-import { servicioCreacionVehiculo, SolicitudVehiculo } from "../../../api/vehicles";
-import { servicioVehiculoFoto } from "../../../api/vehiclePhotos";
+import { servicioMarca, Marca } from "../../../../api/brands";
+import { servicioModelo, Modelo } from "../../../../api/models";
+import { servicioVehiculo, VehiculoDetalle } from "../../../../api/vehicles";
+import { servicioVehiculoFoto } from "../../../../api/vehiclePhotos";
+import type { VehiculoFoto } from "../../../../api/vehiclePhotos";
 
-export default function CreacionVehiculoPage() {
+export default function EditarVehiculoPage() {
   const { usuario, estaAutenticado, estaCargando } = useAuth();
   const router = useRouter();
+  const params = useParams();
+  const vehiculoId = params?.id ? Number(params.id) : null;
+  
+  const [cargando, establecerCargando] = useState(true);
   const [guardando, establecerGuardando] = useState(false);
   const [error, establecerError] = useState("");
   const [exito, establecerExito] = useState(false);
+  const [vehiculo, establecerVehiculo] = useState<VehiculoDetalle | null>(null);
 
   // Estados para marcas y modelos
   const [marcas, establecerMarcas] = useState<Marca[]>([]);
@@ -29,6 +35,7 @@ export default function CreacionVehiculoPage() {
   // Estados para imágenes
   const [imagenes, establecerImagenes] = useState<(File | null)[]>([null, null, null]);
   const [vistasPrevia, establecerVistasPrevia] = useState<(string | null)[]>([null, null, null]);
+  const [imagenesExistentes, establecerImagenesExistentes] = useState<string[]>([]);
 
   // Datos del formulario
   const [datosFormulario, establecerDatosFormulario] = useState({
@@ -52,14 +59,88 @@ export default function CreacionVehiculoPage() {
     }
   }, [estaAutenticado, estaCargando, router]);
 
+  // Cargar vehículo
   useEffect(() => {
-    if (usuario?.id) {
-      establecerDatosFormulario(prev => ({
-        ...prev,
-        usuario: Number(usuario.id),
-      }));
+    const cargarVehiculo = async () => {
+      if (!vehiculoId || !usuario?.id) return;
+
+      establecerCargando(true);
+      establecerError("");
+
+      try {
+        const vehiculoData = await servicioVehiculo.getById(vehiculoId);
+
+        // Verificar que el usuario es el propietario
+        if (Number(usuario.id) !== vehiculoData.usuario) {
+          establecerError("No tienes permiso para editar este vehículo");
+          setTimeout(() => router.push("/perfil"), 2000);
+          return;
+        }
+
+        // Verificar que el vehículo está rechazado o en revisión
+        const estadoLower = vehiculoData.estado.toLowerCase();
+        if (!estadoLower.includes('rechazado') && !estadoLower.includes('revision') && !estadoLower.includes('en_revision') && !estadoLower.includes('pendiente') && !estadoLower.includes('pending')) {
+          establecerError("Este vehículo no está en estado de revisión o rechazado para ser editado.");
+          setTimeout(() => router.push("/perfil"), 2000);
+          return;
+        }
+
+        establecerVehiculo(vehiculoData);
+        establecerMarcaSeleccionada(vehiculoData.marca);
+        establecerNombreMarcaSeleccionada(vehiculoData.marca_nombre);
+        establecerNombreModeloSeleccionado(vehiculoData.modelo_nombre);
+
+        // Cargar imágenes existentes
+        if (vehiculoData.fotos && vehiculoData.fotos.length > 0) {
+          const urls: string[] = [];
+          vehiculoData.fotos.forEach((foto) => {
+            if (typeof foto === 'string') {
+              urls.push(foto);
+            } else if (foto && typeof foto === 'object') {
+              const fotoObj = foto as VehiculoFoto;
+              if (fotoObj.url_imagen_url) {
+                urls.push(fotoObj.url_imagen_url);
+              } else if (fotoObj.url_imagen) {
+                urls.push(fotoObj.url_imagen.startsWith('http') ? fotoObj.url_imagen : `${process.env.NEXT_PUBLIC_API_URL || ''}${fotoObj.url_imagen}`);
+              }
+            }
+          });
+          establecerImagenesExistentes(urls);
+          // Llenar vistas previa con las primeras 3 imágenes existentes
+          const nuevasVistasPrevia = [...vistasPrevia];
+          urls.slice(0, 3).forEach((url, index) => {
+            nuevasVistasPrevia[index] = url;
+          });
+          establecerVistasPrevia(nuevasVistasPrevia);
+        }
+
+        // Llenar formulario con datos del vehículo
+        establecerDatosFormulario({
+          usuario: vehiculoData.usuario,
+          marca: vehiculoData.marca,
+          modelo: vehiculoData.modelo,
+          año: String(vehiculoData.año),
+          precio: String(vehiculoData.precio),
+          tipo_transmision: vehiculoData.tipo_transmision,
+          tipo_combustible: vehiculoData.tipo_combustible,
+          kilometraje: vehiculoData.kilometraje ? String(vehiculoData.kilometraje) : "",
+          descripcion: vehiculoData.descripcion || "",
+          estado: "en_revision", // Siempre volver a en_revision al editar
+          tipo_vehiculo: vehiculoData.tipo_vehiculo,
+          ubicacion: vehiculoData.ubicacion,
+        });
+      } catch (err) {
+        console.error("Error al cargar vehículo:", err);
+        establecerError(err instanceof Error ? err.message : "Error al cargar el vehículo");
+      } finally {
+        establecerCargando(false);
+      }
+    };
+
+    if (vehiculoId && usuario?.id && !estaCargando) {
+      cargarVehiculo();
     }
-  }, [usuario]);
+  }, [vehiculoId, usuario, estaCargando, router]);
 
   // Cargar marcas al montar
   useEffect(() => {
@@ -79,7 +160,6 @@ export default function CreacionVehiculoPage() {
     const cargarModelos = async () => {
       if (marcaSeleccionada) {
         try {
-          // Limpiar modelos antes de cargar nuevos
           establecerModelos([]);
           const modelosData = await servicioModelo.getByBrand(marcaSeleccionada);
           establecerModelos(modelosData);
@@ -156,12 +236,8 @@ export default function CreacionVehiculoPage() {
 
   const manejarEnvio = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Prevenir múltiples envíos
-    if (guardando) {
-      return;
-    }
-    
+    if (!vehiculoId) return;
+
     establecerGuardando(true);
     establecerError("");
     establecerExito(false);
@@ -178,9 +254,8 @@ export default function CreacionVehiculoPage() {
         throw new Error("Todos los campos de selección son requeridos");
       }
 
-      // Crear vehículo
-      const datosVehiculo: SolicitudVehiculo = {
-        usuario: datosFormulario.usuario,
+      // Actualizar vehículo
+      await servicioVehiculo.update(vehiculoId, {
         marca: datosFormulario.marca,
         modelo: datosFormulario.modelo,
         año: Number(datosFormulario.año),
@@ -189,54 +264,45 @@ export default function CreacionVehiculoPage() {
         tipo_combustible: datosFormulario.tipo_combustible,
         kilometraje: datosFormulario.kilometraje ? Number(datosFormulario.kilometraje) : undefined,
         descripcion: datosFormulario.descripcion || undefined,
-        estado: datosFormulario.estado,
+        estado: "en_revision", // Volver a en_revision
         tipo_vehiculo: datosFormulario.tipo_vehiculo,
         ubicacion: datosFormulario.ubicacion,
-      };
+      });
 
-      const vehiculoCreado = await servicioCreacionVehiculo.create(datosVehiculo);
-
-      // Subir imágenes si hay
+      // Subir nuevas imágenes si hay
       const imagenesFiltradas = imagenes.filter(img => img !== null && img !== undefined) as File[];
       if (imagenesFiltradas.length > 0) {
         try {
           await Promise.all(
             imagenesFiltradas.map((imagen) =>
-              servicioVehiculoFoto.upload(vehiculoCreado.id, imagen)
+              servicioVehiculoFoto.upload(vehiculoId, imagen)
             )
           );
         } catch (uploadError) {
           console.error('Error al subir imágenes:', uploadError);
-          establecerError("Vehículo creado pero hubo un error al subir las imágenes. Puedes editarlas más tarde.");
+          establecerError("Vehículo actualizado pero hubo un error al subir las imágenes. Puedes editarlas más tarde.");
         }
       }
 
       establecerExito(true);
-      
-      // Mantener el botón deshabilitado durante la redirección para evitar clics accidentales
       // Redirigir después de 2 segundos
       setTimeout(() => {
-        router.push(`/catalogo/${vehiculoCreado.id}`);
+        router.push("/perfil");
       }, 2000);
     } catch (error) {
-      console.error("Error al crear vehículo:", error);
-      establecerError(error instanceof Error ? error.message : "Error al crear el vehículo");
-      // Solo habilitar el botón si hay un error, después de un pequeño delay
-      setTimeout(() => {
-        establecerGuardando(false);
-      }, 500);
+      console.error("Error al actualizar vehículo:", error);
+      establecerError(error instanceof Error ? error.message : "Error al actualizar el vehículo");
+    } finally {
+      establecerGuardando(false);
     }
-    // No resetear guardando en finally si fue exitoso, para mantener deshabilitado durante redirección
   };
 
   // Filtrar marcas y modelos según búsqueda
-  // Filtrar marcas por búsqueda, pero si no hay búsqueda mostrar todas las marcas
   const marcasFiltradas = buscandoMarca
     ? marcas.filter(marca =>
         marca.nombre.toLowerCase().includes(buscandoMarca.toLowerCase())
       )
     : marcas;
-  // Filtrar modelos por marca seleccionada y por búsqueda
   const modelosFiltrados = modelos
     .filter(modelo => marcaSeleccionada ? modelo.marca === marcaSeleccionada : false)
     .filter(modelo =>
@@ -245,7 +311,7 @@ export default function CreacionVehiculoPage() {
         : true
     );
 
-  if (estaCargando) {
+  if (estaCargando || cargando) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-red-700 border-t-transparent rounded-full animate-spin"></div>
@@ -253,7 +319,7 @@ export default function CreacionVehiculoPage() {
     );
   }
 
-  if (!estaAutenticado || !usuario) {
+  if (!estaAutenticado || !usuario || !vehiculo) {
     return null;
   }
 
@@ -263,12 +329,29 @@ export default function CreacionVehiculoPage() {
         <div className="bg-white py-8 px-6 shadow-lg border-2 border-red-700 rounded-lg sm:px-10">
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-gray-900 text-center">
-              Crear Vehículo
+              Editar Vehículo
             </h2>
             <p className="mt-2 text-sm text-gray-600 text-center">
-              Completa la información de tu vehículo para publicarlo
+              Corrige la información de tu vehículo según las observaciones del administrador
             </p>
           </div>
+
+          {/* Nota del administrador */}
+          {vehiculo.nota_de_administrador && (
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-blue-800">Nota del Administrador:</h3>
+                  <p className="mt-2 text-sm text-blue-700">{vehiculo.nota_de_administrador}</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={manejarEnvio} className="space-y-6">
             {error && (
@@ -279,7 +362,7 @@ export default function CreacionVehiculoPage() {
 
             {exito && (
               <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg text-sm">
-                ¡Vehículo creado exitosamente! Redirigiendo...
+                ¡Vehículo actualizado exitosamente! Redirigiendo...
               </div>
             )}
 
@@ -330,7 +413,6 @@ export default function CreacionVehiculoPage() {
                             establecerNombreMarcaSeleccionada(marca.nombre);
                             establecerBuscandoMarca("");
                             establecerMostrarDropdownMarca(false);
-                            // Limpiar modelo seleccionado y modelos cuando se cambia la marca
                             establecerNombreModeloSeleccionado("");
                             establecerBuscandoModelo("");
                             establecerModelos([]);
@@ -502,7 +584,7 @@ export default function CreacionVehiculoPage() {
                   <option value="en_revision">En Revisión</option>
                 </select>
                 <p className="mt-1 text-xs text-gray-500">
-                  Los vehículos nuevos se envían automáticamente a revisión
+                  El vehículo volverá a revisión después de guardar
                 </p>
               </div>
 
@@ -595,7 +677,7 @@ export default function CreacionVehiculoPage() {
                         />
                       </label>
                       <span className="text-gray-600 text-sm flex-1">
-                        {imagenes[index] ? imagenes[index]!.name : "Sin archivos seleccionados"}
+                        {imagenes[index] ? imagenes[index]!.name : vistasPrevia[index] ? "Imagen existente" : "Sin archivos seleccionados"}
                       </span>
                       {vistasPrevia[index] && (
                         <button
@@ -624,7 +706,7 @@ export default function CreacionVehiculoPage() {
                 ))}
               </div>
               <p className="mt-2 text-sm text-gray-500">
-                Formatos aceptados: JPG, PNG, GIF. Tamaño máximo: 5MB por imagen
+                Formatos aceptados: JPG, PNG, GIF. Tamaño máximo: 5MB por imagen. Las imágenes nuevas reemplazarán las existentes.
               </p>
             </div>
 
@@ -632,27 +714,17 @@ export default function CreacionVehiculoPage() {
             <div className="flex gap-4 pt-4">
               <button
                 type="button"
-                onClick={() => router.back()}
-                disabled={guardando}
-                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => router.push("/perfil")}
+                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                disabled={guardando || exito}
+                disabled={guardando}
                 className="flex-1 flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {guardando ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Guardando...
-                  </>
-                ) : exito ? (
-                  "¡Vehículo Creado!"
-                ) : (
-                  "Crear Vehículo"
-                )}
+                {guardando ? "Guardando..." : "Guardar Cambios"}
               </button>
             </div>
           </form>
@@ -661,4 +733,9 @@ export default function CreacionVehiculoPage() {
     </div>
   );
 }
+
+
+
+
+
 

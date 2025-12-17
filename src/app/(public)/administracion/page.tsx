@@ -20,6 +20,8 @@ export default function AdministracionPage() {
   const [cargando, establecerCargando] = useState(true);
   const [error, establecerError] = useState<string>("");
   const [procesando, establecerProcesando] = useState<number | null>(null);
+  const [notaAdministrador, establecerNotaAdministrador] = useState<Record<number, string>>({});
+  const { usuario } = useAuth();
   const { mostrar: mostrarToast, cerrar: cerrarToast, toasts } = usarToast();
 
   // Cargar vehículos en revisión desde la API
@@ -62,15 +64,25 @@ export default function AdministracionPage() {
       return;
     }
 
+    if (!usuario?.id) {
+      mostrarToast("Error: No se pudo identificar al administrador.", "error");
+      return;
+    }
+
     establecerProcesando(id);
     establecerError("");
 
     try {
       // Cambiar el estado a "disponible" para que aparezca en el catálogo
-      await servicioVehiculo.updateEstado(id, "disponible");
+      await servicioVehiculo.updateConNotaAdmin(id, "disponible", Number(usuario.id), notaAdministrador[id] || "");
       
       // Remover el vehículo de la lista de en revisión
       establecerVehiculosEnRevision(prev => prev.filter(v => v.id !== id));
+      establecerNotaAdministrador(prev => {
+        const newState = { ...prev };
+        delete newState[id];
+        return newState;
+      });
       
       mostrarToast("Vehículo aceptado y publicado en el catálogo", "success");
     } catch (err) {
@@ -87,15 +99,25 @@ export default function AdministracionPage() {
       return;
     }
 
+    if (!usuario?.id) {
+      mostrarToast("Error: No se pudo identificar al administrador.", "error");
+      return;
+    }
+
     establecerProcesando(id);
     establecerError("");
 
     try {
-      // Cambiar el estado a "rechazado"
-      await servicioVehiculo.updateEstado(id, "rechazado");
+      // Cambiar el estado a "rechazado" con nota del administrador
+      await servicioVehiculo.updateConNotaAdmin(id, "rechazado", Number(usuario.id), notaAdministrador[id] || "");
       
       // Remover el vehículo de la lista de en revisión
       establecerVehiculosEnRevision(prev => prev.filter(v => v.id !== id));
+      establecerNotaAdministrador(prev => {
+        const newState = { ...prev };
+        delete newState[id];
+        return newState;
+      });
       
       mostrarToast("Vehículo rechazado exitosamente", "success");
     } catch (err) {
@@ -316,6 +338,24 @@ export default function AdministracionPage() {
                             <p className="text-sm font-medium text-gray-900">{formatearFecha(vehiculo.fecha_solicitud)}</p>
                           </div>
                         </div>
+                      </div>
+
+                      {/* Campo de nota del administrador */}
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <label htmlFor={`nota_admin_${vehiculo.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+                          Nota para el vendedor (opcional)
+                        </label>
+                        <textarea
+                          id={`nota_admin_${vehiculo.id}`}
+                          rows={3}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                          placeholder="Añadir nota para el vendedor (opcional)"
+                          value={notaAdministrador[vehiculo.id] || ""}
+                          onChange={(e) => establecerNotaAdministrador(prev => ({ ...prev, [vehiculo.id]: e.target.value }))}
+                        />
+                        <p className="mt-1 text-xs text-gray-500">
+                          Esta nota será visible para el vendedor cuando revise su vehículo
+                        </p>
                       </div>
 
                       {/* Botones de acción */}

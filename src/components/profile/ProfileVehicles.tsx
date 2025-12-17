@@ -13,22 +13,23 @@ interface ProfileVehiclesProps {
 
 export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesProps) {
   const router = useRouter();
-  const [filter, setFilter] = useState<'all' | 'disponible' | 'vendido' | 'revision'>('all');
+  const [filter, setFilter] = useState<'all' | 'disponible' | 'vendido' | 'revision' | 'rechazado'>('all');
 
   // Mapear estados del backend a estados del filtro
-  const mapEstadoToFilter = (estado: string): 'disponible' | 'vendido' | 'revision' => {
+  const mapEstadoToFilter = (estado: string): 'disponible' | 'vendido' | 'revision' | 'rechazado' => {
     const estadoLower = estado.toLowerCase();
     if (estadoLower.includes('vendido') || estadoLower.includes('sold')) return 'vendido';
+    if (estadoLower.includes('rechazado') || estadoLower.includes('rejected')) return 'rechazado';
     if (estadoLower.includes('revision') || estadoLower.includes('en_revision') || estadoLower.includes('pendiente') || estadoLower.includes('pending')) return 'revision';
     return 'disponible';
   };
 
   const filteredVehicles = vehicles.filter(vehicle => {
     if (filter === 'all') {
-      // Si no es el propietario, excluir vehículos en revisión de "Todos"
+      // Si no es el propietario, excluir vehículos en revisión y rechazados de "Todos"
       if (!isOwner) {
         const vehicleFilter = mapEstadoToFilter(vehicle.estado);
-        return vehicleFilter !== 'revision';
+        return vehicleFilter !== 'revision' && vehicleFilter !== 'rechazado';
       }
       return true;
     }
@@ -41,6 +42,9 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
     if (estadoLower.includes('vendido') || estadoLower.includes('sold')) {
       return { text: 'Vendido', color: 'bg-gray-100 text-gray-600' };
     }
+    if (estadoLower.includes('rechazado') || estadoLower.includes('rejected')) {
+      return { text: 'Rechazado', color: 'bg-red-100 text-red-700' };
+    }
     if (estadoLower.includes('revision') || estadoLower.includes('en_revision') || estadoLower.includes('pendiente') || estadoLower.includes('pending')) {
       return { text: 'Revisión', color: 'bg-yellow-100 text-yellow-700' };
     }
@@ -49,6 +53,10 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
 
   const handleVerDetalles = (id: number) => {
     router.push(`/catalogo/${id}`);
+  };
+
+  const handleEditarVehiculo = (id: number) => {
+    router.push(`/editar-vehiculo/${id}`);
   };
 
   // Convertir VehiculoDetalle a formato Vehiculo para Carta_v
@@ -94,7 +102,7 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
             {isOwner ? 'Mis Vehículos' : 'Vehículos de este vendedor'}
           </h2>
           <p className="text-gray-600 text-sm">
-            {filteredVehicles.length} vehículo{filteredVehicles.length !== 1 ? 's' : ''} {filter !== 'all' ? `(${filter === 'disponible' ? 'Activos' : filter === 'vendido' ? 'Vendidos' : filter === 'revision' ? 'Revisión' : filter})` : ''}
+            {filteredVehicles.length} vehículo{filteredVehicles.length !== 1 ? 's' : ''} {filter !== 'all' ? `(${filter === 'disponible' ? 'Activos' : filter === 'vendido' ? 'Vendidos' : filter === 'revision' ? 'Revisión' : filter === 'rechazado' ? 'Rechazados' : filter})` : ''}
           </p>
         </div>
 
@@ -131,16 +139,28 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
             Vendidos
           </button>
           {isOwner && (
-            <button
-              onClick={() => setFilter('revision')}
-              className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
-                filter === 'revision' 
-                  ? 'bg-red-700 text-white' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              Revisión
-            </button>
+            <>
+              <button
+                onClick={() => setFilter('revision')}
+                className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
+                  filter === 'revision' 
+                    ? 'bg-red-700 text-white' 
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                Revisión
+              </button>
+              <button
+                onClick={() => setFilter('rechazado')}
+                className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
+                  filter === 'rechazado' 
+                    ? 'bg-red-700 text-white' 
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                Rechazados
+              </button>
+            </>
           )}
         </div>
 
@@ -180,18 +200,23 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
           {filteredVehicles.map((vehicle) => {
             const vehiculo = convertirAVehiculo(vehicle);
             const badge = getStatusBadge(vehicle.estado);
+            const estadoFiltro = mapEstadoToFilter(vehicle.estado);
+            // Solo mostrar botón de editar para vehículos rechazados
+            const puedeEditar = isOwner && estadoFiltro === 'rechazado';
+            
             return (
               <div key={vehicle.id} className="relative">
                 {/* Badge de estado */}
-                <div className="absolute top-3 right-3 z-10">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${badge.color}`}>
+                <div className="absolute top-3 right-3 z-20">
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${badge.color} shadow-md`}>
                     {badge.text}
                   </span>
                 </div>
-                {/* Usar Carta_v con datos convertidos */}
+                {/* Carta con botón de editar integrado */}
                 <Carta_v
                   vehicle={vehiculo}
                   onVerDetalles={handleVerDetalles}
+                  onEditar={puedeEditar ? () => handleEditarVehiculo(vehicle.id) : undefined}
                 />
               </div>
             );

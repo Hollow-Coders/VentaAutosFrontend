@@ -34,6 +34,8 @@ export interface VehiculoDetalle {
   fecha_publicacion: string;
   fotos: Array<string | VehiculoFoto>;
   total_documentos: number;
+  administrador_que_evaluo?: number;
+  nota_de_administrador?: string;
 }
 
 // Parámetros de filtro según CatalogoViewSet
@@ -100,6 +102,20 @@ export const servicioVehiculo = {
   // Actualizar el estado de un vehículo
   async updateEstado(id: number, estado: string): Promise<VehiculoDetalle> {
     return await apiClient.patch<VehiculoDetalle>(`/vehiculos/${id}/`, { estado });
+  },
+
+  // Actualizar el estado de un vehículo con nota del administrador
+  async updateConNotaAdmin(id: number, estado: string, administradorId: number, nota: string): Promise<VehiculoDetalle> {
+    return await apiClient.patch<VehiculoDetalle>(`/vehiculos/${id}/`, {
+      estado,
+      administrador_que_evaluo: administradorId,
+      nota_de_administrador: nota,
+    });
+  },
+
+  // Actualizar un vehículo con datos parciales
+  async update(id: number, data: Partial<VehiculoDetalle>): Promise<VehiculoDetalle> {
+    return await apiClient.patch<VehiculoDetalle>(`/vehiculos/${id}/`, data);
   },
 };
 
