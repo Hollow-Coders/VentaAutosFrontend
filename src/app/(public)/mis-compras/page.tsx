@@ -37,13 +37,17 @@ export default function MisComprasPage() {
       try {
         // Obtener todas las compras del usuario
         const ventas = await servicioVenta.getMyPurchases();
+        console.log("Ventas obtenidas:", ventas);
+        console.log("Usuario ID:", usuario.id);
 
         // Filtrar solo las compras del usuario actual (seguridad adicional)
         const usuarioId = Number(usuario.id);
         const comprasDelUsuario = ventas.filter(venta => {
           const compradorId = Number(venta.comprador);
+          console.log(`Comparando: compradorId=${compradorId}, usuarioId=${usuarioId}`);
           return compradorId === usuarioId;
         });
+        console.log("Compras del usuario filtradas:", comprasDelUsuario);
 
         // Cargar detalles de cada vehículo, vendedor y verificar valoraciones
         const comprasConDetalles = await Promise.all(

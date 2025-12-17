@@ -1,20 +1,34 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { servicioVehiculo, VehiculoDetalle } from "@/api/vehicles";
 import BidButton from "@/components/vehicle/BidButton";
 import BuyButton from "@/components/vehicle/BuyButton";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function VehicleDetailPage() {
   const params = useParams();
+  const router = useRouter();
+  const { usuario, estaAutenticado } = useAuth();
   const idParam = Array.isArray(params?.id) ? params?.id[0] : params?.id;
   const vehiculoId = Number(idParam);
   const [vehiculo, setVehiculo] = useState<VehiculoDetalle | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [imagenActiva, setImagenActiva] = useState(0);
+  const [imagenActual, setImagenActual] = useState(0);
+
+  const fotos = useMemo(() => {
+    if (!vehiculo?.fotos) return [];
+    return vehiculo.fotos
+      .map((foto) => {
+        if (!foto) return null;
+        if (typeof foto === "string") return foto;
+        return foto.url_imagen_url ?? foto.url_imagen ?? null;
+      })
+      .filter((url): url is string => Boolean(url));
+  }, [vehiculo]);
 
   useEffect(() => {
     if (!vehiculoId || Number.isNaN(vehiculoId)) {
@@ -29,7 +43,7 @@ export default function VehicleDetailPage() {
       try {
         const data = await servicioVehiculo.getById(vehiculoId);
         setVehiculo(data);
-        setImagenActiva(0);
+        setImagenActual(0);
       } catch (err) {
         console.error("Error al cargar vehículo:", err);
         setError(err instanceof Error ? err.message : "No se pudo cargar la información del vehículo.");
@@ -41,36 +55,38 @@ export default function VehicleDetailPage() {
     cargarVehiculo();
   }, [vehiculoId]);
 
-  const fotos = useMemo(() => {
-    if (!vehiculo?.fotos) return [];
-    return vehiculo.fotos
-      .map((foto) => {
-        if (!foto) return null;
-        if (typeof foto === "string") return foto;
-        return foto.url_imagen_url ?? foto.url_imagen ?? null;
-      })
-      .filter((url): url is string => Boolean(url));
-  }, [vehiculo]);
+  useEffect(() => {
+    if (imagenActual >= fotos.length && fotos.length > 0) {
+      setImagenActual(0);
+    }
+  }, [imagenActual, fotos.length]);
 
-  const precioFormateado = useMemo(() => {
-    if (!vehiculo) return "";
+  const formatearPrecio = (precio: number): string => {
     return new Intl.NumberFormat("es-MX", {
       style: "currency",
       currency: "MXN",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(vehiculo.precio);
-  }, [vehiculo]);
+    }).format(precio);
+  };
 
-  const kilometrajeFormateado = useMemo(() => {
-    if (!vehiculo?.kilometraje) return "No especificado";
-    return new Intl.NumberFormat("es-MX").format(vehiculo.kilometraje) + " km";
-  }, [vehiculo]);
+  const formatearFecha = (fecha: string): string => {
+    return new Date(fecha).toLocaleDateString("es-MX", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const formatearKilometraje = (km?: number): string => {
+    if (!km) return "No especificado";
+    return new Intl.NumberFormat("es-MX").format(km) + " km";
+  };
 
   if (cargando) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Cargando información del vehículo...</div>
+        <div className="text-gray-600">Cargando vehículo...</div>
       </div>
     );
   }
@@ -78,12 +94,12 @@ export default function VehicleDetailPage() {
   if (error || !vehiculo) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <h1 className="text-3xl font-bold text-gray-900">Vehículo no disponible</h1>
-          <p className="text-gray-600">{error ?? "El vehículo que buscas no existe o ha sido eliminado."}</p>
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">Error</h1>
+          <p className="text-gray-600 mb-4">{error || "Vehículo no encontrado"}</p>
           <Link
             href="/catalogo"
-            className="inline-block bg-red-700 text-white px-6 py-3 rounded-full font-semibold hover:bg-red-800 transition-colors"
+            className="bg-red-700 text-white px-6 py-3 rounded-lg hover:bg-red-800 transition-colors"
           >
             Volver al catálogo
           </Link>
@@ -144,7 +160,7 @@ export default function VehicleDetailPage() {
                 {fotos.length > 0 ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={fotos[imagenActiva]}
+                    src={fotos[imagenActual]}
                     alt={nombreVehiculo}
                     className="w-full h-full object-cover"
                   />
@@ -162,9 +178,9 @@ export default function VehicleDetailPage() {
                       <button
                         key={foto}
                         type="button"
-                        onClick={() => setImagenActiva(index)}
+                        onClick={() => setImagenActual(index)}
                         className={`h-20 w-32 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
-                          imagenActiva === index ? "border-red-600" : "border-transparent"
+                          imagenActual === index ? "border-red-600" : "border-transparent"
                         }`}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -183,30 +199,57 @@ export default function VehicleDetailPage() {
                   <p className="text-gray-600 capitalize">{vehiculo.tipo_vehiculo} • {vehiculo.tipo_transmision}</p>
                 </div>
                 <div className="text-left md:text-right">
-                  <p className="text-3xl font-bold text-red-600">{precioFormateado}</p>
+                  <p className="text-3xl font-bold text-red-600">{formatearPrecio(vehiculo.precio)}</p>
                   <p className="text-sm text-gray-600">{vehiculo.ubicacion}</p>
                 </div>
               </div>
 
+              {/* Especificaciones principales */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                 <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Marca</div>
+                  <div className="text-lg font-semibold text-gray-900">{vehiculo.marca_nombre}</div>
+                </div>
+                <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Modelo</div>
+                  <div className="text-lg font-semibold text-gray-900">{vehiculo.modelo_nombre}</div>
+                </div>
+                <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Año</div>
+                  <div className="text-lg font-semibold text-gray-900">{vehiculo.año}</div>
+                </div>
+                <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Tipo de Vehículo</div>
+                  <div className="text-lg font-semibold text-gray-900 capitalize">{vehiculo.tipo_vehiculo}</div>
+                </div>
+                <div className="border border-gray-200 rounded-lg p-4">
                   <div className="text-sm text-gray-600 mb-1">Kilometraje</div>
-                  <div className="text-lg font-semibold text-gray-900">{kilometrajeFormateado}</div>
+                  <div className="text-lg font-semibold text-gray-900">{formatearKilometraje(vehiculo.kilometraje)}</div>
+                </div>
+                <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Transmisión</div>
+                  <div className="text-lg font-semibold text-gray-900 capitalize">{vehiculo.tipo_transmision}</div>
                 </div>
                 <div className="border border-gray-200 rounded-lg p-4">
                   <div className="text-sm text-gray-600 mb-1">Combustible</div>
                   <div className="text-lg font-semibold text-gray-900 capitalize">{vehiculo.tipo_combustible}</div>
                 </div>
                 <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-1">Estado</div>
-                  <div className="text-lg font-semibold text-gray-900 capitalize">{vehiculo.estado.replace("_", " ")}</div>
+                  <div className="text-sm text-gray-600 mb-1">Ubicación</div>
+                  <div className="text-lg font-semibold text-gray-900">{vehiculo.ubicacion}</div>
                 </div>
                 <div className="border border-gray-200 rounded-lg p-4">
                   <div className="text-sm text-gray-600 mb-1">Publicado</div>
                   <div className="text-lg font-semibold text-gray-900">
-                    {new Date(vehiculo.fecha_publicacion).toLocaleDateString("es-MX")}
+                    {formatearFecha(vehiculo.fecha_publicacion)}
                   </div>
                 </div>
+                {vehiculo.total_documentos > 0 && (
+                  <div className="border border-gray-200 rounded-lg p-4 bg-blue-50">
+                    <div className="text-sm text-gray-600 mb-1">Documentos</div>
+                    <div className="text-lg font-semibold text-blue-700">{vehiculo.total_documentos} disponible(s)</div>
+                  </div>
+                )}
               </div>
 
               <div className="border-t border-gray-200 pt-6">
@@ -223,8 +266,22 @@ export default function VehicleDetailPage() {
               <h2 className="text-xl font-bold text-gray-900 mb-4">Opciones de Compra</h2>
 
               <div className="space-y-4">
-                <BidButton vehicle={vehiculo} />
-                <BuyButton vehicle={vehiculo} />
+                {/* Solo mostrar botón de puja si el vehículo no está vendido */}
+                {vehiculo.estado && !vehiculo.estado.toLowerCase().includes('vendido') && !vehiculo.estado.toLowerCase().includes('sold') && (
+                  <BidButton vehicle={vehiculo} />
+                )}
+                <BuyButton 
+                  vehicle={vehiculo} 
+                  onCompraExitosa={async () => {
+                    // Recargar los datos del vehículo después de la compra
+                    try {
+                      const data = await servicioVehiculo.getById(vehiculoId);
+                      setVehiculo(data);
+                    } catch (err) {
+                      console.error("Error recargando vehículo:", err);
+                    }
+                  }}
+                />
               </div>
 
               <div className="mt-6 pt-6 border-t border-gray-200 space-y-3">
@@ -268,7 +325,33 @@ export default function VehicleDetailPage() {
                     <p className="text-sm text-gray-600">Id usuario: {vehiculo.usuario}</p>
                   </div>
                 </div>
+                <Link
+                  href={`/perfil/${vehiculo.usuario}`}
+                  className="mt-4 inline-block text-sm text-red-700 hover:text-red-800 font-medium"
+                >
+                  Ver perfil del vendedor →
+                </Link>
               </div>
+
+              {/* Botón de chat */}
+              {estaAutenticado && usuario && vehiculo && Number(usuario.id) !== vehiculo.usuario && (
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <button
+                    onClick={() => {
+                      const compradorId = Number(usuario.id);
+                      const vendedorId = vehiculo.usuario;
+                      const vehiculoId = vehiculo.id;
+                      router.push(`/chat?comprador=${compradorId}&vendedor=${vendedorId}&vehiculo=${vehiculoId}`);
+                    }}
+                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-sm"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    Chatear con el vendedor
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
