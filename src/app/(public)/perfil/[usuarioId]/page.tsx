@@ -6,9 +6,9 @@ import { useParams, useRouter } from "next/navigation";
 import { Perfil, servicioPerfil } from "../../../../api";
 import { VehiculoDetalle, servicioVehiculo } from "../../../../api/vehicles";
 import { servicioValoracion, Valoracion, PromedioVendedor } from "../../../../api/ratings";
-import EncabezadoPerfil from "../../../../components/profile/ProfileHeader";
-import ProfileVehicles from "../../../../components/profile/ProfileVehicles";
-import ProfileReviews from "../../../../components/profile/ProfileReviews";
+import EncabezadoPerfil from "../../../../components/perfil/EncabezadoPerfil";
+import VehiculosPerfil from "../../../../components/perfil/VehiculosPerfil";
+import ResenasPerfil from "../../../../components/perfil/ResenasPerfil";
 
 export default function PerfilPublicoPage() {
   const router = useRouter();
@@ -307,10 +307,10 @@ export default function PerfilPublicoPage() {
                 <div className="w-6 h-6 border-2 border-red-700 border-t-transparent rounded-full animate-spin"></div>
               </div>
             ) : (
-              <ProfileVehicles vehicles={vehiculos} isOwner={false} />
+              <VehiculosPerfil vehicles={vehiculos} isOwner={false} />
             )}
 
-            <ProfileReviews 
+            <ResenasPerfil 
               valoraciones={valoraciones} 
               promedio={promedio}
               cargando={cargandoValoraciones}

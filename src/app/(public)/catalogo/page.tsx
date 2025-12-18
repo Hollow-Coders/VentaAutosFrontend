@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Carta_v from '../../../components/vehicle/Carta_v'
+import TarjetaVehiculo from '../../../components/vehiculo/TarjetaVehiculo'
 import { servicioVehiculo, Vehiculo, FiltrosCatalogo } from '@/api/vehicles'
 import { servicioMarca, Marca } from '@/api/brands'
 import { servicioModelo, Modelo } from '@/api/models'
@@ -323,7 +323,7 @@ function Catalogo() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {vehiculos.map((vehiculo) => (
-                <Carta_v
+                <TarjetaVehiculo
                   key={vehiculo.id}
                   vehicle={vehiculo}
                   onVerDetalles={handleVerDetalles}

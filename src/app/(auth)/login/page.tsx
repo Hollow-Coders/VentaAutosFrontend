@@ -1,10 +1,10 @@
-import AuthLayout from "../../../components/auth/AuthLayout";
-import LoginForm from "../../../components/auth/LoginForm";
+import DisenoAutenticacion from "../../../components/autenticacion/DisenoAutenticacion";
+import FormularioLogin from "../../../components/autenticacion/FormularioLogin";
 
 export default function LoginPage() {
   return (
-    <AuthLayout>
-      <LoginForm />
-    </AuthLayout>
+    <DisenoAutenticacion>
+      <FormularioLogin />
+    </DisenoAutenticacion>
   );
 }

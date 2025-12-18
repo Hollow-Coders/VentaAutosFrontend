@@ -9,12 +9,14 @@ interface Usuario {
   nombre_completo?: string;
   correo: string;
   avatar?: string;
+  rol?: number; // ID del rol (1 = Administrador, 2 = Vendedor, 3 = Comprador)
 }
 
 interface TipoContextoAutenticacion {
   usuario: Usuario | null;
   estaAutenticado: boolean;
   estaCargando: boolean;
+  esAdministrador: boolean; // Helper para verificar si es administrador
   iniciarSesion: (correo: string, contrasena: string) => Promise<void>;
   registrar: (nombre: string, apellido: string, nombreCompleto: string, correo: string, contrasena: string) => Promise<void>;
   cerrarSesion: () => void;
@@ -65,6 +67,7 @@ export function ProveedorAutenticacion({ children }: Readonly<{ children: React.
         apellido: response.apellido,
         nombre_completo: response.nombre_completo,
         correo: response.correo,
+        rol: response.rol,
       };
       establecerUsuario(usuario);
       authService.setCurrentUser(usuario);
@@ -94,6 +97,7 @@ export function ProveedorAutenticacion({ children }: Readonly<{ children: React.
         apellido: response.apellido,
         nombre_completo: response.nombre_completo,
         correo: response.correo,
+        rol: response.rol,
       };
       establecerUsuario(usuario);
       authService.setCurrentUser(usuario);
@@ -116,10 +120,14 @@ export function ProveedorAutenticacion({ children }: Readonly<{ children: React.
     }
   };
 
+  // Verificar si el usuario es administrador (rol ID = 1)
+  const esAdministrador = usuario?.rol === 1;
+
   const valor = {
     usuario,
     estaAutenticado: !!usuario,
     estaCargando,
+    esAdministrador,
     iniciarSesion,
     registrar,
     cerrarSesion,
