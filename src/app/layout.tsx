@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
+import BarraNavegacion from "../components/diseno/BarraNavegacion";
+import PiePagina from "../components/diseno/PiePagina";
 import { ProveedorAutenticacion } from "../context/AuthContext";
 
 export const metadata: Metadata = {
@@ -14,9 +14,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="es">
       <body>
         <ProveedorAutenticacion>
-          <Navbar />
+          <BarraNavegacion />
           <main>{children}</main>
-          <Footer/>
+          <PiePagina/>
         </ProveedorAutenticacion>
       </body>
     </html>

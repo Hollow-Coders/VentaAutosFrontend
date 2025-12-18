@@ -1,10 +1,10 @@
-import AuthLayout from "../../../components/auth/AuthLayout";
-import RegisterForm from "../../../components/auth/RegisterForm";
+import DisenoAutenticacion from "../../../components/autenticacion/DisenoAutenticacion";
+import FormularioRegistro from "../../../components/autenticacion/FormularioRegistro";
 
 export default function RegisterPage() {
   return (
-    <AuthLayout>
-      <RegisterForm />
-    </AuthLayout>
+    <DisenoAutenticacion>
+      <FormularioRegistro />
+    </DisenoAutenticacion>
   );
 }

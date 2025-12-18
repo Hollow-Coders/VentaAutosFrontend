@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { servicioVehiculo, VehiculoDetalle } from "@/api/vehicles";
-import BidButton from "@/components/vehicle/BidButton";
-import BuyButton from "@/components/vehicle/BuyButton";
+import BotonPuja from "@/components/vehiculo/BotonPuja";
+import BotonComprar from "@/components/vehiculo/BotonComprar";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function VehicleDetailPage() {
@@ -268,9 +268,9 @@ export default function VehicleDetailPage() {
               <div className="space-y-4">
                 {/* Solo mostrar botón de puja si el vehículo no está vendido */}
                 {vehiculo.estado && !vehiculo.estado.toLowerCase().includes('vendido') && !vehiculo.estado.toLowerCase().includes('sold') && (
-                  <BidButton vehicle={vehiculo} />
+                  <BotonPuja vehicle={vehiculo} />
                 )}
-                <BuyButton 
+                <BotonComprar 
                   vehicle={vehiculo} 
                   onCompraExitosa={async () => {
                     // Recargar los datos del vehículo después de la compra

@@ -8,6 +8,7 @@ export interface Usuario {
   nombre_completo?: string;
   correo: string;
   avatar?: string;
+  rol?: number; // ID del rol (1 = Administrador, 2 = Vendedor, 3 = Comprador)
 }
 
 export interface SolicitudInicioSesion {
@@ -23,6 +24,7 @@ export interface RespuestaInicioSesion {
   nombre_completo: string;
   correo: string;
   access: string; // Token de acceso
+  rol?: number; // ID del rol (1 = Administrador, 2 = Vendedor, 3 = Comprador)
 }
 
 export interface SolicitudRegistro {
@@ -42,6 +44,7 @@ export interface RespuestaRegistro {
   nombre_completo: string;
   correo: string;
   access: string; // Token de acceso
+  rol?: number; // ID del rol (1 = Administrador, 2 = Vendedor, 3 = Comprador)
 }
 
 // Servicios de autenticación
@@ -88,14 +91,31 @@ export const servicioAutenticacion = {
 
   // Verificar autenticación (obtener usuario actual desde /usuarios/ endpoint)
   async verifyToken(): Promise<Usuario> {
-    // Si hay token, intentar obtener el usuario actual
-    // Nota: Esto dependerá de cómo esté configurado el backend
-    // Por ahora retornamos null si no hay usuario en storage
-    const user = servicioAutenticacion.getCurrentUser();
-    if (!user) {
+    // Intentar obtener el usuario actual desde el backend
+    try {
+      // Si hay un endpoint para obtener el usuario actual, usarlo
+      // Por ahora, intentamos obtener desde el storage y luego desde el backend si es necesario
+      const user = servicioAutenticacion.getCurrentUser();
+      if (user) {
+        // Intentar obtener información actualizada del backend si hay token
+        const token = apiClient.getToken();
+        if (token) {
+          try {
+            // Intentar obtener información del usuario desde el backend
+            // Esto dependerá de cómo esté configurado tu backend
+            // Por ahora retornamos el usuario del storage
+            return user;
+          } catch {
+            // Si falla, retornar el usuario del storage
+            return user;
+          }
+        }
+        return user;
+      }
+      throw new Error('No hay usuario autenticado');
+    } catch (error) {
       throw new Error('No hay usuario autenticado');
     }
-    return user;
   },
 
   // Obtener usuario actual
