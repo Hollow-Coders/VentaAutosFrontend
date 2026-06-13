@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { servicioPerfil } from "../../api";
+import { useTheme } from "../../context/ThemeContext";
 
 interface Usuario {
   id: number | string;
@@ -18,30 +19,31 @@ interface PropsMenuUsuario {
   user: Usuario;
 }
 
-export default function UserMenu({ user }: PropsMenuUsuario) {
-  const [estaAbierto, establecerEstadoAbierto] = useState(false);
-  const [fotoPerfil, establecerFotoPerfil] = useState<string | null>(null);
-  const [cargandoFoto, establecerCargandoFoto] = useState(true);
+export default function UserMenu({ user }: Readonly<PropsMenuUsuario>) {
+  const [estaAbierto, setEstaAbierto] = useState(false);
+  const [fotoPerfil, setFotoPerfil] = useState<string | null>(null);
+  const [cargandoFoto, setCargandoFoto] = useState(true);
   const { cerrarSesion } = useAuth();
+  const { isDarkMode, toggleTheme } = useTheme();
 
   // Cargar foto de perfil
   useEffect(() => {
     const cargarFotoPerfil = async () => {
       if (!user?.id) {
-        establecerCargandoFoto(false);
+        setCargandoFoto(false);
         return;
       }
       
       try {
         const perfil = await servicioPerfil.getByUsuarioId(Number(user.id));
         if (perfil.foto_perfil_url) {
-          establecerFotoPerfil(perfil.foto_perfil_url);
+          setFotoPerfil(perfil.foto_perfil_url);
         }
       } catch {
         // Si no hay perfil, no es error crítico
         console.log('No se encontró perfil o foto');
       } finally {
-        establecerCargandoFoto(false);
+        setCargandoFoto(false);
       }
     };
 
@@ -50,7 +52,7 @@ export default function UserMenu({ user }: PropsMenuUsuario) {
 
   const manejarCierreSesion = () => {
     cerrarSesion();
-    establecerEstadoAbierto(false);
+    setEstaAbierto(false);
   };
 
   // Obtener nombre para mostrar (con validación)
@@ -60,8 +62,8 @@ export default function UserMenu({ user }: PropsMenuUsuario) {
   return (
     <div className="relative">
       <button
-        onClick={() => establecerEstadoAbierto(!estaAbierto)}
-        className="flex items-center space-x-2 px-3 py-2 rounded-full hover:bg-gray-50 transition-colors"
+        onClick={() => setEstaAbierto(!estaAbierto)}
+        className="flex items-center space-x-2 px-3 py-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
       >
         <div className="w-8 h-8 bg-red-700 rounded-full flex items-center justify-center overflow-hidden">
           {fotoPerfil && !cargandoFoto ? (
@@ -76,11 +78,11 @@ export default function UserMenu({ user }: PropsMenuUsuario) {
             </span>
           )}
         </div>
-        <span className="text-gray-700 font-medium hidden sm:block">
+        <span className="text-gray-700 dark:text-gray-200 font-medium hidden sm:block">
           {nombreMostrar}
         </span>
         <svg
-          className={`w-4 h-4 text-gray-500 transition-transform ${
+          className={`w-4 h-4 text-gray-500 dark:text-gray-300 transition-transform ${
             estaAbierto ? "rotate-180" : ""
           }`}
           fill="none"
@@ -100,61 +102,81 @@ export default function UserMenu({ user }: PropsMenuUsuario) {
       {estaAbierto && (
         <>
           {/* Overlay para cerrar el menú */}
-          <div
+          <button
+            type="button"
+            aria-label="Cerrar menú de usuario"
             className="fixed inset-0 z-10"
-            onClick={() => establecerEstadoAbierto(false)}
+            onClick={() => setEstaAbierto(false)}
           />
           
-          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-20">
+          <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20">
             <div className="py-2">
               {/* Información del usuario */}
-              <div className="px-4 py-2 border-b border-gray-100">
-                <p className="text-sm font-medium text-gray-900">{nombreMostrar}</p>
-                <p className="text-xs text-gray-500">{user?.correo || 'Sin correo'}</p>
+              <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{nombreMostrar}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{user?.correo || 'Sin correo'}</p>
               </div>
 
               {/* Enlaces del menú */}
               <Link
                 href="/dashboard"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                onClick={() => establecerEstadoAbierto(false)}
+                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                onClick={() => setEstaAbierto(false)}
               >
                 Mi Dashboard
               </Link>
               <Link
                 href="/perfil"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                onClick={() => establecerEstadoAbierto(false)}
+                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                onClick={() => setEstaAbierto(false)}
               >
                 Mi Perfil
               </Link>
               <Link
                 href="/mis-pujas"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                onClick={() => establecerEstadoAbierto(false)}
+                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                onClick={() => setEstaAbierto(false)}
               >
                 Mis Pujas
               </Link>
               <Link
                 href="/mis-compras"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                onClick={() => establecerEstadoAbierto(false)}
+                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                onClick={() => setEstaAbierto(false)}
               >
                 Mis Compras
               </Link>
               <Link
                 href="/administracion"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                onClick={() => establecerEstadoAbierto(false)}
+                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                onClick={() => setEstaAbierto(false)}
               >
                 Administración
               </Link>
+
+              <button
+                onClick={toggleTheme}
+                className="w-full px-4 py-2 text-sm text-left text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between"
+              >
+                <span>{isDarkMode ? "Modo claro" : "Modo oscuro"}</span>
+                <span
+                  className={`inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                    isDarkMode ? "bg-red-700" : "bg-gray-300"
+                  }`}
+                >
+                  <span
+                    className={`h-4 w-4 rounded-full bg-white transition-transform ${
+                      isDarkMode ? "translate-x-4" : "translate-x-1"
+                    }`}
+                  />
+                </span>
+              </button>
               
-              <hr className="my-2" />
+              <hr className="my-2 border-gray-200 dark:border-gray-700" />
               
               <button
                 onClick={manejarCierreSesion}
-                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
               >
                 Cerrar Sesión
               </button>

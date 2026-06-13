@@ -57,9 +57,9 @@ export default function PurchaseCard({ venta, vehiculo, vendedorNombre, yaValora
   const estadoBadge = getEstadoBadge(venta.estado);
 
   return (
-    <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
+    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
       {/* Imagen del vehículo */}
-      <div className="h-48 bg-gray-200 flex items-center justify-center relative">
+      <div className="h-48 bg-gray-200 dark:bg-slate-700 flex items-center justify-center relative">
         {fotoPrincipal ? (
           <img
             src={fotoPrincipal}
@@ -67,8 +67,8 @@ export default function PurchaseCard({ venta, vehiculo, vendedorNombre, yaValora
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-gray-100 to-gray-200">
-            <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-700 dark:to-slate-600">
+            <svg className="w-16 h-16 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
           </div>
@@ -84,10 +84,10 @@ export default function PurchaseCard({ venta, vehiculo, vendedorNombre, yaValora
       {/* Contenido de la carta */}
       <div className="p-5">
         <div className="mb-4">
-          <h2 className="text-xl font-semibold text-gray-800 mb-1">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-1">
             {vehiculo.marca_nombre} {vehiculo.modelo_nombre} {vehiculo.año}
           </h2>
-          <p className="text-sm text-gray-600 mb-2">
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
             Vendedor: {vendedorNombre || vehiculo.usuario_nombre || 'N/A'}
           </p>
         </div>
@@ -95,28 +95,28 @@ export default function PurchaseCard({ venta, vehiculo, vendedorNombre, yaValora
         {/* Información de la venta */}
         <div className="space-y-2 mb-4">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">Precio de compra:</span>
+            <span className="text-sm text-gray-600 dark:text-gray-300">Precio de compra:</span>
             <span className="text-lg font-bold text-red-600">
               {formatearPrecio(venta.precio_final)}
             </span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">Método de pago:</span>
-            <span className="text-sm font-medium text-gray-800 capitalize">
+            <span className="text-sm text-gray-600 dark:text-gray-300">Método de pago:</span>
+            <span className="text-sm font-medium text-gray-800 dark:text-gray-100 capitalize">
               {venta.metodo_pago}
             </span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">Fecha de compra:</span>
-            <span className="text-sm text-gray-800">
+            <span className="text-sm text-gray-600 dark:text-gray-300">Fecha de compra:</span>
+            <span className="text-sm text-gray-800 dark:text-gray-100">
               {formatearFecha(venta.fecha_venta)}
             </span>
           </div>
         </div>
 
         {/* Información adicional del vehículo */}
-        <div className="border-t border-gray-200 pt-3 mb-4">
-          <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+        <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mb-4">
+          <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-gray-300">
             <div>
               <span className="font-medium">Kilometraje:</span> {vehiculo.kilometraje ? `${vehiculo.kilometraje.toLocaleString()} km` : 'N/A'}
             </div>
@@ -137,7 +137,7 @@ export default function PurchaseCard({ venta, vehiculo, vendedorNombre, yaValora
           <div className="flex gap-2">
             <Link
               href={`/vehiculo/${vehiculo.id}`}
-              className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors text-center text-sm font-medium"
+              className="flex-1 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-100 px-4 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors text-center text-sm font-medium"
             >
               Ver Vehículo
             </Link>
@@ -151,8 +151,7 @@ export default function PurchaseCard({ venta, vehiculo, vendedorNombre, yaValora
               Chatear con Vendedor
             </Link>
           </div>
-          
-          {/* Botón de valoración mejorado */}
+
           {!yaValorado && (
             <button
               onClick={() => setMostrarFormularioValoracion(true)}
@@ -164,9 +163,9 @@ export default function PurchaseCard({ venta, vehiculo, vendedorNombre, yaValora
               Valorar Compra
             </button>
           )}
-          
+
           {yaValorado && (
-            <div className="w-full bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 text-green-700 px-4 py-3 rounded-xl text-center text-sm font-semibold flex items-center justify-center gap-2">
+            <div className="w-full bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-200 dark:border-green-700 text-green-700 dark:text-green-300 px-4 py-3 rounded-xl text-center text-sm font-semibold flex items-center justify-center gap-2">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>

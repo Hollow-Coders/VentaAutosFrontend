@@ -26,9 +26,9 @@ function Carta_v({ vehicle, onVerDetalles, onEditar }: CartaVProps) {
   }
 
   return (
-    <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 transform flex flex-col h-full">
+    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 transform flex flex-col h-full">
       {/* Imagen del vehículo */}
-      <div className="h-48 bg-gray-200 flex items-center justify-center">
+      <div className="h-48 bg-gray-200 dark:bg-slate-700 flex items-center justify-center">
         {fotoPrincipal ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -37,8 +37,8 @@ function Carta_v({ vehicle, onVerDetalles, onEditar }: CartaVProps) {
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-gray-100 to-gray-200">
-            <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-700 dark:to-slate-600">
+            <svg className="w-16 h-16 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
           </div>
@@ -47,11 +47,11 @@ function Carta_v({ vehicle, onVerDetalles, onEditar }: CartaVProps) {
 
       {/* Contenido de la carta */}
       <div className="p-4 flex-1 flex flex-col">
-        <h2 className="text-lg font-semibold text-gray-800 mb-1">{vehicle.nombre}</h2>
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-1">{vehicle.nombre}</h2>
         
         <div className="mb-3">
           <p className="text-lg font-bold text-red-600 mb-1">Precio {formatearPrecio(vehicle.precio)}</p>
-          <p className="text-sm text-gray-600">Ubicación {vehicle.ubicacion}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">Ubicación {vehicle.ubicacion}</p>
         </div>
 
         <div className="mt-auto space-y-2">

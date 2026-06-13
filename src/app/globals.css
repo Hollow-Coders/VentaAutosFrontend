@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: #ffffff;
@@ -19,10 +20,24 @@
   }
 }
 
+html.dark {
+  --background: #0f172a;
+  --foreground: #e5e7eb;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+html.dark main {
+  background-color: #0f172a;
+}
+
+html,
+body {
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Desactivar autocompletado solo para campos de marca y modelo */

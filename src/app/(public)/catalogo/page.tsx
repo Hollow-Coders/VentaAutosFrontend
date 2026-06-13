@@ -148,11 +148,11 @@ function Catalogo() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       <div className="flex flex-col lg:flex-row">
         
         {/* Barra lateral con filtros */}
-        <div className="w-full lg:w-80 bg-white border-r border-gray-200 p-6 hidden lg:block">
+        <div className="w-full lg:w-80 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-gray-700 p-6 hidden lg:block">
           
           {/* Perfil del usuario */}
           {usuario && (
@@ -163,7 +163,7 @@ function Catalogo() {
                     {usuario.nombre_completo?.charAt(0) || usuario.nombre?.charAt(0) || '👤'}
                   </span>
                 </div>
-                <span className="text-lg font-semibold text-gray-800">
+                <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                   {usuario.nombre_completo || usuario.nombre || 'Usuario'}
                 </span>
               </div>
@@ -173,7 +173,7 @@ function Catalogo() {
           {/* Sección de filtros */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">Filtros</h3>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Filtros</h3>
               <button
                 onClick={limpiarFiltros}
                 className="text-sm text-red-600 hover:text-red-800 font-medium"
@@ -190,7 +190,7 @@ function Catalogo() {
                   setMarcaSeleccionada(e.target.value)
                   setModeloSeleccionado('') // Resetear modelo cuando cambia la marca
                 }}
-                className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-700 hover:border-red-300 hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:border-red-300 hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               >
                 <option value="">Todas las marcas</option>
                 {marcas.map((marca) => (
@@ -204,7 +204,7 @@ function Catalogo() {
               <select
                 value={modeloSeleccionado}
                 onChange={(e) => setModeloSeleccionado(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-700 hover:border-red-300 hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:border-red-300 hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 disabled={!marcaSeleccionada}
               >
                 <option value="">Todos los modelos</option>
@@ -221,7 +221,7 @@ function Catalogo() {
                 placeholder="Año mínimo"
                 value={añoMin}
                 onChange={(e) => setAñoMin(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-700 hover:border-red-300 hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:border-red-300 hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               />
 
               {/* Filtro de Año Máximo */}
@@ -230,7 +230,7 @@ function Catalogo() {
                 placeholder="Año máximo"
                 value={añoMax}
                 onChange={(e) => setAñoMax(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-700 hover:border-red-300 hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:border-red-300 hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               />
 
               {/* Filtro de Precio Mínimo */}
@@ -239,7 +239,7 @@ function Catalogo() {
                 placeholder="Precio mínimo"
                 value={precioMin}
                 onChange={(e) => setPrecioMin(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-700 hover:border-red-300 hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:border-red-300 hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               />
 
               {/* Filtro de Precio Máximo */}
@@ -248,7 +248,7 @@ function Catalogo() {
                 placeholder="Precio máximo"
                 value={precioMax}
                 onChange={(e) => setPrecioMax(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-700 hover:border-red-300 hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:border-red-300 hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               />
 
               {/* Filtro de Ubicación */}
@@ -258,7 +258,7 @@ function Catalogo() {
                 value={ubicacionFiltro}
                 onChange={(e) => setUbicacionFiltro(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && aplicarFiltros()}
-                className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-700 hover:border-red-300 hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:border-red-300 hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               />
 
               {/* Botón de Filtrar */}
@@ -279,7 +279,7 @@ function Catalogo() {
           {/* Título y barra de búsqueda */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
-              <h1 className="text-3xl font-bold text-gray-800">Catálogo de Vehículos</h1>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Catálogo de Vehículos</h1>
               <button className="lg:hidden bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 font-medium">
                 Filtros
               </button>
@@ -292,7 +292,7 @@ function Catalogo() {
                 onChange={(e) => setBusqueda(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && manejarBusqueda()}
                 placeholder="Busca tu auto (marca, modelo, ubicación)" 
-                className="flex-1 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 hover:border-red-300 hover:shadow-md transition-all duration-300"
+                className="flex-1 p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 hover:border-red-300 hover:shadow-md transition-all duration-300"
               />
               <button
                 onClick={manejarBusqueda}
@@ -306,7 +306,7 @@ function Catalogo() {
 
           {/* Mensaje de error */}
           {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
+            <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg text-red-800 dark:text-red-300">
               {error}
             </div>
           )}
@@ -314,11 +314,11 @@ function Catalogo() {
           {/* Grid de vehículos */}
           {cargando ? (
             <div className="flex justify-center items-center py-12">
-              <div className="text-gray-600">Cargando vehículos...</div>
+              <div className="text-gray-600 dark:text-gray-300">Cargando vehículos...</div>
             </div>
           ) : vehiculos.length === 0 ? (
             <div className="flex justify-center items-center py-12">
-              <div className="text-gray-600">No se encontraron vehículos</div>
+              <div className="text-gray-600 dark:text-gray-300">No se encontraron vehículos</div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

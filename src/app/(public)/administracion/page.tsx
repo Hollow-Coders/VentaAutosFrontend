@@ -148,10 +148,10 @@ export default function AdministracionPage() {
 
   if (estaCargando || cargando) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-red-700 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando administración...</p>
+          <p className="text-gray-600 dark:text-gray-300">Cargando administración...</p>
         </div>
       </div>
     );
@@ -160,12 +160,12 @@ export default function AdministracionPage() {
   return (
     <>
       <ToastContainer toasts={toasts} onClose={cerrarToast} />
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8">
         <div className="container mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Administración</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Administración</h1>
+          <p className="text-gray-600 dark:text-gray-300">
             Revisa y gestiona los vehículos pendientes de aprobación para el catálogo
           </p>
         </div>
@@ -179,11 +179,11 @@ export default function AdministracionPage() {
 
         {/* Estadísticas */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-yellow-500">
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 border-l-4 border-yellow-500 border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">En Revisión</p>
-                <p className="text-2xl font-bold text-gray-900">{vehiculosEnRevision.length}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">En Revisión</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{vehiculosEnRevision.length}</p>
               </div>
               <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
                 <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -196,16 +196,16 @@ export default function AdministracionPage() {
 
         {/* Lista de vehículos en revisión */}
         {vehiculosEnRevision.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-12 text-center">
+            <div className="w-24 h-24 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-12 h-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
               No hay vehículos en revisión
             </h2>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Todos los vehículos han sido procesados
             </p>
           </div>
@@ -214,7 +214,7 @@ export default function AdministracionPage() {
             {vehiculosEnRevision.map((vehiculo) => (
               <div
                 key={vehiculo.id}
-                className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+                className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow"
               >
                 <div className="p-6">
                   <div className="flex flex-col lg:flex-row gap-6">
@@ -263,10 +263,10 @@ export default function AdministracionPage() {
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
                             {vehiculo.marca_nombre} {vehiculo.modelo_nombre} {vehiculo.año}
                           </h3>
-                          <div className="flex items-center gap-4 text-sm text-gray-600">
+                          <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300">
                             <span className="flex items-center gap-1">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -296,21 +296,21 @@ export default function AdministracionPage() {
                         
                         {/* Información técnica del vehículo */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                          <div className="bg-gray-50 rounded-lg p-3">
-                            <p className="text-xs text-gray-500 mb-1">Transmisión</p>
-                            <p className="text-sm font-semibold text-gray-900">{vehiculo.tipo_transmision}</p>
+                          <div className="bg-gray-50 dark:bg-slate-700 rounded-lg p-3">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Transmisión</p>
+                            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{vehiculo.tipo_transmision}</p>
                           </div>
-                          <div className="bg-gray-50 rounded-lg p-3">
-                            <p className="text-xs text-gray-500 mb-1">Combustible</p>
-                            <p className="text-sm font-semibold text-gray-900">{vehiculo.tipo_combustible}</p>
+                          <div className="bg-gray-50 dark:bg-slate-700 rounded-lg p-3">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Combustible</p>
+                            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{vehiculo.tipo_combustible}</p>
                           </div>
-                          <div className="bg-gray-50 rounded-lg p-3">
-                            <p className="text-xs text-gray-500 mb-1">Tipo de Vehículo</p>
-                            <p className="text-sm font-semibold text-gray-900">{vehiculo.tipo_vehiculo}</p>
+                          <div className="bg-gray-50 dark:bg-slate-700 rounded-lg p-3">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Tipo de Vehículo</p>
+                            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{vehiculo.tipo_vehiculo}</p>
                           </div>
-                          <div className="bg-gray-50 rounded-lg p-3">
-                            <p className="text-xs text-gray-500 mb-1">Kilometraje</p>
-                            <p className="text-sm font-semibold text-gray-900">
+                          <div className="bg-gray-50 dark:bg-slate-700 rounded-lg p-3">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Kilometraje</p>
+                            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                               {vehiculo.kilometraje ? `${vehiculo.kilometraje.toLocaleString("es-MX")} km` : "N/A"}
                             </p>
                           </div>
@@ -319,23 +319,23 @@ export default function AdministracionPage() {
                         {/* Descripción */}
                         {vehiculo.descripcion && (
                           <div className="mb-4">
-                            <p className="text-xs font-medium text-gray-700 mb-1">Descripción</p>
-                            <p className="text-sm text-gray-600 leading-relaxed">
+                            <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Descripción</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                               {vehiculo.descripcion}
                             </p>
                           </div>
                         )}
 
                         {/* Información del vendedor y fecha */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 border-t border-gray-200">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                           <div>
-                            <p className="text-xs text-gray-500 mb-1">Vendedor</p>
-                            <p className="text-sm font-medium text-gray-900">{vehiculo.usuario_nombre}</p>
-                            <p className="text-xs text-gray-400">ID: {vehiculo.usuario}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Vendedor</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{vehiculo.usuario_nombre}</p>
+                            <p className="text-xs text-gray-400 dark:text-gray-500">ID: {vehiculo.usuario}</p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 mb-1">Fecha de solicitud</p>
-                            <p className="text-sm font-medium text-gray-900">{formatearFecha(vehiculo.fecha_solicitud)}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Fecha de solicitud</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{formatearFecha(vehiculo.fecha_solicitud)}</p>
                           </div>
                         </div>
                       </div>
@@ -359,7 +359,7 @@ export default function AdministracionPage() {
                       </div>
 
                       {/* Botones de acción */}
-                      <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                      <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                         <button
                           onClick={() => manejarAceptar(vehiculo.id)}
                           disabled={procesando === vehiculo.id}

@@ -3,6 +3,7 @@ import "./globals.css";
 import BarraNavegacion from "../components/diseno/BarraNavegacion";
 import PiePagina from "../components/diseno/PiePagina";
 import { ProveedorAutenticacion } from "../context/AuthContext";
+import { ThemeProvider } from "../context/ThemeContext";
 
 export const metadata: Metadata = {
   title: "Mi Sitio con Next.js",
@@ -11,13 +12,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <body>
-        <ProveedorAutenticacion>
-          <BarraNavegacion />
-          <main>{children}</main>
-          <PiePagina/>
-        </ProveedorAutenticacion>
+        <ThemeProvider>
+          <ProveedorAutenticacion>
+            <BarraNavegacion />
+            <main>{children}</main>
+            <PiePagina/>
+          </ProveedorAutenticacion>
+        </ThemeProvider>
       </body>
     </html>
   );

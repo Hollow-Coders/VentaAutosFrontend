@@ -84,18 +84,18 @@ export default function DetalleVehiculo() {
 
   if (cargando) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Cargando vehículo...</div>
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
+        <div className="text-gray-600 dark:text-gray-300">Cargando vehículo...</div>
       </div>
     )
   }
 
   if (error || !vehiculo) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">Error</h1>
-          <p className="text-gray-600 mb-4">{error || 'Vehículo no encontrado'}</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Error</h1>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">{error || 'Vehículo no encontrado'}</p>
           <Link
             href="/catalogo"
             className="bg-red-700 text-white px-6 py-3 rounded-lg hover:bg-red-800 transition-colors"
@@ -110,13 +110,13 @@ export default function DetalleVehiculo() {
   const nombreVehiculo = `${vehiculo.marca_nombre} ${vehiculo.modelo_nombre} ${vehiculo.año}`;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-200 py-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
+      <div className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-gray-700 py-4">
         <div className="container mx-auto px-4">
           <nav className="flex" aria-label="Breadcrumb">
             <ol className="inline-flex items-center space-x-1 md:space-x-3">
               <li className="inline-flex items-center">
-                <Link href="/" className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-red-600">
+                <Link href="/" className="inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600">
                   Inicio
                 </Link>
               </li>
@@ -129,7 +129,7 @@ export default function DetalleVehiculo() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <Link href="/catalogo" className="ml-1 text-sm font-medium text-gray-500 md:ml-2 hover:text-gray-700">
+                  <Link href="/catalogo" className="ml-1 text-sm font-medium text-gray-500 dark:text-gray-400 md:ml-2 hover:text-gray-700 dark:hover:text-gray-200">
                     Catálogo
                   </Link>
                 </div>
@@ -143,7 +143,7 @@ export default function DetalleVehiculo() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="ml-1 text-sm font-medium text-gray-500 md:ml-2">{nombreVehiculo}</span>
+                  <span className="ml-1 text-sm font-medium text-gray-500 dark:text-gray-400 md:ml-2">{nombreVehiculo}</span>
                 </div>
               </li>
             </ol>
@@ -154,8 +154,8 @@ export default function DetalleVehiculo() {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-              <div className="h-96 bg-gray-100 flex items-center justify-center relative">
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm overflow-hidden">
+              <div className="h-96 bg-gray-100 dark:bg-slate-700 flex items-center justify-center relative">
                 {fotos.length > 0 ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -164,14 +164,14 @@ export default function DetalleVehiculo() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <svg className="w-40 h-40 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-40 h-40 text-gray-300 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                   </svg>
                 )}
               </div>
 
               {fotos.length > 1 && (
-                <div className="p-4 bg-white border-t border-gray-200">
+                <div className="p-4 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-gray-700">
                   <div className="flex gap-4 overflow-x-auto">
                     {fotos.map((foto, index) => (
                       <button
@@ -191,69 +191,68 @@ export default function DetalleVehiculo() {
               )}
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm p-6">
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm p-6">
               <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between mb-6">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">{nombreVehiculo}</h1>
-                  <p className="text-gray-600 capitalize">{vehiculo.tipo_vehiculo} • {vehiculo.tipo_transmision}</p>
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{nombreVehiculo}</h1>
+                  <p className="text-gray-600 dark:text-gray-300 capitalize">{vehiculo.tipo_vehiculo} • {vehiculo.tipo_transmision}</p>
                 </div>
                 <div className="text-left md:text-right">
                   <p className="text-3xl font-bold text-red-600">{formatearPrecio(vehiculo.precio)}</p>
-                  <p className="text-sm text-gray-600">{vehiculo.ubicacion}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">{vehiculo.ubicacion}</p>
                 </div>
               </div>
 
-              {/* Especificaciones principales */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-1">Marca</div>
-                  <div className="text-lg font-semibold text-gray-900">{vehiculo.marca_nombre}</div>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">Marca</div>
+                  <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">{vehiculo.marca_nombre}</div>
                 </div>
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-1">Modelo</div>
-                  <div className="text-lg font-semibold text-gray-900">{vehiculo.modelo_nombre}</div>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">Modelo</div>
+                  <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">{vehiculo.modelo_nombre}</div>
                 </div>
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-1">Año</div>
-                  <div className="text-lg font-semibold text-gray-900">{vehiculo.año}</div>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">Año</div>
+                  <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">{vehiculo.año}</div>
                 </div>
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-1">Tipo de Vehículo</div>
-                  <div className="text-lg font-semibold text-gray-900 capitalize">{vehiculo.tipo_vehiculo}</div>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">Tipo de Vehículo</div>
+                  <div className="text-lg font-semibold text-gray-900 dark:text-gray-100 capitalize">{vehiculo.tipo_vehiculo}</div>
                 </div>
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-1">Kilometraje</div>
-                  <div className="text-lg font-semibold text-gray-900">{formatearKilometraje(vehiculo.kilometraje)}</div>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">Kilometraje</div>
+                  <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">{formatearKilometraje(vehiculo.kilometraje)}</div>
                 </div>
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-1">Transmisión</div>
-                  <div className="text-lg font-semibold text-gray-900 capitalize">{vehiculo.tipo_transmision}</div>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">Transmisión</div>
+                  <div className="text-lg font-semibold text-gray-900 dark:text-gray-100 capitalize">{vehiculo.tipo_transmision}</div>
                 </div>
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-1">Combustible</div>
-                  <div className="text-lg font-semibold text-gray-900 capitalize">{vehiculo.tipo_combustible}</div>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">Combustible</div>
+                  <div className="text-lg font-semibold text-gray-900 dark:text-gray-100 capitalize">{vehiculo.tipo_combustible}</div>
                 </div>
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-1">Ubicación</div>
-                  <div className="text-lg font-semibold text-gray-900">{vehiculo.ubicacion}</div>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">Ubicación</div>
+                  <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">{vehiculo.ubicacion}</div>
                 </div>
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-1">Publicado</div>
-                  <div className="text-lg font-semibold text-gray-900">
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">Publicado</div>
+                  <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     {formatearFecha(vehiculo.fecha_publicacion)}
                   </div>
                 </div>
                 {vehiculo.total_documentos > 0 && (
-                  <div className="border border-gray-200 rounded-lg p-4 bg-blue-50">
-                    <div className="text-sm text-gray-600 mb-1">Documentos</div>
-                    <div className="text-lg font-semibold text-blue-700">{vehiculo.total_documentos} disponible(s)</div>
+                  <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-blue-50 dark:bg-blue-900/20">
+                    <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">Documentos</div>
+                    <div className="text-lg font-semibold text-blue-700 dark:text-blue-300">{vehiculo.total_documentos} disponible(s)</div>
                   </div>
                 )}
               </div>
 
-              <div className="border-t border-gray-200 pt-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Descripción</h2>
-                <p className="text-gray-700 leading-relaxed">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Descripción</h2>
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                   {vehiculo.descripcion || "El vendedor no proporcionó una descripción detallada para este vehículo."}
                 </p>
               </div>
@@ -261,11 +260,10 @@ export default function DetalleVehiculo() {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-white rounded-2xl shadow-sm p-6 sticky top-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Opciones de Compra</h2>
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm p-6 sticky top-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Opciones de Compra</h2>
 
               <div className="space-y-4">
-                {/* Solo mostrar botón de puja si el vehículo no está vendido */}
                 {vehiculo.estado && !vehiculo.estado.toLowerCase().includes('vendido') && !vehiculo.estado.toLowerCase().includes('sold') && (
                   <BotonPuja vehicle={vehiculo} />
                 )}
@@ -281,7 +279,6 @@ export default function DetalleVehiculo() {
                   }}
                 />
                 
-                {/* Botón de chat */}
                 {estaAutenticado && usuario && vehiculo && Number(usuario.id) !== vehiculo.usuario && (
                   <button
                     onClick={() => {
@@ -300,8 +297,8 @@ export default function DetalleVehiculo() {
                 )}
               </div>
 
-              <div className="mt-6 pt-6 border-t border-gray-200 space-y-3">
-                <div className="flex items-center gap-2 text-gray-600">
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 space-y-3">
+                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
                   <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
@@ -318,7 +315,7 @@ export default function DetalleVehiculo() {
                   </svg>
                   {vehiculo.ubicacion}
                 </div>
-                <div className="flex items-center gap-2 text-gray-600">
+                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
                   <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -326,8 +323,8 @@ export default function DetalleVehiculo() {
                 </div>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-3">Vendedor</h3>
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Vendedor</h3>
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 bg-red-700 rounded-full flex items-center justify-center">
                     <span className="text-white text-xl font-bold">
@@ -335,10 +332,10 @@ export default function DetalleVehiculo() {
                     </span>
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-gray-900">
+                    <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                       {vehiculo.usuario_nombre || "Vendedor registrado"}
                     </p>
-                    <p className="text-sm text-gray-600">Id usuario: {vehiculo.usuario}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Id usuario: {vehiculo.usuario}</p>
                   </div>
                 </div>
                 <Link
@@ -355,4 +352,3 @@ export default function DetalleVehiculo() {
     </div>
   )
 }
-

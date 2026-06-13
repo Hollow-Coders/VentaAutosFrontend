@@ -94,14 +94,14 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 mb-8">
+    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm p-6 mb-8">
       {/* Header con filtros y botones */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
             {isOwner ? 'Mis Vehículos' : 'Vehículos de este vendedor'}
           </h2>
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-600 dark:text-gray-300 text-sm">
             {filteredVehicles.length} vehículo{filteredVehicles.length !== 1 ? 's' : ''} {filter !== 'all' ? `(${filter === 'disponible' ? 'Activos' : filter === 'vendido' ? 'Vendidos' : filter === 'revision' ? 'Revisión' : filter === 'rechazado' ? 'Rechazados' : filter})` : ''}
           </p>
         </div>
@@ -113,7 +113,7 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
             className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
               filter === 'all' 
                 ? 'bg-red-700 text-white' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-600'
             }`}
           >
             Todos
@@ -123,7 +123,7 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
             className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
               filter === 'disponible' 
                 ? 'bg-red-700 text-white' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-600'
             }`}
           >
             Activos
@@ -133,7 +133,7 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
             className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
               filter === 'vendido' 
                 ? 'bg-red-700 text-white' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-600'
             }`}
           >
             Vendidos
@@ -145,7 +145,7 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
                 className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
                   filter === 'revision' 
                     ? 'bg-red-700 text-white' 
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-600'
                 }`}
               >
                 Revisión
@@ -155,7 +155,7 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
                 className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
                   filter === 'rechazado' 
                     ? 'bg-red-700 text-white' 
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-600'
                 }`}
               >
                 Rechazados
@@ -183,15 +183,15 @@ export default function ProfileVehicles({ vehicles, isOwner }: ProfileVehiclesPr
       {/* Grid de vehículos */}
       {filteredVehicles.length === 0 ? (
         <div className="text-center py-12">
-          <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-24 h-24 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-12 h-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
           </div>
-          <p className="text-gray-600 text-lg font-semibold mb-2">
+          <p className="text-gray-600 dark:text-gray-300 text-lg font-semibold mb-2">
             {isOwner ? 'No tienes vehículos' : 'Este vendedor no tiene vehículos'}
           </p>
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             {isOwner ? 'Comienza agregando tu primer vehículo' : 'Intenta con otro vendedor'}
           </p>
         </div>

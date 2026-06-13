@@ -128,7 +128,7 @@ export default function Home() {
   };
 
   return (
-    <main className="bg-white">
+    <main className="bg-white dark:bg-slate-900">
       <section className="py-20 px-4 relative bg-cover bg-center bg-no-repeat" style={{backgroundImage: "url('https://images.pexels.com/photos/19248437/pexels-photo-19248437/free-photo-of-fila-transporte-estacionado-enfoque-selectivo.png?auto=compress&cs=tinysrgb&w=1920&h=1080&dpr=1')"}}>
         <div className="absolute inset-0 bg-opacity-30" style={{backdropFilter: 'blur(2px)'}}></div>
         <div className="container mx-auto relative z-10">
@@ -178,14 +178,14 @@ export default function Home() {
       </section>
 
       {/* Seccion de tutoriales para el usuario */}
-      <section className="py-20 px-4 bg-gray-50">
+      <section className="py-20 px-4 bg-gray-50 dark:bg-slate-800">
         <div className="container mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               ¿CÓMO FUNCIONA?
             </h2>
             <div className="w-16 h-1 bg-red-700 mx-auto mb-6"></div>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Aprende todo lo que necesitas saber para usar nuestra plataforma de manera efectiva
             </p>
           </div>
@@ -213,14 +213,14 @@ export default function Home() {
             </div>
 
             {/* Carta 2 de como vender un vehiculo */}
-            <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-sm">
+            <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-700 rounded-3xl p-8 shadow-sm">
               <div className="w-16 h-16 bg-red-700 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Vende tu vehículo</h3>
-              <p className="text-gray-600 mb-6 leading-relaxed">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Vende tu vehículo</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
                 Publique su vehículo y conéctese con compradores verificados. Proceso simple, seguro y completamente transparente.
               </p>
               <button className="flex items-center justify-center space-x-2 border border-red-700 text-red-700 hover:bg-red-700 hover:text-white rounded-full px-6 py-3 transition-colors">
@@ -234,14 +234,14 @@ export default function Home() {
             </div>
 
             {/* Carta 3 de como buscar un vehiculo en el catalogo */}
-            <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-sm">
+            <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-700 rounded-3xl p-8 shadow-sm">
               <div className="w-16 h-16 bg-red-700 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Busca tu auto ideal</h3>
-              <p className="text-gray-600 mb-6 leading-relaxed">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Busca tu auto ideal</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
                 Utilice nuestros filtros avanzados y herramientas de búsqueda para encontrar exactamente el vehículo que necesita.
               </p>
               <button className="flex items-center justify-center space-x-2 border border-red-700 text-red-700 hover:bg-red-700 hover:text-white rounded-full px-6 py-3 transition-colors">
@@ -261,11 +261,11 @@ export default function Home() {
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               VEHÍCULOS DESTACADOS
             </h2>
             <div className="w-16 h-1 bg-red-700 mx-auto mb-6"></div>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Descubre nuestra selección de vehículos más populares y mejor valorados por nuestros usuarios
             </p>
           </div>
@@ -275,18 +275,18 @@ export default function Home() {
             {/* Botones de navegación */}
             <button
               onClick={prevSlide}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-red-50 border border-gray-200"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white dark:bg-slate-900 rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-red-50 dark:hover:bg-slate-800 border border-gray-200 dark:border-gray-700"
             >
-              <svg className="w-6 h-6 text-gray-600 hover:text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-gray-600 dark:text-gray-300 hover:text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
 
             <button
               onClick={nextSlide}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-red-50 border border-gray-200"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white dark:bg-slate-900 rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-red-50 dark:hover:bg-slate-800 border border-gray-200 dark:border-gray-700"
             >
-              <svg className="w-6 h-6 text-gray-600 hover:text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-gray-600 dark:text-gray-300 hover:text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
@@ -297,7 +297,7 @@ export default function Home() {
                 <div className="flex justify-center items-center py-20">
                   <div className="text-center">
                     <div className="w-16 h-16 border-4 border-red-700 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600">Cargando vehículos destacados...</p>
+                    <p className="text-gray-600 dark:text-gray-300">Cargando vehículos destacados...</p>
                   </div>
                 </div>
               ) : error ? (
@@ -314,7 +314,7 @@ export default function Home() {
                 </div>
               ) : vehicles.length === 0 ? (
                 <div className="flex justify-center items-center py-20">
-                  <p className="text-gray-600">No hay vehículos disponibles en este momento</p>
+                  <p className="text-gray-600 dark:text-gray-300">No hay vehículos disponibles en este momento</p>
                 </div>
               ) : (
                 <div className="flex transition-transform duration-500 ease-in-out">
@@ -322,9 +322,9 @@ export default function Home() {
                     {getCurrentVehicles().map((vehicle) => (
                       <div
                         key={vehicle.id}
-                        className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                        className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 transform"
                       >
-                        <div className="relative h-48 bg-gradient-to-br from-red-100 to-red-200 overflow-hidden">
+                        <div className="relative h-48 bg-gray-200 dark:bg-slate-700 overflow-hidden flex items-center justify-center">
                           <div className={`absolute top-4 left-4 ${vehicle.badgeColor} text-white px-3 py-1 rounded-full text-xs font-semibold z-10`}>
                             {vehicle.badge}
                           </div>
@@ -343,34 +343,24 @@ export default function Home() {
                             />
                           ) : null}
                           <div className={`absolute inset-0 flex items-center justify-center ${vehicle.foto_principal ? 'hidden' : ''}`}>
-                            <div className="w-32 h-20 bg-gradient-to-br from-red-300 to-red-400 rounded-xl flex items-center justify-center">
-                              <svg className="w-12 h-12 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center">
+                              <svg className="w-16 h-16 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                               </svg>
                             </div>
                           </div>
                         </div>
-                        <div className="p-6">
+                        <div className="p-4">
                           <div className="text-sm text-red-600 font-semibold mb-2">{vehicle.category}</div>
-                          <h3 className="text-xl font-bold text-gray-900 mb-2">{vehicle.name} | {vehicle.year}</h3>
-                          <div className="flex justify-between items-center mb-4">
-                            <span className="text-2xl font-bold text-gray-900">{vehicle.price}</span>
-                            <span className="text-sm text-gray-500">{vehicle.ubicacion}</span>
-                          </div>
-                          <div className="space-y-2">
-                            <Link
-                              href={`/catalogo/${vehicle.id}`}
-                              className="block w-full text-center bg-white border border-red-700 text-red-700 hover:bg-red-700 hover:text-white rounded-full px-4 py-2 font-medium transition-colors"
-                            >
-                              Ver detalles
-                            </Link>
-                            <Link
-                              href={`/catalogo/${vehicle.id}`}
-                              className="block w-full text-center bg-red-700 text-white hover:bg-red-800 rounded-full px-4 py-2 font-medium transition-colors"
-                            >
-                              Comprar ahora
-                            </Link>
-                          </div>
+                          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-1">{vehicle.name} | {vehicle.year}</h3>
+                          <p className="text-lg font-bold text-red-600 mb-1">Precio {vehicle.price}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">Ubicación {vehicle.ubicacion}</p>
+                          <Link
+                            href={`/catalogo/${vehicle.id}`}
+                            className="w-full bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 font-medium"
+                          >
+                            🚗 Ver detalles
+                          </Link>
                         </div>
                       </div>
                     ))}
@@ -401,7 +391,7 @@ export default function Home() {
             <Link href="/catalogo" className="inline-block bg-red-700 text-white px-12 py-4 rounded-full font-bold text-lg hover:bg-red-800 transition-colors">
               EXPLORAR CATÁLOGO COMPLETO
             </Link>
-            <p className="text-gray-500 mt-4">Más de 100+ vehículos disponibles</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-4">Más de 100+ vehículos disponibles</p>
           </div>
         </div>
       </section>

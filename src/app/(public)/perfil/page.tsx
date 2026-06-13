@@ -92,9 +92,9 @@ export default function PerfilPage() {
   const reviews: any[] = [];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-12">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-lg shadow-lg overflow-hidden border border-transparent dark:border-gray-700">
           {/* Header del perfil */}
           <EncabezadoPerfil 
             usuario={usuario} 
@@ -111,12 +111,12 @@ export default function PerfilPage() {
                   <p className="text-xs uppercase tracking-[0.25em] text-red-700/70 font-semibold mb-2">
                     Información Personal
                   </p>
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Resumen del perfil</h2>
-                  <p className="mt-2 text-sm text-gray-600 max-w-2xl">
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">Resumen del perfil</h2>
+                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 max-w-2xl">
                     Aquí encontrarás los datos principales asociados a tu cuenta. Mantén esta información actualizada para generar confianza con los compradores.
                   </p>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 border border-gray-200 rounded-full px-4 py-2">
+                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-300 bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2">
                   <span className="inline-flex h-2 w-2 rounded-full bg-green-500"></span>
                   Datos sincronizados automáticamente
                 </div>
@@ -129,43 +129,43 @@ export default function PerfilPage() {
               ) : (
                 <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
                   <div className="xl:col-span-2 space-y-4">
-                    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-4">
-                      <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">Nombre completo</p>
-                      <p className="mt-2 text-lg font-semibold text-gray-900">{nombreMostrar}</p>
+                    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm px-5 py-4">
+                      <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 font-semibold">Nombre completo</p>
+                      <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100">{nombreMostrar}</p>
                       {usuario.apellido && (
-                        <p className="text-sm text-gray-500 mt-1">Apellido registrado: {usuario.apellido}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Apellido registrado: {usuario.apellido}</p>
                       )}
                     </div>
 
-                    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-4">
-                      <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">Correo electrónico</p>
-                      <p className="mt-2 text-lg font-semibold text-gray-900 break-words">{usuario?.correo || 'Sin correo'}</p>
-                      <p className="text-xs text-gray-500 mt-2">Utiliza este correo para recibir notificaciones y gestionar tus ventas.</p>
+                    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm px-5 py-4">
+                      <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 font-semibold">Correo electrónico</p>
+                      <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100 break-words">{usuario?.correo || 'Sin correo'}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Utiliza este correo para recibir notificaciones y gestionar tus ventas.</p>
                     </div>
 
-                    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-4">
-                      <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">Teléfono de contacto</p>
-                      <p className="mt-2 text-lg font-semibold text-gray-900">{perfil?.telefono || 'No especificado'}</p>
-                      <p className="text-xs text-gray-500 mt-2">Este número no se comparte públicamente a menos que tú lo indiques.</p>
+                    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm px-5 py-4">
+                      <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 font-semibold">Teléfono de contacto</p>
+                      <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100">{perfil?.telefono || 'No especificado'}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Este número no se comparte públicamente a menos que tú lo indiques.</p>
                     </div>
                   </div>
 
                   <div className="xl:col-span-1 space-y-4">
-                    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-4">
-                      <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">Ubicación</p>
-                      <p className="mt-2 text-lg font-semibold text-gray-900">{perfil?.ciudad || 'No especificada'}</p>
-                      <p className="text-sm text-gray-500">{perfil?.direccion || 'Dirección no especificada'}</p>
+                    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm px-5 py-4">
+                      <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 font-semibold">Ubicación</p>
+                      <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100">{perfil?.ciudad || 'No especificada'}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{perfil?.direccion || 'Dirección no especificada'}</p>
                     </div>
 
-                    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-4">
-                      <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">ID de usuario</p>
-                      <p className="mt-2 text-lg font-semibold text-gray-900">#{usuario?.id || 'N/A'}</p>
-                      <p className="text-xs text-gray-500 mt-2">Utiliza este identificador para recibir soporte más rápido.</p>
+                    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm px-5 py-4">
+                      <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 font-semibold">ID de usuario</p>
+                      <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100">#{usuario?.id || 'N/A'}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Utiliza este identificador para recibir soporte más rápido.</p>
                     </div>
 
                     {perfil?.foto_perfil_url && (
-                      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-4">
-                        <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-3">Foto de perfil</p>
+                      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm px-5 py-4">
+                        <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 font-semibold mb-3">Foto de perfil</p>
                         <img
                           src={perfil.foto_perfil_url}
                           alt="Foto de perfil"
@@ -175,12 +175,12 @@ export default function PerfilPage() {
                     )}
                   </div>
 
-                  <div className="xl:col-span-1 bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-4 flex flex-col h-full">
-                    <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">Descripción</p>
-                    <p className="mt-3 text-sm text-gray-700 leading-relaxed flex-1 whitespace-pre-wrap">
+                    <div className="xl:col-span-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm px-5 py-4 flex flex-col h-full">
+                    <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 font-semibold">Descripción</p>
+                    <p className="mt-3 text-sm text-gray-700 dark:text-gray-300 leading-relaxed flex-1 whitespace-pre-wrap">
                       {perfil?.descripcion || 'Aún no has agregado una descripción. Cuenta a tus visitantes sobre tu experiencia como vendedor.'}
                     </p>
-                    <div className="mt-4 text-xs text-gray-500 flex items-center gap-2">
+                    <div className="mt-4 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
                       <span className="inline-flex h-2 w-2 rounded-full bg-red-600"></span>
                       Actualiza tu descripción desde el botón “Editar perfil”.
                     </div>
@@ -208,7 +208,7 @@ export default function PerfilPage() {
             <div className="flex flex-wrap gap-4 mt-8">
               <Link
                 href="/"
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                className="px-6 py-3 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-100 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-slate-600 transition-colors"
               >
                 Volver al Inicio
               </Link>

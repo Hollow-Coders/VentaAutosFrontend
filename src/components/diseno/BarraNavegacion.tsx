@@ -16,13 +16,43 @@ const BarraNavegacion = () => {
     { href: "/contacto", label: "Contacto" },
   ];
 
+  const authSection = () => {
+    if (estaCargando) {
+      return (
+        <div className="flex items-center space-x-2">
+          <div className="w-4 h-4 border-2 border-red-700 border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-sm text-gray-600 dark:text-gray-300">Cargando...</span>
+        </div>
+      );
+    }
+
+    if (estaAutenticado && usuario) {
+      return <MenuUsuario user={usuario} />;
+    }
+
+    return (
+      <>
+        <Link
+          href="/login"
+          className="text-red-700 border border-red-700 bg-white dark:bg-gray-900 px-4 py-2 rounded-full text-sm font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+        >
+          Iniciar Sesión
+        </Link>
+        <Link
+          href="/register"
+          className="bg-red-700 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-red-800 transition-colors"
+        >
+          Registrarse
+        </Link>
+      </>
+    );
+  };
+
   return (
-    <div className="bg-white">
-      {/* Navegación principal */}
-      <nav className="bg-white border-b border-red-700">
+    <div className="bg-white dark:bg-gray-900">
+      <nav className="bg-white dark:bg-gray-900 border-b border-red-700">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between py-4">
-            {/* Logo */}
             <div className="flex items-center">
               <Link href="/" className="flex items-center">
                 <div className="w-8 h-8 bg-red-700 rounded-full flex items-center justify-center">
@@ -40,13 +70,12 @@ const BarraNavegacion = () => {
                     />
                   </svg>
                 </div>
-                <span className="ml-2 text-xl font-bold text-gray-900">
+                <span className="ml-2 text-xl font-bold text-gray-900 dark:text-gray-100">
                   Pagina Autos
                 </span>
               </Link>
             </div>
 
-            {/* Enlaces de navegación - SIEMPRE VISIBLES */}
             <div className="flex gap-8">
               {enlacesPublicos.map((enlace) => (
                 <Link
@@ -56,7 +85,7 @@ const BarraNavegacion = () => {
                     ${
                       ruta === enlace.href
                         ? "bg-red-700 text-white font-semibold"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                        : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800"
                     }`}
                 >
                   {enlace.label}
@@ -64,34 +93,8 @@ const BarraNavegacion = () => {
               ))}
             </div>
 
-            {/* Área de autenticación */}
             <div className="flex items-center space-x-3">
-              {estaCargando ? (
-                // Estado de carga
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-red-700 border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-sm text-gray-600">Cargando...</span>
-                </div>
-              ) : estaAutenticado && usuario ? (
-                // Usuario autenticado - Mostrar menú de usuario
-                <MenuUsuario user={usuario} />
-              ) : (
-                // Usuario no autenticado - Mostrar botones de login/register
-                <>
-                  <Link
-                    href="/login"
-                    className="text-red-700 border border-red-700 bg-white px-4 py-2 rounded-full text-sm font-medium hover:bg-red-50 transition-colors"
-                  >
-                    Iniciar Sesión
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="bg-red-700 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-red-800 transition-colors"
-                  >
-                    Registrarse
-                  </Link>
-                </>
-              )}
+              {authSection()}
             </div>
           </div>
         </div>
