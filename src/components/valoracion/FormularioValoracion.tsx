@@ -105,7 +105,7 @@ export default function FormularioValoracion({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all animate-scaleIn">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all animate-scaleIn">
         {/* Header con gradiente */}
         <div className="bg-gradient-to-r from-red-600 to-red-700 p-6 rounded-t-2xl">
           <div className="flex items-start justify-between">
@@ -146,13 +146,13 @@ export default function FormularioValoracion({
         {/* Contenido */}
         <div className="p-6 space-y-6">
           {/* Calificación con diseño mejorado */}
-          <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6 border border-yellow-100">
-            <label className="block text-base font-semibold text-gray-800 mb-4 text-center">
+          <div className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl p-6 border border-yellow-100 dark:border-yellow-800/50">
+            <label className="block text-base font-semibold text-gray-800 dark:text-gray-100 mb-4 text-center">
               ¿Cómo calificarías esta compra?
             </label>
             
             {/* Estrellas grandes e interactivas */}
-            <div className="flex justify-center items-center gap-2 mb-4">
+            <div className="flex justify-center items-center gap-1 sm:gap-2 mb-4">
               {[1, 2, 3, 4, 5].map((estrella) => (
                 <button
                   key={estrella}
@@ -162,11 +162,11 @@ export default function FormularioValoracion({
                   className={`transition-all duration-200 transform hover:scale-110 active:scale-95 ${
                     estrella <= calificacion
                       ? "text-yellow-400 drop-shadow-lg"
-                      : "text-gray-300 hover:text-yellow-200"
+                      : "text-gray-300 dark:text-gray-600 hover:text-yellow-200"
                   }`}
                 >
                   <svg
-                    className="w-12 h-12"
+                    className="w-8 h-8 sm:w-12 sm:h-12"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -178,8 +178,8 @@ export default function FormularioValoracion({
 
             {/* Valor numérico destacado */}
             <div className="text-center">
-              <div className="inline-flex items-center gap-3 bg-white rounded-full px-6 py-3 shadow-md border border-gray-200">
-                <span className="text-sm font-medium text-gray-600">Calificación:</span>
+              <div className="inline-flex items-center gap-3 bg-white dark:bg-slate-700 rounded-full px-6 py-3 shadow-md border border-gray-200 dark:border-gray-600">
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Calificación:</span>
                 <input
                   type="number"
                   min="0"
@@ -195,9 +195,9 @@ export default function FormularioValoracion({
                   className="w-20 text-center text-2xl font-bold text-red-600 border-0 focus:ring-2 focus:ring-red-500 rounded-lg bg-transparent"
                   disabled={estaCargando}
                 />
-                <span className="text-sm text-gray-500">/ 5.0</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">/ 5.0</span>
               </div>
-              <p className="text-xs text-gray-500 mt-3">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
                 Puedes usar valores decimales (ej: 4.5)
               </p>
             </div>
@@ -205,8 +205,8 @@ export default function FormularioValoracion({
 
           {/* Comentario con diseño mejorado */}
           <div>
-            <label className="block text-base font-semibold text-gray-800 mb-3 flex items-center gap-2">
-              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <label className="block text-base font-semibold text-gray-800 dark:text-gray-100 mb-3 flex items-center gap-2">
+              <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
               Comparte tu experiencia (opcional)
@@ -217,7 +217,7 @@ export default function FormularioValoracion({
                 onChange={(e) => setComentario(e.target.value)}
                 rows={5}
                 maxLength={500}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-none transition-all text-gray-700 placeholder-gray-400"
+                className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-slate-700 focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-none transition-all text-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                 placeholder="Cuéntanos sobre tu experiencia con esta compra. ¿Qué te gustó? ¿Hay algo que mejorar?"
                 disabled={estaCargando}
               />
@@ -233,7 +233,7 @@ export default function FormularioValoracion({
 
           {/* Error con mejor diseño */}
           {error && (
-            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg text-sm flex items-start gap-3 animate-shake">
+            <div className="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm flex items-start gap-3 animate-shake">
               <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
@@ -243,12 +243,12 @@ export default function FormularioValoracion({
         </div>
 
         {/* Footer con botones mejorados */}
-        <div className="p-6 bg-gray-50 rounded-b-2xl border-t border-gray-200 flex gap-3">
+        <div className="p-6 bg-gray-50 dark:bg-slate-700/50 rounded-b-2xl border-t border-gray-200 dark:border-gray-600 flex gap-3">
           <button
             type="button"
             onClick={onCancel}
             disabled={estaCargando}
-            className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-white hover:border-gray-400 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
+            className="flex-1 px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-white dark:hover:bg-slate-700 hover:border-gray-400 dark:hover:border-gray-500 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
           >
             Cancelar
           </button>

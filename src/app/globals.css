@@ -2,8 +2,13 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #eef1f6;
+  --foreground: #334155;
+  --surface: #f7f8fa;
+  --border: #dde3ec;
+  --muted: #64748b;
+  --accent: #dc2626;
+  --accent-soft: #fef2f2;
 }
 
 @theme inline {
@@ -13,34 +18,102 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #ffffff;
-    --foreground: #000000;
-  }
-}
-
 html.dark {
-  --background: #0f172a;
-  --foreground: #e5e7eb;
+  --background: #0f1419;
+  --foreground: #cbd5e1;
+  --surface: #1a2332;
+  --border: #2a3544;
+  --muted: #94a3b8;
+  --accent: #f87171;
+  --accent-soft: rgba(248, 113, 113, 0.12);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html.dark main {
-  background-color: #0f172a;
+  background-color: var(--background);
 }
 
 html,
 body {
   transition: background-color 0.2s ease, color 0.2s ease;
+  overflow-x: hidden;
 }
 
-/* Desactivar autocompletado solo para campos de marca y modelo */
+@layer components {
+  .surface-card {
+    @apply bg-slate-50/95 dark:bg-slate-800/55 border border-slate-200/80 dark:border-slate-700/50 rounded-2xl shadow-sm;
+  }
+
+  .surface-card-hover {
+    @apply bg-slate-50/95 dark:bg-slate-800/55 border border-slate-200/80 dark:border-slate-700/50 rounded-2xl shadow-sm transition-all duration-200 hover:shadow-md hover:border-slate-300/80 dark:hover:border-slate-600;
+  }
+
+  .section-muted {
+    @apply bg-slate-100/50 dark:bg-slate-900/40;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-red-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors shadow-sm;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 bg-slate-50 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-xl text-sm font-medium border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-xl text-sm font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2;
+  }
+
+  .form-hint {
+    @apply mt-1.5 text-xs text-slate-500 dark:text-slate-400;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50/80 dark:bg-slate-800/90 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-red-400/60 transition-colors;
+  }
+
+  .input-field:disabled,
+  .input-field-disabled {
+    @apply bg-slate-100/90 dark:bg-slate-700/40 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 cursor-not-allowed opacity-100;
+  }
+
+  .dropdown-panel {
+    @apply absolute z-10 mt-1 w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl shadow-lg max-h-60 overflow-y-auto;
+  }
+
+  .dropdown-item {
+    @apply w-full text-left px-4 py-2.5 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/70 transition-colors text-sm;
+  }
+
+  .alert-error {
+    @apply bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 px-4 py-3 rounded-xl text-sm;
+  }
+
+  .alert-success {
+    @apply bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300 px-4 py-3 rounded-xl text-sm;
+  }
+
+  .section-label {
+    @apply text-xs font-semibold uppercase tracking-[0.2em] text-red-600/75 dark:text-red-400/80;
+  }
+
+  .page-title {
+    @apply text-2xl sm:text-3xl font-semibold text-slate-800 dark:text-slate-50 tracking-tight;
+  }
+}
+
+/* Autofill — modo claro */
 #marca:-webkit-autofill,
 #marca:-webkit-autofill:hover,
 #marca:-webkit-autofill:focus,
@@ -49,11 +122,22 @@ body {
 #modelo:-webkit-autofill:hover,
 #modelo:-webkit-autofill:focus,
 #modelo:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px white inset !important;
-  -webkit-text-fill-color: inherit !important;
+  -webkit-box-shadow: 0 0 0 30px #f1f5f9 inset !important;
+  -webkit-text-fill-color: #334155 !important;
 }
 
-/* Ocultar sugerencias de autocompletado solo para campos de marca y modelo */
+html.dark #marca:-webkit-autofill,
+html.dark #marca:-webkit-autofill:hover,
+html.dark #marca:-webkit-autofill:focus,
+html.dark #marca:-webkit-autofill:active,
+html.dark #modelo:-webkit-autofill,
+html.dark #modelo:-webkit-autofill:hover,
+html.dark #modelo:-webkit-autofill:focus,
+html.dark #modelo:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #1e293b inset !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+}
+
 #marca::-webkit-contacts-auto-fill-button,
 #marca::-webkit-credentials-auto-fill-button,
 #modelo::-webkit-contacts-auto-fill-button,
@@ -64,4 +148,10 @@ body {
   height: 0;
   width: 0;
   margin: 0;
+}
+
+/* Select nativo — opciones legibles en oscuro */
+html.dark select option {
+  background-color: #1e293b;
+  color: #e2e8f0;
 }

@@ -291,25 +291,25 @@ export default function ChatPage() {
   const esRemitente = (mensaje: Mensaje) => mensaje.remitente === Number(usuario?.id);
 
   return (
-    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
+    <div className="flex flex-col h-[calc(100dvh-4.5rem)] sm:h-[calc(100dvh-5rem)] bg-gray-50 dark:bg-slate-900 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm flex-shrink-0">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+      <div className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-gray-700 shadow-sm flex-shrink-0">
+        <div className="container mx-auto px-4 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               <button
                 onClick={() => router.back()}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors flex-shrink-0"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
-              <div>
-                <h1 className="text-xl font-semibold text-gray-900">
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-xl font-semibold text-gray-900 dark:text-gray-100 truncate">
                   {vehiculo ? `${vehiculo.marca_nombre} ${vehiculo.modelo_nombre} ${vehiculo.año}` : "Chat"}
                 </h1>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 truncate">
                   {compradorId === Number(usuario?.id) 
                     ? `Vendedor: ${vendedorNombre}`
                     : `Comprador: Usuario`}
@@ -319,9 +319,10 @@ export default function ChatPage() {
             {vehiculo && (
               <Link
                 href={`/catalogo/${vehiculo.id}`}
-                className="text-red-700 hover:text-red-800 text-sm font-medium"
+                className="text-red-700 hover:text-red-800 text-sm font-medium self-start sm:self-auto flex-shrink-0"
               >
-                Ver Vehículo
+                <span className="sm:hidden">Ver vehículo</span>
+                <span className="hidden sm:inline">Ver Vehículo</span>
               </Link>
             )}
           </div>
@@ -354,7 +355,7 @@ export default function ChatPage() {
         {/* Contenedor con scroll para los mensajes - altura fija */}
         <div 
           ref={mensajesContainerRef}
-          className="flex-1 overflow-y-auto bg-gray-50 rounded-lg border border-gray-200 p-4 min-h-0 max-h-full"
+          className="flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-gray-700 p-3 sm:p-4 min-h-0 max-h-full"
         >
           {mensajes.length === 0 && !errorChatNoDisponible ? (
             <div className="text-center py-12 h-full flex flex-col items-center justify-center">
@@ -372,10 +373,10 @@ export default function ChatPage() {
                   key={mensaje.id}
                   className={`flex ${esRemitente(mensaje) ? "justify-end" : "justify-start"}`}
                 >
-                  <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                  <div className={`max-w-[85%] sm:max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                     esRemitente(mensaje)
                       ? "bg-red-700 text-white"
-                      : "bg-white text-gray-900 border border-gray-200"
+                      : "bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700"
                   }`}>
                     {!esRemitente(mensaje) && mensaje.remitente_nombre && (
                       <p className="text-xs font-semibold mb-1 opacity-75">
@@ -399,33 +400,33 @@ export default function ChatPage() {
       </div>
 
       {/* Input de mensaje */}
-      <div className="bg-white border-t border-gray-200 flex-shrink-0">
-        <div className="container mx-auto px-4 py-4">
+      <div className="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
+        <div className="container mx-auto px-4 py-3 sm:py-4">
           <form onSubmit={manejarEnviarMensaje} className="flex gap-2">
             <input
               type="text"
               value={nuevoMensaje}
               onChange={(e) => establecerNuevoMensaje(e.target.value)}
               placeholder={errorChatNoDisponible ? "Chat no disponible" : "Escribe un mensaje..."}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="flex-1 min-w-0 px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-slate-800 disabled:cursor-not-allowed"
               disabled={enviando || errorChatNoDisponible}
             />
             <button
               type="submit"
               disabled={!nuevoMensaje.trim() || enviando || errorChatNoDisponible}
-              className="bg-red-700 text-white px-6 py-2 rounded-lg hover:bg-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="bg-red-700 text-white px-3 sm:px-6 py-2 rounded-lg hover:bg-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 sm:gap-2 flex-shrink-0"
             >
               {enviando ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Enviando...</span>
+                  <span className="hidden sm:inline">Enviando...</span>
                 </>
               ) : (
                 <>
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
-                  <span>Enviar</span>
+                  <span className="hidden sm:inline">Enviar</span>
                 </>
               )}
             </button>

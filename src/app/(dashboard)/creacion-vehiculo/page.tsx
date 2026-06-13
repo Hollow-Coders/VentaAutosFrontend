@@ -247,8 +247,8 @@ export default function CreacionVehiculoPage() {
 
   if (estaCargando) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-red-700 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -257,28 +257,29 @@ export default function CreacionVehiculoPage() {
     return null;
   }
 
+  const labelClass = "form-label";
+  const inputClass = "input-field";
+  const inputDisabledClass = "input-field input-field-disabled";
+
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
+    <div className="min-h-screen py-8 sm:py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white py-8 px-6 shadow-lg border-2 border-red-700 rounded-lg sm:px-10">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 text-center">
-              Crear Vehículo
-            </h2>
-            <p className="mt-2 text-sm text-gray-600 text-center">
+        <div className="surface-card py-6 sm:py-8 px-4 sm:px-6 lg:px-10">
+          <div className="mb-8 text-center">
+            <p className="section-label mb-2">Publicar vehículo</p>
+            <h2 className="page-title">Crear vehículo</h2>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
               Completa la información de tu vehículo para publicarlo
             </p>
           </div>
 
           <form onSubmit={manejarEnvio} className="space-y-6">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
-                {error}
-              </div>
+              <div className="alert-error">{error}</div>
             )}
 
             {exito && (
-              <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg text-sm">
+              <div className="alert-success">
                 ¡Vehículo creado exitosamente! Redirigiendo...
               </div>
             )}
@@ -286,7 +287,7 @@ export default function CreacionVehiculoPage() {
             {/* Marca y Modelo */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="marca" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="marca" className={labelClass}>
                   Marca
                 </label>
                 <div className="relative">
@@ -312,13 +313,13 @@ export default function CreacionVehiculoPage() {
                       setTimeout(() => establecerMostrarDropdownMarca(false), 200);
                     }}
                     placeholder="Buscar marca"
-                    className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
+                    className={inputClass}
                   />
-                  <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   {mostrarDropdownMarca && marcasFiltradas.length > 0 && (
-                    <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                    <div className="dropdown-panel">
                       {marcasFiltradas.map((marca) => (
                         <button
                           key={marca.id}
@@ -330,12 +331,11 @@ export default function CreacionVehiculoPage() {
                             establecerNombreMarcaSeleccionada(marca.nombre);
                             establecerBuscandoMarca("");
                             establecerMostrarDropdownMarca(false);
-                            // Limpiar modelo seleccionado y modelos cuando se cambia la marca
                             establecerNombreModeloSeleccionado("");
                             establecerBuscandoModelo("");
                             establecerModelos([]);
                           }}
-                          className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                          className="dropdown-item"
                         >
                           {marca.nombre}
                         </button>
@@ -346,7 +346,7 @@ export default function CreacionVehiculoPage() {
               </div>
 
               <div>
-                <label htmlFor="modelo" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="modelo" className={labelClass}>
                   Modelo
                 </label>
                 <div className="relative">
@@ -374,13 +374,13 @@ export default function CreacionVehiculoPage() {
                     }}
                     placeholder="Buscar modelo"
                     disabled={!marcaSeleccionada}
-                    className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={`${inputClass} disabled:opacity-60`}
                   />
-                  <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   {mostrarDropdownModelo && marcaSeleccionada && modelosFiltrados.length > 0 && (
-                    <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                    <div className="dropdown-panel">
                       {modelosFiltrados.map((modelo) => (
                         <button
                           key={modelo.id}
@@ -396,7 +396,7 @@ export default function CreacionVehiculoPage() {
                             establecerBuscandoModelo("");
                             establecerMostrarDropdownModelo(false);
                           }}
-                          className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                          className="dropdown-item"
                         >
                           {modelo.nombre}
                         </button>
@@ -410,7 +410,7 @@ export default function CreacionVehiculoPage() {
             {/* Año y Precio */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="año" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="año" className={labelClass}>
                   Año
                 </label>
                 <input
@@ -421,12 +421,12 @@ export default function CreacionVehiculoPage() {
                   onChange={manejarCambio}
                   placeholder="Año del vehículo"
                   required
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
+                  className={inputClass}
                 />
               </div>
 
               <div>
-                <label htmlFor="precio" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="precio" className={labelClass}>
                   Precio
                 </label>
                 <input
@@ -437,7 +437,7 @@ export default function CreacionVehiculoPage() {
                   onChange={manejarCambio}
                   placeholder="Precio del vehículo"
                   required
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
+                  className={inputClass}
                 />
               </div>
             </div>
@@ -445,7 +445,7 @@ export default function CreacionVehiculoPage() {
             {/* Tipo Transmisión y Tipo Combustible */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="tipo_transmision" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="tipo_transmision" className={labelClass}>
                   Tipo de Transmisión
                 </label>
                 <select
@@ -454,7 +454,7 @@ export default function CreacionVehiculoPage() {
                   value={datosFormulario.tipo_transmision}
                   onChange={manejarCambio}
                   required
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
+                  className={inputClass}
                 >
                   <option value="">Selecciona una opción</option>
                   <option value="Manual">Manual</option>
@@ -465,7 +465,7 @@ export default function CreacionVehiculoPage() {
               </div>
 
               <div>
-                <label htmlFor="tipo_combustible" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="tipo_combustible" className={labelClass}>
                   Tipo de Combustible
                 </label>
                 <select
@@ -474,7 +474,7 @@ export default function CreacionVehiculoPage() {
                   value={datosFormulario.tipo_combustible}
                   onChange={manejarCambio}
                   required
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
+                  className={inputClass}
                 >
                   <option value="">Selecciona una opción</option>
                   <option value="Gasolina">Gasolina</option>
@@ -489,7 +489,7 @@ export default function CreacionVehiculoPage() {
             {/* Estado y Tipo Vehículo */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="estado" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="estado" className={labelClass}>
                   Estado
                 </label>
                 <select
@@ -497,17 +497,17 @@ export default function CreacionVehiculoPage() {
                   name="estado"
                   value={datosFormulario.estado}
                   disabled
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors bg-gray-100 cursor-not-allowed"
+                  className={inputDisabledClass}
                 >
                   <option value="en_revision">En Revisión</option>
                 </select>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="form-hint">
                   Los vehículos nuevos se envían automáticamente a revisión
                 </p>
               </div>
 
               <div>
-                <label htmlFor="tipo_vehiculo" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="tipo_vehiculo" className={labelClass}>
                   Tipo de Vehículo
                 </label>
                 <select
@@ -516,11 +516,11 @@ export default function CreacionVehiculoPage() {
                   value={datosFormulario.tipo_vehiculo}
                   disabled
                   required
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors bg-gray-100 cursor-not-allowed"
+                  className={inputDisabledClass}
                 >
                   <option value="">{datosFormulario.tipo_vehiculo || "Se asignará automáticamente"}</option>
                 </select>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="form-hint">
                   El tipo de vehículo se selecciona automáticamente según el modelo
                 </p>
               </div>
@@ -529,7 +529,7 @@ export default function CreacionVehiculoPage() {
             {/* Kilometraje y Ubicación */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="kilometraje" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="kilometraje" className={labelClass}>
                   Kilometraje
                 </label>
                 <input
@@ -539,12 +539,12 @@ export default function CreacionVehiculoPage() {
                   value={datosFormulario.kilometraje}
                   onChange={manejarCambio}
                   placeholder="Kilometraje del vehículo"
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
+                  className={inputClass}
                 />
               </div>
 
               <div>
-                <label htmlFor="ubicacion" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="ubicacion" className={labelClass}>
                   Ubicación
                 </label>
                 <input
@@ -555,14 +555,14 @@ export default function CreacionVehiculoPage() {
                   onChange={manejarCambio}
                   placeholder="Ubicación del vehículo"
                   required
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
+                  className={inputClass}
                 />
               </div>
             </div>
 
             {/* Descripción */}
             <div>
-              <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="descripcion" className={labelClass}>
                 Descripción
               </label>
               <textarea
@@ -572,20 +572,20 @@ export default function CreacionVehiculoPage() {
                 value={datosFormulario.descripcion}
                 onChange={manejarCambio}
                 placeholder="Descripción del vehículo"
-                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors"
+                className={inputClass}
               />
             </div>
 
             {/* Imágenes */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-4">
+              <label className={labelClass}>
                 Imágenes del Vehículo (máximo 3)
               </label>
               <div className="space-y-4">
                 {[0, 1, 2].map((index) => (
-                  <div key={index} className="border border-gray-300 rounded-lg p-4">
-                    <div className="flex items-center gap-4 mb-3">
-                      <label className="px-4 py-2 bg-gray-100 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-200 cursor-pointer transition-colors">
+                  <div key={index} className="border border-slate-200 dark:border-slate-600 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-800/30">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-3">
+                      <label className="btn-secondary cursor-pointer self-start">
                         <span className="text-sm font-medium">Seleccionar archivo</span>
                         <input
                           type="file"
@@ -594,7 +594,7 @@ export default function CreacionVehiculoPage() {
                           className="hidden"
                         />
                       </label>
-                      <span className="text-gray-600 text-sm flex-1">
+                      <span className="text-slate-500 dark:text-slate-400 text-sm flex-1 truncate min-w-0">
                         {imagenes[index] ? imagenes[index]!.name : "Sin archivos seleccionados"}
                       </span>
                       {vistasPrevia[index] && (
@@ -616,32 +616,32 @@ export default function CreacionVehiculoPage() {
                         <img
                           src={vistasPrevia[index]!}
                           alt={`Vista previa ${index + 1}`}
-                          className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                          className="w-full h-48 object-cover rounded-xl border border-slate-200 dark:border-slate-600"
                         />
                       </div>
                     )}
                   </div>
                 ))}
               </div>
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="form-hint mt-2">
                 Formatos aceptados: JPG, PNG, GIF. Tamaño máximo: 5MB por imagen
               </p>
             </div>
 
             {/* Botones */}
-            <div className="flex gap-4 pt-4">
+            <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 pt-4">
               <button
                 type="button"
                 onClick={() => router.back()}
                 disabled={guardando}
-                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 btn-secondary py-3 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={guardando || exito}
-                className="flex-1 flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 btn-primary py-3 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {guardando ? (
                   <>

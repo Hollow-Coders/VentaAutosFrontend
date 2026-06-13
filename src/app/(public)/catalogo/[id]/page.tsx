@@ -113,8 +113,8 @@ export default function DetalleVehiculo() {
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       <div className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-gray-700 py-4">
         <div className="container mx-auto px-4">
-          <nav className="flex" aria-label="Breadcrumb">
-            <ol className="inline-flex items-center space-x-1 md:space-x-3">
+          <nav className="flex overflow-x-auto" aria-label="Breadcrumb">
+            <ol className="inline-flex items-center space-x-1 md:space-x-3 min-w-0">
               <li className="inline-flex items-center">
                 <Link href="/" className="inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600">
                   Inicio
@@ -143,7 +143,7 @@ export default function DetalleVehiculo() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="ml-1 text-sm font-medium text-gray-500 dark:text-gray-400 md:ml-2">{nombreVehiculo}</span>
+                  <span className="ml-1 text-sm font-medium text-gray-500 dark:text-gray-400 md:ml-2 truncate max-w-[120px] sm:max-w-xs">{nombreVehiculo}</span>
                 </div>
               </li>
             </ol>
@@ -151,11 +151,11 @@ export default function DetalleVehiculo() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6 sm:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm overflow-hidden">
-              <div className="h-96 bg-gray-100 dark:bg-slate-700 flex items-center justify-center relative">
+              <div className="h-56 sm:h-72 lg:h-96 bg-gray-100 dark:bg-slate-700 flex items-center justify-center relative">
                 {fotos.length > 0 ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -191,14 +191,14 @@ export default function DetalleVehiculo() {
               )}
             </div>
 
-            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm p-6">
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm p-4 sm:p-6">
               <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between mb-6">
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{nombreVehiculo}</h1>
+                <div className="min-w-0">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 break-words">{nombreVehiculo}</h1>
                   <p className="text-gray-600 dark:text-gray-300 capitalize">{vehiculo.tipo_vehiculo} • {vehiculo.tipo_transmision}</p>
                 </div>
-                <div className="text-left md:text-right">
-                  <p className="text-3xl font-bold text-red-600">{formatearPrecio(vehiculo.precio)}</p>
+                <div className="text-left md:text-right flex-shrink-0">
+                  <p className="text-2xl sm:text-3xl font-bold text-red-600">{formatearPrecio(vehiculo.precio)}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-300">{vehiculo.ubicacion}</p>
                 </div>
               </div>

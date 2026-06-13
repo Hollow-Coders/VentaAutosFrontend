@@ -223,14 +223,14 @@ export default function PerfilPublicoPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 sm:py-12">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg overflow-hidden border border-transparent dark:border-gray-700">
           <EncabezadoPerfil usuario={usuarioPublico} perfil={perfil} esPropietario={false} />
 
-          <div className="p-8">
+          <div className="p-4 sm:p-6 lg:p-8">
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Información del Vendedor</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 sm:mb-6">Información del Vendedor</h2>
 
               {cargandoPerfil ? (
                 <div className="flex items-center justify-center py-8">
@@ -240,11 +240,11 @@ export default function PerfilPublicoPage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Nombre
                       </label>
-                      <div className="px-4 py-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <p className="text-gray-900">{nombreMostrar}</p>
+                      <div className="px-4 py-3 bg-gray-50 dark:bg-slate-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                        <p className="text-gray-900 dark:text-gray-100 break-words">{nombreMostrar}</p>
                       </div>
                     </div>
 

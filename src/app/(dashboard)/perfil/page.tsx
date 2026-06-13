@@ -2,13 +2,44 @@
 
 import { useAuth } from "../../../hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { servicioPerfil, Perfil } from "../../../api";
 import { servicioVehiculo, VehiculoDetalle } from "../../../api/vehicles";
 import EncabezadoPerfil from "../../../components/perfil/EncabezadoPerfil";
 import VehiculosPerfil from "../../../components/perfil/VehiculosPerfil";
 import ResenasPerfil from "../../../components/perfil/ResenasPerfil";
+
+function FilaInfo({
+  icono,
+  etiqueta,
+  valor,
+  hint,
+}: {
+  icono: React.ReactNode;
+  etiqueta: string;
+  valor: string;
+  hint?: string;
+}) {
+  return (
+    <div className="flex gap-3 py-3.5 border-b border-slate-200/70 dark:border-slate-700/50 last:border-0 last:pb-0 first:pt-0">
+      <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 flex items-center justify-center">
+        {icono}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          {etiqueta}
+        </p>
+        <p className="mt-0.5 text-sm font-semibold text-slate-800 dark:text-slate-100 break-words">
+          {valor}
+        </p>
+        {hint && (
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{hint}</p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function PerfilPage() {
   const { usuario, estaAutenticado, estaCargando } = useAuth();
@@ -24,11 +55,10 @@ export default function PerfilPage() {
     }
   }, [estaAutenticado, estaCargando, router]);
 
-  // Cargar perfil cuando el usuario esté disponible
   useEffect(() => {
     const cargarPerfil = async () => {
       if (!usuario?.id) return;
-      
+
       establecerCargandoPerfil(true);
       try {
         const perfilData = await servicioPerfil.getByUsuarioId(Number(usuario.id));
@@ -46,11 +76,10 @@ export default function PerfilPage() {
     }
   }, [usuario?.id, estaAutenticado]);
 
-  // Cargar vehículos del usuario
   useEffect(() => {
     const cargarVehiculos = async () => {
       if (!usuario?.id) return;
-      
+
       establecerCargandoVehiculos(true);
       try {
         const vehiculosData = await servicioVehiculo.getByUsuario(Number(usuario.id));
@@ -68,15 +97,26 @@ export default function PerfilPage() {
     }
   }, [usuario?.id, estaAutenticado]);
 
-  // Callback para actualizar el perfil después de guardar
   const manejarActualizarPerfil = (perfilActualizado: Perfil) => {
     establecerPerfil(perfilActualizado);
   };
 
+  const estadisticas = useMemo(() => {
+    const activos = vehiculos.filter((v) => {
+      const e = v.estado.toLowerCase();
+      return !e.includes("vendido") && !e.includes("sold") && !e.includes("rechazado");
+    }).length;
+    const vendidos = vehiculos.filter((v) => {
+      const e = v.estado.toLowerCase();
+      return e.includes("vendido") || e.includes("sold");
+    }).length;
+    return { total: vehiculos.length, activos, vendidos };
+  }, [vehiculos]);
+
   if (estaCargando) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-red-700 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -85,146 +125,145 @@ export default function PerfilPage() {
     return null;
   }
 
-  // Obtener nombre para mostrar (con validación)
-  const nombreMostrar = usuario?.nombre_completo || usuario?.nombre || usuario?.correo?.split('@')[0] || 'Usuario';
-
-  // Datos de reviews (por ahora vacío, se puede implementar cuando haya API)
-  const reviews: any[] = [];
+  const nombreMostrar =
+    usuario?.nombre_completo || usuario?.nombre || usuario?.correo?.split("@")[0] || "Usuario";
+  const valoraciones: never[] = [];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="container mx-auto px-4 max-w-7xl">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          {/* Header del perfil */}
-          <EncabezadoPerfil 
-            usuario={usuario} 
-            perfil={perfil} 
+    <div className="min-h-screen py-6 sm:py-10">
+      <div className="container mx-auto px-4 max-w-6xl space-y-6">
+        {/* Encabezado */}
+        <div className="surface-card overflow-hidden">
+          <EncabezadoPerfil
+            usuario={usuario}
+            perfil={perfil}
             alActualizarPerfil={manejarActualizarPerfil}
+            estadisticas={{
+              totalVehiculos: estadisticas.total,
+              vehiculosActivos: estadisticas.activos,
+              vehiculosVendidos: estadisticas.vendidos,
+            }}
           />
+        </div>
 
-          {/* Contenido del perfil */}
-          <div className="p-8">
-            {/* Información Personal */}
-            <div className="mb-8">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.25em] text-red-700/70 font-semibold mb-2">
-                    Información Personal
-                  </p>
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Resumen del perfil</h2>
-                  <p className="mt-2 text-sm text-gray-600 max-w-2xl">
-                    Aquí encontrarás los datos principales asociados a tu cuenta. Mantén esta información actualizada para generar confianza con los compradores.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 border border-gray-200 rounded-full px-4 py-2">
-                  <span className="inline-flex h-2 w-2 rounded-full bg-green-500"></span>
-                  Datos sincronizados automáticamente
-                </div>
-              </div>
+        {/* Estadísticas rápidas */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          {[
+            { label: "Publicados", value: estadisticas.total, accent: "text-red-600 dark:text-red-400" },
+            { label: "Activos", value: estadisticas.activos, accent: "text-emerald-600 dark:text-emerald-400" },
+            { label: "Vendidos", value: estadisticas.vendidos, accent: "text-slate-600 dark:text-slate-300" },
+            { label: "Valoraciones", value: 0, accent: "text-amber-500 dark:text-amber-400" },
+          ].map((stat) => (
+            <div key={stat.label} className="surface-card px-4 py-4 sm:px-5 sm:py-5 text-center sm:text-left">
+              <p className={`text-2xl sm:text-3xl font-semibold tabular-nums ${stat.accent}`}>
+                {cargandoVehiculos && stat.label !== "Valoraciones" ? "—" : stat.value}
+              </p>
+              <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Contenido principal */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Sidebar */}
+          <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
+            <div className="surface-card p-5 sm:p-6">
+              <p className="section-label mb-1">Contacto</p>
+              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">
+                Datos de tu cuenta
+              </h2>
 
               {cargandoPerfil ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="w-6 h-6 border-2 border-red-700 border-t-transparent rounded-full animate-spin"></div>
+                <div className="flex justify-center py-8">
+                  <div className="w-6 h-6 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : (
-                <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-                  <div className="xl:col-span-2 space-y-4">
-                    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-4">
-                      <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">Nombre completo</p>
-                      <p className="mt-2 text-lg font-semibold text-gray-900">{nombreMostrar}</p>
-                      {usuario.apellido && (
-                        <p className="text-sm text-gray-500 mt-1">Apellido registrado: {usuario.apellido}</p>
-                      )}
-                    </div>
-
-                    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-4">
-                      <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">Correo electrónico</p>
-                      <p className="mt-2 text-lg font-semibold text-gray-900 break-words">{usuario?.correo || 'Sin correo'}</p>
-                      <p className="text-xs text-gray-500 mt-2">Utiliza este correo para recibir notificaciones y gestionar tus ventas.</p>
-                    </div>
-
-                    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-4">
-                      <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">Teléfono de contacto</p>
-                      <p className="mt-2 text-lg font-semibold text-gray-900">{perfil?.telefono || 'No especificado'}</p>
-                      <p className="text-xs text-gray-500 mt-2">Este número no se comparte públicamente a menos que tú lo indiques.</p>
-                    </div>
-                  </div>
-
-                  <div className="xl:col-span-1 space-y-4">
-                    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-4">
-                      <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">Ubicación</p>
-                      <p className="mt-2 text-lg font-semibold text-gray-900">{perfil?.ciudad || 'No especificada'}</p>
-                      <p className="text-sm text-gray-500">{perfil?.direccion || 'Dirección no especificada'}</p>
-                    </div>
-
-                    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-4">
-                      <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">ID de usuario</p>
-                      <p className="mt-2 text-lg font-semibold text-gray-900">#{usuario?.id || 'N/A'}</p>
-                      <p className="text-xs text-gray-500 mt-2">Utiliza este identificador para recibir soporte más rápido.</p>
-                    </div>
-
-                    {perfil?.foto_perfil_url && (
-                      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-4">
-                        <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-3">Foto de perfil</p>
-                        <img
-                          src={perfil.foto_perfil_url}
-                          alt="Foto de perfil"
-                          className="w-24 h-24 object-cover rounded-xl border border-gray-100 shadow-sm"
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="xl:col-span-1 bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-4 flex flex-col h-full">
-                    <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">Descripción</p>
-                    <p className="mt-3 text-sm text-gray-700 leading-relaxed flex-1 whitespace-pre-wrap">
-                      {perfil?.descripcion || 'Aún no has agregado una descripción. Cuenta a tus visitantes sobre tu experiencia como vendedor.'}
-                    </p>
-                    <div className="mt-4 text-xs text-gray-500 flex items-center gap-2">
-                      <span className="inline-flex h-2 w-2 rounded-full bg-red-600"></span>
-                      Actualiza tu descripción desde el botón “Editar perfil”.
-                    </div>
-                  </div>
+                <div>
+                  <FilaInfo
+                    icono={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    }
+                    etiqueta="Nombre"
+                    valor={nombreMostrar}
+                  />
+                  <FilaInfo
+                    icono={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    }
+                    etiqueta="Correo"
+                    valor={usuario?.correo || "Sin correo"}
+                    hint="Recibirás notificaciones y avisos de venta aquí."
+                  />
+                  <FilaInfo
+                    icono={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                    }
+                    etiqueta="Teléfono"
+                    valor={perfil?.telefono || "No especificado"}
+                  />
+                  <FilaInfo
+                    icono={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    }
+                    etiqueta="Ubicación"
+                    valor={perfil?.ciudad || "No especificada"}
+                    hint={perfil?.direccion || undefined}
+                  />
                 </div>
               )}
             </div>
 
-            {/* Vehículos del usuario */}
-            {cargandoVehiculos ? (
-              <div className="mb-8 flex items-center justify-center py-8">
-                <div className="w-6 h-6 border-2 border-red-700 border-t-transparent rounded-full animate-spin"></div>
+            {perfil?.descripcion && (
+              <div className="surface-card p-5 sm:p-6">
+                <p className="section-label mb-1">Acerca de</p>
+                <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-3">
+                  Tu presentación
+                </h2>
+                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+                  {perfil.descripcion}
+                </p>
               </div>
-            ) : (
-              <VehiculosPerfil 
-                vehicles={vehiculos} 
-                isOwner={true} 
-              />
             )}
 
-            {/* Reviews del usuario */}
-            <ResenasPerfil reviews={reviews} />
-
-            {/* Acciones */}
-            <div className="flex flex-wrap gap-4 mt-8">
-              <Link
-                href="/"
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
-              >
-                Volver al Inicio
-              </Link>
-              <Link
-                href="/catalogo"
-                className="px-6 py-3 bg-red-700 text-white rounded-lg font-medium hover:bg-red-800 transition-colors"
-              >
-                Ver Catálogo
-              </Link>
-              <Link
-                href="/creacion-vehiculo"
-                className="px-6 py-3 bg-red-700 text-white rounded-lg font-medium hover:bg-red-800 transition-colors"
-              >
-                Vender Vehiculo
-              </Link>
+            <div className="surface-card p-5 sm:p-6">
+              <p className="section-label mb-3">Acciones</p>
+              <div className="flex flex-col gap-2">
+                <Link href="/creacion-vehiculo" className="btn-primary w-full">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Vender vehículo
+                </Link>
+                <Link href="/catalogo" className="btn-secondary w-full">
+                  Ver catálogo
+                </Link>
+                <Link href="/mis-compras" className="btn-ghost w-full justify-start">
+                  Mis compras
+                </Link>
+              </div>
             </div>
+          </aside>
+
+          {/* Contenido */}
+          <div className="lg:col-span-8 space-y-6">
+            {cargandoVehiculos ? (
+              <div className="surface-card flex items-center justify-center py-16">
+                <div className="w-6 h-6 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : (
+              <VehiculosPerfil vehicles={vehiculos} isOwner={true} />
+            )}
+
+            <ResenasPerfil valoraciones={valoraciones} promedio={null} />
           </div>
         </div>
       </div>

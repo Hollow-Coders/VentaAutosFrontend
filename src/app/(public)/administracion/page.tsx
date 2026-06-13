@@ -160,11 +160,11 @@ export default function AdministracionPage() {
   return (
     <>
       <ToastContainer toasts={toasts} onClose={cerrarToast} />
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-6 sm:py-8">
         <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Administración</h1>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Administración</h1>
           <p className="text-gray-600 dark:text-gray-300">
             Revisa y gestiona los vehículos pendientes de aprobación para el catálogo
           </p>
@@ -261,12 +261,12 @@ export default function AdministracionPage() {
 
                     {/* Información del vehículo */}
                     <div className="flex-1">
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1 break-words">
                             {vehiculo.marca_nombre} {vehiculo.modelo_nombre} {vehiculo.año}
                           </h3>
-                          <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300">
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-600 dark:text-gray-300">
                             <span className="flex items-center gap-1">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -284,7 +284,7 @@ export default function AdministracionPage() {
                             )}
                           </div>
                         </div>
-                        <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full">
+                        <span className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-300 text-xs font-semibold rounded-full flex-shrink-0 self-start">
                           En Revisión
                         </span>
                       </div>

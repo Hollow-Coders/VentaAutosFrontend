@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { servicioPerfil } from "../../api";
 import { useTheme } from "../../context/ThemeContext";
@@ -23,8 +23,33 @@ export default function MenuUsuario({ user }: Readonly<PropsMenuUsuario>) {
   const [estaAbierto, setEstaAbierto] = useState(false);
   const [fotoPerfil, setFotoPerfil] = useState<string | null>(null);
   const [cargandoFoto, setCargandoFoto] = useState(true);
+  const menuRef = useRef<HTMLDivElement>(null);
   const { cerrarSesion, esAdministrador } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
+
+  useEffect(() => {
+    if (!estaAbierto) return;
+
+    const cerrarSiClickFuera = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setEstaAbierto(false);
+      }
+    };
+
+    const cerrarConEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setEstaAbierto(false);
+      }
+    };
+
+    document.addEventListener("mousedown", cerrarSiClickFuera);
+    document.addEventListener("keydown", cerrarConEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", cerrarSiClickFuera);
+      document.removeEventListener("keydown", cerrarConEscape);
+    };
+  }, [estaAbierto]);
 
   useEffect(() => {
     const cargarFotoPerfil = async () => {
@@ -57,10 +82,13 @@ export default function MenuUsuario({ user }: Readonly<PropsMenuUsuario>) {
   const inicial = nombreMostrar?.charAt(0)?.toUpperCase() || 'U';
 
   return (
-    <div className="relative">
+    <div className="relative" ref={menuRef}>
       <button
+        type="button"
+        aria-expanded={estaAbierto}
+        aria-haspopup="true"
         onClick={() => setEstaAbierto(!estaAbierto)}
-        className="flex items-center space-x-2 px-3 py-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        className="flex items-center space-x-2 px-3 py-2 rounded-xl hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors"
       >
         <div className="w-8 h-8 bg-red-700 rounded-full flex items-center justify-center overflow-hidden">
           {fotoPerfil && !cargandoFoto ? (
@@ -75,7 +103,7 @@ export default function MenuUsuario({ user }: Readonly<PropsMenuUsuario>) {
             </span>
           )}
         </div>
-        <span className="text-gray-700 dark:text-gray-200 font-medium hidden sm:block">
+        <span className="text-slate-700 dark:text-slate-200 font-medium hidden sm:block truncate max-w-[140px] lg:max-w-[200px]">
           {nombreMostrar}
         </span>
         <svg
@@ -96,45 +124,37 @@ export default function MenuUsuario({ user }: Readonly<PropsMenuUsuario>) {
       </button>
 
       {estaAbierto && (
-        <>
-          <button
-            type="button"
-            aria-label="Cerrar menú de usuario"
-            className="fixed inset-0 z-10"
-            onClick={() => setEstaAbierto(false)}
-          />
-          
-          <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20">
+          <div className="absolute right-0 mt-2 w-56 surface-card py-1 z-50 shadow-md">
             <div className="py-2">
-              <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{nombreMostrar}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{user?.correo || 'Sin correo'}</p>
+              <div className="px-4 py-2 border-b border-slate-200/70 dark:border-slate-700/60">
+                <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">{nombreMostrar}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user?.correo || 'Sin correo'}</p>
               </div>
 
               <Link
                 href="/dashboard"
-                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="block px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-700/50 transition-colors"
                 onClick={() => setEstaAbierto(false)}
               >
                 Mi Dashboard
               </Link>
               <Link
                 href="/perfil"
-                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="block px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-700/50 transition-colors"
                 onClick={() => setEstaAbierto(false)}
               >
                 Mi Perfil
               </Link>
               <Link
                 href="/mis-pujas"
-                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="block px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-700/50 transition-colors"
                 onClick={() => setEstaAbierto(false)}
               >
                 Mis Pujas
               </Link>
               <Link
                 href="/mis-compras"
-                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="block px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-700/50 transition-colors"
                 onClick={() => setEstaAbierto(false)}
               >
                 Mis Compras
@@ -142,7 +162,7 @@ export default function MenuUsuario({ user }: Readonly<PropsMenuUsuario>) {
               {esAdministrador && (
                 <Link
                   href="/administracion"
-                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className="block px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-700/50 transition-colors"
                   onClick={() => setEstaAbierto(false)}
                 >
                   Administración
@@ -151,33 +171,32 @@ export default function MenuUsuario({ user }: Readonly<PropsMenuUsuario>) {
 
               <button
                 onClick={toggleTheme}
-                className="w-full px-4 py-2 text-sm text-left text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between"
+                className="w-full px-4 py-2.5 text-sm text-left text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-700/50 transition-colors flex items-center justify-between"
               >
                 <span>{isDarkMode ? "Modo claro" : "Modo oscuro"}</span>
                 <span
                   className={`inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                    isDarkMode ? "bg-red-700" : "bg-gray-300"
+                    isDarkMode ? "bg-red-600" : "bg-slate-300"
                   }`}
                 >
                   <span
-                    className={`h-4 w-4 rounded-full bg-white transition-transform ${
+                    className={`h-4 w-4 rounded-full bg-slate-50 transition-transform ${
                       isDarkMode ? "translate-x-4" : "translate-x-1"
                     }`}
                   />
                 </span>
               </button>
               
-              <hr className="my-2 border-gray-200 dark:border-gray-700" />
+              <hr className="my-2 border-slate-200/70 dark:border-slate-700/60" />
               
               <button
                 onClick={manejarCierreSesion}
-                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                className="block w-full text-left px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
               >
                 Cerrar Sesión
               </button>
             </div>
           </div>
-        </>
       )}
     </div>
   );

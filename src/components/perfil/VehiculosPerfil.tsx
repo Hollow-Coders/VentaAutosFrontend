@@ -40,15 +40,15 @@ export default function VehiculosPerfil({ vehicles, isOwner }: ProfileVehiclesPr
   const getStatusBadge = (estado: string) => {
     const estadoLower = estado.toLowerCase();
     if (estadoLower.includes('vendido') || estadoLower.includes('sold')) {
-      return { text: 'Vendido', color: 'bg-gray-100 text-gray-600' };
+      return { text: 'Vendido', color: 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300' };
     }
     if (estadoLower.includes('rechazado') || estadoLower.includes('rejected')) {
-      return { text: 'Rechazado', color: 'bg-red-100 text-red-700' };
+      return { text: 'Rechazado', color: 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300' };
     }
     if (estadoLower.includes('revision') || estadoLower.includes('en_revision') || estadoLower.includes('pendiente') || estadoLower.includes('pending')) {
-      return { text: 'Revisión', color: 'bg-yellow-100 text-yellow-700' };
+      return { text: 'Revisión', color: 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300' };
     }
-    return { text: 'Activo', color: 'bg-green-100 text-green-700' };
+    return { text: 'Activo', color: 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300' };
   };
 
   const handleVerDetalles = (id: number) => {
@@ -94,106 +94,87 @@ export default function VehiculosPerfil({ vehicles, isOwner }: ProfileVehiclesPr
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 mb-8">
-      {/* Header con filtros y botones */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            {isOwner ? 'Mis Vehículos' : 'Vehículos de este vendedor'}
+    <div className="surface-card p-5 sm:p-6">
+      <div className="flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-start mb-6">
+        <div className="min-w-0">
+          <p className="section-label mb-1">Inventario</p>
+          <h2 className="text-xl sm:text-2xl font-semibold text-slate-800 dark:text-slate-100">
+            {isOwner ? "Mis vehículos" : "Vehículos de este vendedor"}
           </h2>
-          <p className="text-gray-600 text-sm">
-            {filteredVehicles.length} vehículo{filteredVehicles.length !== 1 ? 's' : ''} {filter !== 'all' ? `(${filter === 'disponible' ? 'Activos' : filter === 'vendido' ? 'Vendidos' : filter === 'revision' ? 'Revisión' : filter === 'rechazado' ? 'Rechazados' : filter})` : ''}
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+            {filteredVehicles.length} vehículo{filteredVehicles.length !== 1 ? "s" : ""}
+            {filter !== "all" &&
+              ` · ${
+                filter === "disponible"
+                  ? "Activos"
+                  : filter === "vendido"
+                    ? "Vendidos"
+                    : filter === "revision"
+                      ? "En revisión"
+                      : "Rechazados"
+              }`}
           </p>
         </div>
 
-        {/* Filtros */}
-        <div className="flex gap-2 flex-wrap mt-4 md:mt-0">
-          <button
-            onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
-              filter === 'all' 
-                ? 'bg-red-700 text-white' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            Todos
-          </button>
-          <button
-            onClick={() => setFilter('disponible')}
-            className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
-              filter === 'disponible' 
-                ? 'bg-red-700 text-white' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            Activos
-          </button>
-          <button
-            onClick={() => setFilter('vendido')}
-            className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
-              filter === 'vendido' 
-                ? 'bg-red-700 text-white' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            Vendidos
-          </button>
-          {isOwner && (
-            <>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 lg:flex-shrink-0">
+          <div className="flex gap-1.5 flex-wrap">
+            {(
+              [
+                ["all", "Todos"],
+                ["disponible", "Activos"],
+                ["vendido", "Vendidos"],
+                ...(isOwner
+                  ? ([
+                      ["revision", "Revisión"],
+                      ["rechazado", "Rechazados"],
+                    ] as const)
+                  : []),
+              ] as const
+            ).map(([key, label]) => (
               <button
-                onClick={() => setFilter('revision')}
-                className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
-                  filter === 'revision' 
-                    ? 'bg-red-700 text-white' 
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                key={key}
+                onClick={() => setFilter(key)}
+                className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors ${
+                  filter === key
+                    ? "bg-red-600 text-white shadow-sm"
+                    : "bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
                 }`}
               >
-                Revisión
+                {label}
               </button>
-              <button
-                onClick={() => setFilter('rechazado')}
-                className={`px-4 py-2 rounded-full font-semibold text-sm transition-colors ${
-                  filter === 'rechazado' 
-                    ? 'bg-red-700 text-white' 
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                Rechazados
-              </button>
-            </>
-          )}
-        </div>
+            ))}
+          </div>
 
-        {/* Botón para agregar vehículo (solo propietario) */}
-        {isOwner && (
-          <div className="mt-4 md:mt-0">
-            <Link
-              href="/creacion-vehiculo"
-              className="inline-flex items-center px-6 py-3 bg-red-700 text-white rounded-full font-semibold hover:bg-red-800 transition-colors text-sm"
-            >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {isOwner && (
+            <Link href="/creacion-vehiculo" className="btn-primary whitespace-nowrap">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              Agregar Vehículo
+              Agregar
             </Link>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Grid de vehículos */}
       {filteredVehicles.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        <div className="text-center py-14 section-muted rounded-xl">
+          <div className="w-16 h-16 bg-slate-200/60 dark:bg-slate-700/60 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
             </svg>
           </div>
-          <p className="text-gray-600 text-lg font-semibold mb-2">
-            {isOwner ? 'No tienes vehículos' : 'Este vendedor no tiene vehículos'}
+          <p className="text-slate-700 dark:text-slate-200 font-medium mb-1">
+            {isOwner ? "Aún no tienes vehículos publicados" : "Este vendedor no tiene vehículos"}
           </p>
-          <p className="text-gray-500 text-sm">
-            {isOwner ? 'Comienza agregando tu primer vehículo' : 'Intenta con otro vendedor'}
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-5">
+            {isOwner ? "Publica tu primer auto para empezar a vender" : "Intenta con otro vendedor"}
           </p>
+          {isOwner && (
+            <Link href="/creacion-vehiculo" className="btn-primary">
+              Publicar vehículo
+            </Link>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
